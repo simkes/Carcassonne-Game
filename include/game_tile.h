@@ -6,7 +6,9 @@
 namespace game_model {
 
 struct Tile;
+
 Type type;
-}
+
+}  // namespace game_model
 
 #endif  // GAME_TILE_H
