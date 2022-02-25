@@ -5,7 +5,7 @@ namespace game_model {
 
 const int CARD_DIMENSION = 5;
 
-enum class Type;
+enum class Type { CASTLE, FIELD, ROAD, MONASTERY, JUNCTION, NOTHING };
 
 }  // namespace game_model
 
