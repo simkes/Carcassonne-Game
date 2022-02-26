@@ -12,6 +12,8 @@ enum Color { RED, YELLOW, GREEN, BLUE, BLACK };
 
 const int NUMBEROFUNITS = 5;
 
+struct Unit;
+
 struct Player {
     const std::string name;
     const Color color;

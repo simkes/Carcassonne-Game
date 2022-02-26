@@ -3,14 +3,23 @@
 
 #include <array>
 #include "game_board.h"
+#include "game_common.h"
 #include "game_tile.h"
 
 namespace game_model {
 
 struct Card {
+    void rotateLeft();   // counterclockwise
+    void rotateRight();  // clockwise
+
+    int id;
+    int rotation;  // can be 0, 1, 2, 3, where the rotation angle is:
+                   // (pi/2)*rotation counterClockWise
+    // TODO: texture id
     Tile *getTile(int x, int y) const;
-    std::array<std::array<Tile *, 5>, 5> *getTiles() const;
-    std::array<std::array<Tile *, 5>, 5> mTiles;
+    const std::array<std::array<Tile *, CARD_DIMENSION>, CARD_DIMENSION>
+        *getTiles() const;
+    std::array<std::array<Tile *, CARD_DIMENSION>, CARD_DIMENSION> mTiles;
 };
 
 }  // namespace game_model

@@ -14,7 +14,7 @@ namespace game_model {
 struct Board {
     bool canAddCard(sf::Vector2i pos, const Card &card);
 
-    std::array<std::array<Tile *, 5>, 5> *addCard(sf::Vector2i pos,
+    const std::array<std::array<Tile *, 5>, 5> *addCard(sf::Vector2i pos,
                                                   const Card &card);
 
 private:
