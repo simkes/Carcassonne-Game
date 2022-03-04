@@ -11,6 +11,15 @@
 
 namespace game_model {
 
+struct Comp {
+    bool operator()(const sf::Vector2i &lhs, const sf::Vector2i &rhs) const {
+        if (lhs.x == rhs.x) {
+            return lhs.y < rhs.y;
+        }
+        return lhs.x < rhs.x;
+    }
+};
+
 struct Board {
     bool canAddCard(sf::Vector2i pos, const Card &card);
 
@@ -19,7 +28,7 @@ struct Board {
 
 private:
     // TODO: wrap in unique
-    std::map<sf::Vector2i, Tile *> mTiles;
+    std::map<sf::Vector2i, Tile *, Comp> mTiles;
     std::map<Type, std::vector<Tile *>> mTypeMap;
     size_t castleCount;
 };

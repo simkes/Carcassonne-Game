@@ -10,7 +10,7 @@ bool Board::canAddCard(sf::Vector2i pos, const Card &card) {
     // TODO: debug, rewrite simpler
     for (int dy : {0, CARD_DIMENSION - 1}) {
         for (int dx = 0; dx < CARD_DIMENSION; dx++) {
-            if (mTiles[{pos.x + dx, pos.y + dy}]->type !=
+            if (mTiles[sf::Vector2i{pos.x + dx, pos.y + dy}]->type !=
                 card.getTile(dx, dy)->type) {
                 return false;
             }
