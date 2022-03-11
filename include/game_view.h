@@ -23,6 +23,7 @@ static TextureHolder Textures;
 
 struct BoardView : public sf::Drawable {
     //c-tor
+    BoardView(game_model::Board &Board): mBoard(Board) {};
 
     sf::View &getView() {
         return mView;
