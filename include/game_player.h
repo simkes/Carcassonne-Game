@@ -1,18 +1,15 @@
-#ifndef GAME_PLAYER_H
-#define GAME_PLAYER_H
+#ifndef GAME_PLAYER_H_
+#define GAME_PLAYER_H_
 
 #include <string>
 #include <vector>
-#include "game_tile.h"
-#include "game_unit.h"
+#include "game_model.h"
 
 namespace game_model {
 
 enum Color { RED, YELLOW, GREEN, BLUE, BLACK };
 
 const int NUMBEROFUNITS = 5;
-
-struct Unit;
 
 struct Player {
     const std::string name;
@@ -30,4 +27,4 @@ private:
 
 }  // namespace game_model
 
-#endif  // GAME_PLAYER_H
+#endif  // GAME_PLAYER_H_

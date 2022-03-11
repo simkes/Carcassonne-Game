@@ -3,7 +3,7 @@
 
 #include <SFML/System/Vector2.hpp>
 #include "game_common.h"
-#include "game_unit.h"
+#include "game_model.h"
 
 namespace game_model {
 

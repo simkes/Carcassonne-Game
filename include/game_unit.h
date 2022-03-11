@@ -1,11 +1,9 @@
-#ifndef GAME_UNIT_H
-#define GAME_UNIT_H
+#ifndef GAME_UNIT_H_
+#define GAME_UNIT_H_
 
-#include "game_player.h"
-#include "game_tile.h"
+#include "game_model.h"
 
 namespace game_model {
-struct Tile;
 
 struct Unit {
     explicit Unit(Player *owner_) : owner(owner_) {
@@ -18,4 +16,4 @@ private:
 
 }  // namespace game_model
 
-#endif  // GAME_UNIT_H
+#endif  // GAME_UNIT_H_
