@@ -11,6 +11,8 @@
 
 namespace game_model {
 
+struct Card;
+
 struct Comp {
     bool operator()(const sf::Vector2i &lhs, const sf::Vector2i &rhs) const {
         if (lhs.x == rhs.x) {

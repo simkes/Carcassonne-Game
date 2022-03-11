@@ -5,6 +5,7 @@
 #include "game_tile.h"
 
 namespace game_model {
+struct Tile;
 
 struct Unit {
     explicit Unit(Player *owner_) : owner(owner_) {
