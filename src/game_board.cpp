@@ -27,7 +27,7 @@ bool Board::canAddCard(sf::Vector2i pos, const Card &card) {
     return true;
 }
 
-const std::array<std::array<Tile *, 5>, 5> *Board::addCard(sf::Vector2i pos,
+const std::array<std::array<Tile *, CARD_DIMENSION>, CARD_DIMENSION> *Board::addCard(sf::Vector2i pos,
                                                      const Card &card) {
     for (int dx = 0; dx < CARD_DIMENSION; dx++) {
         for (int dy = 0; dy < CARD_DIMENSION; dy++) {

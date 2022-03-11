@@ -25,11 +25,15 @@ struct Comp {
 struct Board {
     bool canAddCard(sf::Vector2i pos, const Card &card);
 
-    const std::array<std::array<Tile *, 5>, 5> *addCard(sf::Vector2i pos,
-                                                  const Card &card);
+    const std::array<std::array<Tile *, CARD_DIMENSION>, CARD_DIMENSION>
+        *addCard(sf::Vector2i pos, const Card &card);
+
+    std::map<sf::Vector2i, Tile *> &getTiles() const {
+        return mTiles;
+    }
 
 private:
-    // TODO: wrap in unique
+    // TODO: wrap in unique ?
     std::map<sf::Vector2i, Tile *, Comp> mTiles;
     std::map<Type, std::vector<Tile *>> mTypeMap;
     size_t castleCount;

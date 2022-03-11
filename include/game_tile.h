@@ -12,6 +12,7 @@ struct Tile {
     sf::Vector2i position;
     Unit *unit = nullptr;
     std::pair<int, int> cardIDs;
+    Card *card;
     int belongingCastles = 0;  //?
     // TODO: constructor
 };
