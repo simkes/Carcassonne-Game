@@ -24,6 +24,12 @@ void BoardView::draw(sf::RenderTarget &target, sf::RenderStates states) const {
                 .draw(target, states);
         }
     }
+
+    for (auto object : mBoard.getTiles()) {
+        if (object.second->unit != nullptr) {
+            UnitView(*object.second->unit, *Textures.get_texture(unit_color[object.second->unit->owner->color]));
+        }
+    }
 }
 
 void CardView::draw(sf::RenderTarget &target, sf::RenderStates states) const {
@@ -35,6 +41,16 @@ CardView::CardView(const game_model::Card &card,
     mSprite.setTexture(card_texture);
     mSprite.setRotation(static_cast<float>(90 * card.rotation));
     mSprite.setPosition(transform_coordinates(card.getTile(0, 0)->position));
+}
+
+UnitView::UnitView(const game_model::Unit &unit,
+                   const sf::Texture &unit_texture) {
+    mSprite.setTexture(unit_texture);
+    mSprite.setPosition(transform_coordinates(unit.tile->position));
+}
+
+void UnitView::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+    target.draw(mSprite, states);
 }
 
 }  // namespace game_view

@@ -7,6 +7,7 @@
 #include "game_board.h"
 #include "game_card.h"
 #include "view_util.h"
+#include "game_player.h"
 
 namespace game_view {
 
@@ -23,7 +24,7 @@ static TextureHolder Textures;
 
 struct BoardView : public sf::Drawable {
     //c-tor
-    BoardView(game_model::Board &Board): mBoard(Board) {};
+    BoardView(game_model::Board &Board) : mBoard(Board) {};
 
     sf::View &getView() {
         return mView;
@@ -38,6 +39,17 @@ private:
 
 struct CardView : public sf::Drawable, public sf::Transformable {
     explicit CardView(const game_model::Card &card, const sf::Texture &card_texture);
+
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+
+private:
+    sf::Sprite mSprite;
+};
+
+std::map<game_model::Color, textures::ID>unit_color;
+
+struct UnitView : public sf::Drawable, public sf::Transformable {
+    explicit UnitView(const game_model::Unit &unit, const sf::Texture &unit_texture);
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
