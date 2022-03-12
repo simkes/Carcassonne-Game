@@ -8,7 +8,9 @@
 namespace game_model {
 
 struct Tile {
-    Type type = Type::NOTHING;
+    Tile(Type type_) : type(type_) {}; // *card ?
+
+    Type type;
     sf::Vector2i position;
     Unit *unit = nullptr;
     std::pair<int, int> cardIDs;

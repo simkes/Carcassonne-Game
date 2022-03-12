@@ -19,10 +19,11 @@ struct Player {
 
     Player(std::string name_, Color color_)
         : name(std::move(name_)), color(color_), human(true) {
-    }  // TODO: fill units with unit * ?
+        units.resize(NUMBEROFUNITS);
+    }
 
 private:
-    std::vector<Unit *> units;
+    std::vector<std::unique_ptr<Unit>> units;
 };
 
 }  // namespace game_model
