@@ -3,7 +3,7 @@ using namespace game_model;
 
 sf::RenderWindow startWindow(sf::VideoMode(640,480), "Carcassonne-Game");
 
-std::map <int, Color> colorsMap{ {1, Color::RED}, {2,Color::YELLOW}, {3,Color::GREEN}, {4,Color::BLUE}, {5,Color::BLACK} };
+std::vector <Color> colorsVector{RED, YELLOW, GREEN, BLUE, BLACK};
 
 int getNumberOfPlayers(sf::Text &invitation, sf::Text &textEntered, sf::Sprite &startSprite, sf::Text &title) {
 
@@ -66,7 +66,7 @@ void init_players(std::vector<Player> players, int numberOfPlayers,sf::Text &inv
 
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Enter){
-                    players.emplace_back(stringEntered, colorsMap[counter]);
+                    players.emplace_back(stringEntered, colorsVector[counter-1]);
                     counter ++;
                     stringEntered = "";
                     textEntered.setString("");

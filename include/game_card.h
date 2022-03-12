@@ -9,6 +9,7 @@
 namespace game_model {
 
 struct Card {
+    Card(const std::string &filename){};
     void rotateLeft();   // counterclockwise
     void rotateRight();  // clockwise
 

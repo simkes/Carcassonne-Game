@@ -25,13 +25,15 @@ private:
     std::deque <Card> cardDeck;
     std::vector <Card> placedCards;
     int currentPlayer = 0;
-    defaultInteraction interaction;
-    State nextState;
+    std::size_t numberOfPlayers;
+    defaultInteraction *interaction;
+    State currentState = State::CARDPLACEMENT;
     sf::RenderWindow mWindow;
 
     void processEvents();
     void update();
     void render();
+
 };
 
 } // carcassonne_game

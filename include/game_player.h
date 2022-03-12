@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "game_model.h"
 #include "game_unit.h"
 
 namespace game_model {

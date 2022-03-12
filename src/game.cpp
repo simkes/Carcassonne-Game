@@ -24,7 +24,9 @@ std::deque <Card> init_cardDeck() {
     return cardDeck;
 }
 
-Game::Game(std::vector<Player> players): mPlayers(std::move(players)), mWindow(sf::VideoMode(640, 480), "Carcassonne-Game"/*, sf::Style::Fullscreen*/){
+Game::Game(std::vector<Player> players): mPlayers(std::move(players)),
+      mWindow(sf::VideoMode(640, 480), "Carcassonne-Game"/*, sf::Style::Fullscreen*/),
+      numberOfPlayers(mPlayers.size())  {
     cardDeck = std::move(init_cardDeck());
 }
 
@@ -37,13 +39,14 @@ void Game::run() {
     }
 }
 
-void Game::processEvents()
-{
+void Game::processEvents() {
+    if(currentState == State::DEFAULT){
+        currentPlayer = (currentPlayer++) % numberOfPlayers;
+        currentState = State::CARDPLACEMENT;
+    }
     sf::Event event;
-    while (mWindow.pollEvent(event)) // здесь interaction
-    {
-        if (event.type == sf::Event::Closed)
-            mWindow.close();
+    while(mWindow.pollEvent(event)) {
+        interaction->handleEvent(event);
     }
 }
 
