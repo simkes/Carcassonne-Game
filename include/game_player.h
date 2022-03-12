@@ -3,7 +3,9 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include "game_model.h"
+#include "game_unit.h"
 
 namespace game_model {
 
@@ -19,7 +21,9 @@ struct Player {
 
     Player(std::string name_, Color color_)
         : name(std::move(name_)), color(color_), human(true) {
-        units.resize(NUMBEROFUNITS);
+        for(int i = 0; i < NUMBEROFUNITS; i++){
+            units.emplace_back(std::make_unique<Unit>(this));
+        }
     }
 
 private:

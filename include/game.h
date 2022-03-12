@@ -1,7 +1,7 @@
 #ifndef GAME_H_
 #define GAME_H_
 
-#include <queue>
+#include <deque>
 #include "game_board.h"
 #include "game_player.h"
 #include "interaction.h"
@@ -14,8 +14,7 @@ using namespace game_view;
 
 class Game {
 public:
- explicit Game(std::vector<Player> players) : mPlayers(std::move(players)), mWindow(sf::VideoMode(640, 480), "Carcassonne-Game"){
-};
+ explicit Game(std::vector<Player> players);
 
    // void addState();
     void run();
@@ -23,7 +22,7 @@ public:
 private:
     Board mBoard;
     std::vector <Player> mPlayers;
-    std::queue <Card> cardDeck;
+    std::deque <Card> cardDeck;
     std::vector <Card> placedCards;
     int currentPlayer = 0;
     defaultInteraction interaction;
