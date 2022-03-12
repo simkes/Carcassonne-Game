@@ -26,7 +26,8 @@ std::deque <Card> init_cardDeck() {
 
 Game::Game(std::vector<Player> players): mPlayers(std::move(players)),
       mWindow(sf::VideoMode(640, 480), "Carcassonne-Game"/*, sf::Style::Fullscreen*/),
-      numberOfPlayers(mPlayers.size())  {
+      numberOfPlayers(mPlayers.size()),
+      mBoardView(mBoard) {
     cardDeck = std::move(init_cardDeck());
 }
 
@@ -53,7 +54,7 @@ void Game::processEvents() {
 void Game::render()
 {
     mWindow.clear();
-    mWindow.draw(BoardView(mBoard));
+    mBoardView.draw(mWindow,sf::RenderStates::Default); //TODO: RenderStates ??
     mWindow.display();
 }
 

@@ -29,7 +29,7 @@ private:
     defaultInteraction *interaction;
     State currentState = State::CARDPLACEMENT;
     sf::RenderWindow mWindow;
-
+    BoardView mBoardView;
     void processEvents();
     void update();
     void render();
