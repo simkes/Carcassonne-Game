@@ -25,6 +25,7 @@ add_executable(${EXECUTABLE_NAME}
         src/game_view.cpp
         src/game.cpp
         src/main.cpp
+        src/interaction.cpp
         )
 add_executable(main_debug
         src/main.cpp
