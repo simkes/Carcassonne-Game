@@ -26,7 +26,7 @@ void BoardView::draw(sf::RenderTarget &target, sf::RenderStates states) const {
         if (object.first.x % CARD_DIMENSION == CARD_DIMENSION / 2 &&
             object.first.y == CARD_DIMENSION / 2) {
             CardView(*object.second->card,
-                     *Textures.get_texture(object.second->card->texture_id))
+                     *Textures.get_texture(object.second->card->textureId))
                 .draw(target, states);
         }
     }
