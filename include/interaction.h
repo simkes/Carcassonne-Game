@@ -12,7 +12,7 @@ enum class State { CARDPLACEMENT, UNITPLACEMENT, DEFAULT };
 struct defaultInteraction{
     game_view::BoardView mainView;
     virtual void handleEvent(sf::Event &event);
-    //virtual destructor??git sta
+    //virtual destructor??
 
 }; // may be better to name baseInteraction or smt
 

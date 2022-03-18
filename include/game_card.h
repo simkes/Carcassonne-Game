@@ -9,14 +9,25 @@
 namespace game_model {
 
 struct Card {
-    Card(const std::string &filename){};
+    Card(const std::string &filename, int texture_id){
+        textureId = texture_id;
+        std::ifstream ss(filename);
+        for (int i = 0; i < CARD_DIMENSION; i++){
+            for (int j = 0; j < CARD_DIMENSION; j++){
+                int temp;
+                ss >> temp;
+                mTiles[CARD_DIMENSION - i - 1][j](typesVector[temp]);
+            }
+        }
+    }
+
     void rotateLeft();   // counterclockwise
     void rotateRight();  // clockwise
 
     int id;
-    int rotation;  // can be 0, 1, 2, 3, where the rotation angle is:
+    int rotation = 0;  // can be 0, 1, 2, 3, where the rotation angle is:
                    // (pi/2)*rotation counterClockWise
-    int texture_id;
+    int textureId;
     Tile *getTile(int x, int y) const;
     const std::array<std::array<Tile *, CARD_DIMENSION>, CARD_DIMENSION>
         *getTiles() const;
