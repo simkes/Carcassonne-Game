@@ -60,8 +60,14 @@ void cardPlacementInteraction::handleEvent(sf::Event &event) {
     }
 
     if (event.type == sf::Event::MouseButtonPressed){
-        if (event.mouseButton.button == sf::Mouse::Right){
+        if (event.mouseButton.button == sf::Mouse::Left){
+            sf::Vector2i clickCoordinates(mainView.getView().getCenter());
+            //clickCoordinates.x += (event.mouseButton.x - clickCoordinates.x);
+            //clickCoordinates.y += (event.mouseButton.y - clickCoordinates.y); TODO: convert coordinate
 
+            if (Board.canAddCard(clickCoordinates, currentCard)){
+                Board.addCard(clickCoordinates, currentCard);
+            } // what do with else: error? warning? nothing?
         }
     }
 }
