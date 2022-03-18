@@ -11,14 +11,16 @@
 
 namespace game_view {
 
-struct TextureHolder {
-    void load(textures::ID id, const std::string &filename);
-    void load(textures::ID id, const std::string &filename, int rectLeft, int rectTop, int rectWidth, int rectHeight );
+const int CARDTEXTURESIZE = 379;
 
-    sf::Texture *get_texture(textures::ID id);
+struct TextureHolder {
+    void load(int id, const std::string &filename);
+    void load(int id, const std::string &filename, int rectLeft, int rectTop, int rectWidth, int rectHeight);
+
+    sf::Texture *get_texture(int id);
 
 private:
-    std::map<textures::ID, std::unique_ptr<sf::Texture>> mTextureMap;
+    std::map<int, std::unique_ptr<sf::Texture>> mTextureMap;
 };
 
 static TextureHolder Textures;
@@ -47,7 +49,7 @@ private:
     sf::Sprite mSprite;
 };
 
-std::map<game_model::Color, textures::ID>unit_color;
+std::map<game_model::Color, int>unit_color;
 
 struct UnitView : public sf::Drawable, public sf::Transformable {
     explicit UnitView(const game_model::Unit &unit, const sf::Texture &unit_texture);

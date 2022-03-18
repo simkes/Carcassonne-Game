@@ -16,7 +16,7 @@ struct Card {
     int id;
     int rotation;  // can be 0, 1, 2, 3, where the rotation angle is:
                    // (pi/2)*rotation counterClockWise
-    game_view::textures::ID texture_id;
+    int texture_id;
     Tile *getTile(int x, int y) const;
     const std::array<std::array<Tile *, CARD_DIMENSION>, CARD_DIMENSION>
         *getTiles() const;

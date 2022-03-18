@@ -28,8 +28,11 @@ private:
     std::size_t numberOfPlayers;
     defaultInteraction *interaction;
     State currentState = State::CARDPLACEMENT;
+
     sf::RenderWindow mWindow;
     BoardView mBoardView;
+    static TextureHolder textures;
+
     void processEvents();
     void update();
     void render();
