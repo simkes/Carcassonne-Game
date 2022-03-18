@@ -13,6 +13,7 @@ namespace game_view {
 
 struct TextureHolder {
     void load(textures::ID id, const std::string &filename);
+    void load(textures::ID id, const std::string &filename, int rectLeft, int rectTop, int rectWidth, int rectHeight );
 
     sf::Texture *get_texture(textures::ID id);
 

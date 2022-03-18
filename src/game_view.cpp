@@ -11,6 +11,12 @@ void TextureHolder::load(textures::ID id, const std::string &filename) {
     mTextureMap.insert({id, std::move(texture)});
 }
 
+void TextureHolder::load(textures::ID id, const std::string &filename, int rectLeft, int rectTop, int rectWidth, int rectHeight ) {
+    std::unique_ptr<sf::Texture> texture(new sf::Texture());
+    texture->loadFromFile(filename,sf::IntRect(rectLeft, rectTop, rectWidth, rectHeight));
+    mTextureMap.insert({id, std::move(texture)});
+}
+
 sf::Texture *TextureHolder::get_texture(textures::ID id) {
     return mTextureMap[id].get();
 }
