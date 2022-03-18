@@ -12,22 +12,23 @@ enum class State { CARDPLACEMENT, UNITPLACEMENT, DEFAULT };
 struct defaultInteraction{
     game_view::BoardView mainView;
     virtual void handleEvent(sf::Event &event);
+    //virtual destructor??git sta
 
 }; // may be better to name baseInteraction or smt
 
 struct cardPlacementInteraction: public defaultInteraction{
 
-    //cardPlacementInteraction(game_model::Board &board, game_model::Card &card): Board(board), currentCard(card){}
+    //cardPlacementInteraction(game_view::BoardView view, game_model::Board &board, game_model::Card &card): mainView(view), Board(board), currentCard(card){}
     void handleEvent(sf::Event &event) override;
 
 private:
-    game_model::Board Board; //but its so strange, because in BoardView we have board, maybe make getter
+    game_model::Board &Board; //but its so strange, because in BoardView we have board, maybe make getter
     const game_model::Card &currentCard;
 };
 
 struct unitPlacementInteraction: public defaultInteraction{
 
-    void handleEvent(sf::Event &event);
+    void handleEvent(sf::Event &event) override;
     //cardPlacementInteraction(game_model::Board &board, game_model::Card &card): Board(board), currentCard(card){}
 
 private:
