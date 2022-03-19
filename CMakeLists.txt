@@ -14,7 +14,6 @@ add_executable(${EXECUTABLE_NAME}
         include/game_common.h
         include/game_tile.h
         include/game_player.h
-        include/game_model.h
         include/game.h
         include/game_unit.h
         include/interaction.h

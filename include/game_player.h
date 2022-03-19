@@ -1,9 +1,6 @@
 #ifndef GAME_PLAYER_H_
 #define GAME_PLAYER_H_
 
-#include <string>
-#include <vector>
-#include <memory>
 #include "game_unit.h"
 
 namespace game_model {

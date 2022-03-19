@@ -41,6 +41,7 @@ int get_numberOfPlayers(sf::RenderWindow &gameWindow, sf::Text &invitation, sf::
         gameWindow.display();
     }
 
+    return 0;
 }
 
 void init_mPlayers(sf::RenderWindow &gameWindow, std::vector<Player> &players, std::size_t numberOfPlayers, sf::Text &invitation, sf::Text &textEntered, sf::Sprite &startSprite, sf::Sprite &background, sf::Text &title){
@@ -103,9 +104,9 @@ void Game::init_players() {
 
     startSprite.setPosition(100, 10);
 
-    title.setColor(sf::Color::Black);
-    invitation.setColor(sf::Color::Black);
-    textEntered.setColor(sf::Color::Black);
+    title.setFillColor(sf::Color::Black);
+    invitation.setFillColor(sf::Color::Black);
+    textEntered.setFillColor(sf::Color::Black);
     
     title.setPosition(120,50);
     invitation.setPosition(120,120);
@@ -163,11 +164,17 @@ void Game::run() {
 
 
 void Game::process_events() {
+    if(currentState == interaction::State::CARDPLACEMENT){
+        execute_cardPlacement();
+    }
     defaultInteraction *currentInteraction = interaction[currentState].get();
     sf::Event event;
     while(mWindow.pollEvent(event)) {
         currentInteraction->handleEvent(event);
     }
+}
+
+void Game::update() {
 }
 
 void Game::render()
@@ -207,5 +214,6 @@ void Game::execute_cardPlacement() {
 void Game::execute_unitPlacement() {
     //TODO
 }
+
 
 } // namespace carcassonne_game

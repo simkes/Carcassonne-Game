@@ -65,9 +65,9 @@ void cardPlacementInteraction::handleEvent(sf::Event &event) {
             clickCoordinates.x += (event.mouseButton.x - static_cast<int>(mainView.getView().getSize().x/2));
             clickCoordinates.y += (event.mouseButton.y - static_cast<int>(mainView.getView().getSize().y/2));//TODO: make coordinate convert easier
 
-            if (Board.canAddCard(clickCoordinates, currentCard)){
-                Board.addCard(clickCoordinates, currentCard);
-            } // what do with else: error? warning? nothing?
+            if (gameBoard->canAddCard(clickCoordinates, *currentCard)){
+                gameBoard->addCard(clickCoordinates, *currentCard);
+            } // what to do with else: error? warning? nothing?
         }
     }
 }

@@ -1,11 +1,6 @@
 #ifndef GAME_CARD_H_
 #define GAME_CARD_H_
 
-#include <array>
-#include <fstream>
-#include "game_common.h"
-#include "game_model.h"
-#include "view_util.h"
 #include "game_tile.h"
 
 namespace game_model {

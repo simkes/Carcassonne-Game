@@ -2,10 +2,8 @@
 #define GAME_VIEW_H_
 
 #include <SFML/Graphics.hpp>
-#include <map>
 #include <string>
 #include "game_board.h"
-#include "game_card.h"
 #include "view_util.h"
 #include "game_player.h"
 

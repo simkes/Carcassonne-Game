@@ -1,7 +1,7 @@
 #ifndef GAME_UNIT_H_
 #define GAME_UNIT_H_
 
-#include "game_model.h"
+#include "game_tile.h"
 
 namespace game_model {
 

@@ -1,12 +1,7 @@
 #ifndef GAME_BOARD_H_
 #define GAME_BOARD_H_
 
-#include <SFML/System.hpp>
-#include <array>
-#include <map>
-#include <vector>
-#include "game_common.h"
-#include "game_model.h"
+#include "game_card.h"
 
 namespace game_model {
 

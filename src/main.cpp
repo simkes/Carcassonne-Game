@@ -16,5 +16,5 @@ void init_textures_and_font() {
 int main(){
 init_textures_and_font();
 carcassonne_game::Game newGame;
-newGame.run();
+//newGame.run();
 }
