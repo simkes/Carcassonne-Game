@@ -28,4 +28,13 @@ void Card::rotateLeft() {
     rotation = (rotation + 1) % 4;
 }
 
+void Card::setTiles() {
+    for (int i = 0; i < CARD_DIMENSION; i++){
+        for (int j = 0; j < CARD_DIMENSION; j++){
+            mTiles[CARD_DIMENSION - i - 1][j].cardIDs = std::make_pair(id, -1);
+            mTiles[CARD_DIMENSION - i - 1][j].card = this;
+        }
+    }
+}
+
 }  // namespace game_model

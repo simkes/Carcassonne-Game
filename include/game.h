@@ -22,10 +22,10 @@ private:
     Board mBoard;
     std::deque <Card> cardDeck;
     std::vector <Card> placedCards;
-    Card currentCard;
+    Card *currentCardPtr = nullptr;
 
     std::vector <Player> mPlayers;
-    int currentPlayerIndex = 0;
+    std::size_t currentPlayerIndex = 0;
     Player *currentPlayerPtr = nullptr;
     std::size_t numberOfPlayers;
 
@@ -34,15 +34,18 @@ private:
 
     sf::RenderWindow mWindow;
     BoardView mBoardView;
+    sf::Sprite background;
 
     void init_players();
     void init_cardDeck();
     void init_interaction();
 
-    void processEvents();
+    void process_events();
     void update();
     void render();
-    void changeState();
+    void change_state();
+    void execute_cardPlacement();
+    void execute_unitPlacement();
 
 };
 

@@ -27,6 +27,7 @@ struct Card {
 
     void rotateLeft();   // counterclockwise
     void rotateRight();  // clockwise
+    void setTiles();
 
     int id = 0;
     int rotation = 0;  // can be 0, 1, 2, 3, where the rotation angle is:

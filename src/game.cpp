@@ -93,16 +93,14 @@ void init_mPlayers(sf::RenderWindow &gameWindow, std::vector<Player> &players, s
 }
 
 void Game::init_players() {
-    sf::Sprite background;
+
     sf::Sprite startSprite;
     sf::Text title("Carcassonne-Game",  font, 30);
     sf::Text invitation("",  font, 20);
     sf::Text textEntered("",  font, 20);
 
-    background.setTexture(*Textures.get_texture(game_view::textures::ID::BACKGROUND));
     startSprite.setTexture(*Textures.get_texture(game_view::textures::ID::STARTTEXTURE));
 
-    background.setPosition(0,0);
     startSprite.setPosition(100, 10);
 
     title.setColor(sf::Color::Black);
@@ -137,11 +135,15 @@ void Game::init_cardDeck() {
 
 void Game::init_interaction() {
     interaction.emplace(State::DEFAULT, std::make_unique<defaultInteraction>(mBoardView));
-    interaction.emplace(State::CARDPLACEMENT, std::make_unique<cardPlacementInteraction>(mBoardView, &mBoard, &currentCard));
-    interaction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(mBoardView, &mBoard, &currentCard, currentPlayerPtr));
+    interaction.emplace(State::CARDPLACEMENT, std::make_unique<cardPlacementInteraction>(mBoardView, &mBoard, currentCardPtr));
+    interaction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(mBoardView, &mBoard, currentCardPtr, currentPlayerPtr));
 }
 
 Game::Game(): mWindow(sf::VideoMode(1024, 700), "Carcassonne-Game"/*, sf::Style::Fullscreen*/), mBoardView(mBoard) {
+
+    background.setTexture(*Textures.get_texture(game_view::textures::ID::BACKGROUND));
+    background.setPosition(0,0);
+
     init_players();
     init_cardDeck();
     init_interaction();
@@ -152,13 +154,34 @@ Game::Game(): mWindow(sf::VideoMode(1024, 700), "Carcassonne-Game"/*, sf::Style:
 void Game::run() {
     while (mWindow.isOpen())
     {
-        processEvents();
+        process_events();
         update();
         render();
-        changeState();
+        change_state();
     }
 }
-void Game::changeState() {
+
+
+void Game::process_events() {
+    defaultInteraction *currentInteraction = interaction[currentState].get();
+    sf::Event event;
+    while(mWindow.pollEvent(event)) {
+        currentInteraction->handleEvent(event);
+    }
+}
+
+void Game::render()
+{
+    mWindow.clear();
+    mWindow.draw(background);
+    mBoardView.draw(mWindow,sf::RenderStates::Default); //TODO: RenderStates ??
+    if(currentState==State::CARDPLACEMENT){
+        CardView(*currentCardPtr, *Textures.get_texture(currentCardPtr->textureId < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2 )).draw(mWindow, sf::RenderStates::Default);
+    }
+    mWindow.display();
+}
+
+void Game::change_state() {
     switch (currentState) {
         case State::DEFAULT:{
             currentPlayerIndex= (currentPlayerIndex++) % numberOfPlayers;
@@ -174,24 +197,15 @@ void Game::changeState() {
             break;
     }
 }
-
-void Game::processEvents() {
-    defaultInteraction *currentInteraction = interaction[currentState].get();
-    sf::Event event;
-    while(mWindow.pollEvent(event)) {
-        currentInteraction->handleEvent(event);
-    }
+void Game::execute_cardPlacement() {
+    placedCards.push_back(cardDeck.back());
+    cardDeck.pop_back();
+    currentCardPtr = &placedCards.back();
+    currentCardPtr->id = static_cast<int>(placedCards.size()-1);
+    currentCardPtr->setTiles();
 }
-
-void Game::render()
-{
-    mWindow.clear();
-    mBoardView.draw(mWindow,sf::RenderStates::Default); //TODO: RenderStates ??
-    if(currentState==State::CARDPLACEMENT){
-        CardView(currentCard, *Textures.get_texture(currentCard.textureId < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2 )).draw(mWindow, sf::RenderStates::Default);
-    }
-    mWindow.display();
+void Game::execute_unitPlacement() {
+    //TODO
 }
-
 
 } // namespace carcassonne_game

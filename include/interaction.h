@@ -35,7 +35,7 @@ struct unitPlacementInteraction: public defaultInteraction{
                                       game_model::Card *currentCard_, game_model::Player *currentPlayer_)
         : defaultInteraction(gameBoardView), gameBoard(gameBoard_), currentCard(currentCard_), currentPlayer(currentPlayer_) {}
     void handleEvent(sf::Event &event) override;
-    //cardPlacementInteraction(game_model::Board &board, game_model::Card &card): Board(board), currentCard(card){}
+    //cardPlacementInteraction(game_model::Board &board, game_model::Card &card): Board(board), currentCardPtr(card){}
 
 private:
     game_model::Board *gameBoard;
