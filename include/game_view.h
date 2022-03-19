@@ -21,6 +21,7 @@ private:
 };
 
 static TextureHolder Textures;
+static sf::Font font;
 
 struct BoardView : public sf::Drawable {
     //c-tor

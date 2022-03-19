@@ -10,6 +10,8 @@ std::vector <Type> typesVector {Type::NOTHING, Type::CASTLE, Type::FIELD, Type::
                                 //      0           1           2           3               4               5                   6
 
 enum Color { RED, YELLOW, GREEN, BLUE, BLACK };
+std::vector <Color> colorsVector{RED, YELLOW, GREEN, BLUE, BLACK};
+
 const int NUMBER_OF_UNITS = 5;
 
 }  // namespace game_model
