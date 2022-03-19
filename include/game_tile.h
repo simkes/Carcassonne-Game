@@ -8,13 +8,18 @@
 namespace game_model {
 
 struct Tile {
-    Tile(Type type_) : type(type_) {}; // *card ?
+    explicit Tile(Type type_) : type(type_) {};
+    Tile() = default;
+
+    Tile* get() {
+        return this;
+    }
 
     Type type;
     sf::Vector2i position;
     Unit *unit = nullptr;
     std::pair<int, int> cardIDs;
-    Card *card;
+    Card *card = nullptr;
     int belongingCastles = 0;  //?
     // TODO: constructor
 };

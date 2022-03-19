@@ -2,7 +2,7 @@
 
 namespace game_model {
 
-bool Board::canAddCard(sf::Vector2i pos, const Card &card) {
+bool Board::canAddCard(sf::Vector2i pos, Card &card) {
     if (pos.x % (CARD_DIMENSION - 1) != 0 ||
         pos.y % (CARD_DIMENSION - 1) != 0) {
         return false;
@@ -27,8 +27,8 @@ bool Board::canAddCard(sf::Vector2i pos, const Card &card) {
     return true;
 }
 
-const std::array<std::array<Tile *, CARD_DIMENSION>, CARD_DIMENSION> *Board::addCard(sf::Vector2i pos,
-                                                     const Card &card) {
+const std::vector<std::vector<Tile>> &Board::addCard(sf::Vector2i pos,
+                                                      Card &card) {
     for (int dx = 0; dx < CARD_DIMENSION; dx++) {
         for (int dy = 0; dy < CARD_DIMENSION; dy++) {
             if (mTiles[{pos.x + dx, pos.y + dy}] == nullptr) {

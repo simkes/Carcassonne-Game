@@ -10,12 +10,12 @@ std::deque <Card> init_cardDeck() {
         std::string filename = "cardsdata/" + std::to_string(i) + ".txt";
         if(i < 3){
             for (int j = 0; j < 9; j++){
-                cardDeck.emplace_back(Card(filename));
+                cardDeck.emplace_back(Card(filename, i));
             }
         }
         else {
             for (int j = 0; j < 4; j++){
-                cardDeck.emplace_back(Card(filename));
+                cardDeck.emplace_back(Card(filename, i));
             }
         }
     }

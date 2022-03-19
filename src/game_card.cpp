@@ -2,25 +2,23 @@
 
 namespace game_model {
 
-Tile *Card::getTile(int x, int y) const {
-    return mTiles[y][x];
+Tile *Card::getTile(int x, int y) {
+    return mTiles[y][x].get();
 }
 
-const std::array<std::array<Tile *, CARD_DIMENSION>, CARD_DIMENSION>
-    *Card::getTiles() const {
-    return &mTiles;
+const std::vector<std::vector<Tile>> &Card::getTiles() const{
+    return mTiles;
 }
 
 void Card::rotateRight() {
-    std::array<std::array<Tile *, CARD_DIMENSION>, CARD_DIMENSION> tempArray{};
+    std::vector<std::vector<Tile>> tempVector(CARD_DIMENSION,std::vector<Tile>(CARD_DIMENSION));
     for (int j = 0; j < CARD_DIMENSION; j++) {
         for (int i = 0; i < CARD_DIMENSION; i++) {
-            tempArray[i][CARD_DIMENSION - j - 1] = mTiles[j][i];
+            tempVector[i][CARD_DIMENSION - j - 1] = mTiles[j][i];
         }
     }
     rotation = (rotation + 3) % 4;
-    mTiles = tempArray;  // move is not giving anything because  the
-                         // trivially-copyable type
+    mTiles = std::move(tempVector);
 }
 
 void Card::rotateLeft() {

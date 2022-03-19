@@ -20,10 +20,9 @@ struct Comp {
 };
 
 struct Board {
-    bool canAddCard(sf::Vector2i pos, const Card &card);
+    bool canAddCard(sf::Vector2i pos, Card &card);
 
-    const std::array<std::array<Tile *, CARD_DIMENSION>, CARD_DIMENSION>
-        *addCard(sf::Vector2i pos, const Card &card);
+    const std::vector<std::vector<Tile>> &addCard(sf::Vector2i pos, Card &card);
 
     std::map<sf::Vector2i, Tile *, Comp> &getTiles() {
         return mTiles;
