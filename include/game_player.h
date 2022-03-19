@@ -8,10 +8,6 @@
 
 namespace game_model {
 
-enum Color { RED, YELLOW, GREEN, BLUE, BLACK };
-
-const int NUMBEROFUNITS = 5;
-
 struct Player {
     const std::string name;
     const Color color;
@@ -20,13 +16,13 @@ struct Player {
 
     Player(std::string name_, Color color_)
         : name(std::move(name_)), color(color_), human(true) {
-        for(int i = 0; i < NUMBEROFUNITS; i++){
-            units.emplace_back(std::make_unique<Unit>(this));
+        for(int i = 0; i < NUMBER_OF_UNITS; i++){
+            units.emplace_back(this);
         }
     }
 
 private:
-    std::vector<std::unique_ptr<Unit>> units;
+    std::vector<Unit> units;
 };
 
 }  // namespace game_model

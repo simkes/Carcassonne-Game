@@ -20,26 +20,27 @@ struct defaultInteraction{
 
 struct cardPlacementInteraction: public defaultInteraction{
 
-    explicit cardPlacementInteraction(game_view::BoardView &gameBoardView)
-        : defaultInteraction(gameBoardView) {}
+    explicit cardPlacementInteraction(game_view::BoardView &gameBoardView, game_model::Board *gameBoard_, game_model::Card *currentCard_)
+        : defaultInteraction(gameBoardView), gameBoard(gameBoard_), currentCard(currentCard_) {}
     void handleEvent(sf::Event &event) override;
 
 private:
-    game_model::Board *Board = nullptr; //but its so strange, because in BoardView we have board, maybe make getter
-    const game_model::Card *currentCard = nullptr;
+    game_model::Board *gameBoard; //but its so strange, because in BoardView we have board, maybe make getter
+    game_model::Card *currentCard;
 };
 
 struct unitPlacementInteraction: public defaultInteraction{
 
-    explicit unitPlacementInteraction(game_view::BoardView &gameBoardView)
-        : defaultInteraction(gameBoardView) {}
+    explicit unitPlacementInteraction(game_view::BoardView &gameBoardView, game_model::Board *gameBoard_,
+                                      game_model::Card *currentCard_, game_model::Player *currentPlayer_)
+        : defaultInteraction(gameBoardView), gameBoard(gameBoard_), currentCard(currentCard_), currentPlayer(currentPlayer_) {}
     void handleEvent(sf::Event &event) override;
     //cardPlacementInteraction(game_model::Board &board, game_model::Card &card): Board(board), currentCard(card){}
 
 private:
-    const game_model::Board *Board = nullptr;
-    game_model::Card *currentCard = nullptr;
-    game_model::Player *currentPlayer = nullptr;
+    game_model::Board *gameBoard;
+    game_model::Card *currentCard;
+    game_model::Player *currentPlayer;
 };
 
 } // namespace interaction

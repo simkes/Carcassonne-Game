@@ -11,7 +11,8 @@
 namespace game_model {
 
 struct Card {
-    Card(const std::string &filename, int texture_id){
+    Card() = default;
+    explicit Card(const std::string &filename, int texture_id){
         mTiles.resize(CARD_DIMENSION);
         textureId = texture_id;
         std::ifstream ss(filename);
@@ -27,7 +28,7 @@ struct Card {
     void rotateLeft();   // counterclockwise
     void rotateRight();  // clockwise
 
-    int id;
+    int id = 0;
     int rotation = 0;  // can be 0, 1, 2, 3, where the rotation angle is:
                    // (pi/2)*rotation counterClockWise
     int textureId;
