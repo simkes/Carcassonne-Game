@@ -53,6 +53,12 @@ void init_textures(TextureHolder &textures) {
 
 }
 
+void init_interaction(std::map<State, std::unique_ptr<defaultInteraction>> &interaction, BoardView &gameBoardView){
+    interaction.emplace(State::DEFAULT, std::make_unique<defaultInteraction>(gameBoardView));
+    interaction.emplace(State::CARDPLACEMENT, std::make_unique<cardPlacementInteraction>(gameBoardView));
+    interaction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(gameBoardView));
+}
+
 Game::Game(std::vector<Player> players): mPlayers(std::move(players)),
       mWindow(sf::VideoMode(640, 480), "Carcassonne-Game"/*, sf::Style::Fullscreen*/),
       numberOfPlayers(mPlayers.size()),
@@ -71,13 +77,14 @@ void Game::run() {
 }
 
 void Game::processEvents() {
+    defaultInteraction *currentInteraction = interaction[currentState].get();
     if(currentState == State::DEFAULT){
         currentPlayer = (currentPlayer++) % numberOfPlayers;
         currentState = State::CARDPLACEMENT;
     }
     sf::Event event;
     while(mWindow.pollEvent(event)) {
-        interaction->handleEvent(event);
+        currentInteraction->handleEvent(event);
     }
 }
 

@@ -26,12 +26,13 @@ private:
     std::vector <Card> placedCards;
     int currentPlayer = 0;
     std::size_t numberOfPlayers;
-    defaultInteraction *interaction;
     State currentState = State::CARDPLACEMENT;
 
     sf::RenderWindow mWindow;
     BoardView mBoardView;
     static TextureHolder textures;
+
+    static std::map<State, std::unique_ptr<defaultInteraction>> interaction;
 
     void processEvents();
     void update();

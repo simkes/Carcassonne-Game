@@ -10,31 +10,36 @@ namespace interaction {
 enum class State { CARDPLACEMENT, UNITPLACEMENT, DEFAULT };
 
 struct defaultInteraction{
+    explicit defaultInteraction(game_view::BoardView &gameBoardView) : mainView(gameBoardView) {};
     game_view::BoardView mainView;
     virtual void handleEvent(sf::Event &event);
     //virtual destructor??
+    virtual ~defaultInteraction() = default;
 
 }; // may be better to name baseInteraction or smt
 
 struct cardPlacementInteraction: public defaultInteraction{
 
-    //cardPlacementInteraction(game_view::BoardView view, game_model::Board &board, game_model::Card &card): mainView(view), Board(board), currentCard(card){}
+    explicit cardPlacementInteraction(game_view::BoardView &gameBoardView)
+        : defaultInteraction(gameBoardView) {}
     void handleEvent(sf::Event &event) override;
 
 private:
-    game_model::Board &Board; //but its so strange, because in BoardView we have board, maybe make getter
-    const game_model::Card &currentCard;
+    game_model::Board *Board = nullptr; //but its so strange, because in BoardView we have board, maybe make getter
+    const game_model::Card *currentCard = nullptr;
 };
 
 struct unitPlacementInteraction: public defaultInteraction{
 
+    explicit unitPlacementInteraction(game_view::BoardView &gameBoardView)
+        : defaultInteraction(gameBoardView) {}
     void handleEvent(sf::Event &event) override;
     //cardPlacementInteraction(game_model::Board &board, game_model::Card &card): Board(board), currentCard(card){}
 
 private:
-    const game_model::Board &Board;
-    game_model::Card &currentCard;
-    game_model::Player &currentPlayer;
+    const game_model::Board *Board = nullptr;
+    game_model::Card *currentCard = nullptr;
+    game_model::Player *currentPlayer = nullptr;
 };
 
 } // namespace interaction
