@@ -11,23 +11,20 @@
 
 namespace game_view {
 
-const int CARDTEXTURESIZE = 379;
-
 struct TextureHolder {
-    void load(int id, const std::string &filename);
-    void load(int id, const std::string &filename, int rectLeft, int rectTop, int rectWidth, int rectHeight);
+    void load(textures::ID, const std::string &filename);
 
-    sf::Texture *get_texture(int id);
+    sf::Texture *get_texture(textures::ID);
 
 private:
-    std::map<int, std::unique_ptr<sf::Texture>> mTextureMap;
+    std::map<textures::ID, std::unique_ptr<sf::Texture>> mTextureMap;
 };
 
 static TextureHolder Textures;
 
 struct BoardView : public sf::Drawable {
     //c-tor
-    BoardView(game_model::Board &Board) : mBoard(Board) {};
+    explicit BoardView(game_model::Board &Board) : mBoard(Board) {};
 
     sf::View &getView() {
         return mView;
@@ -41,15 +38,13 @@ private:
 };
 
 struct CardView : public sf::Drawable, public sf::Transformable {
-    explicit CardView(const game_model::Card &card, const sf::Texture &card_texture);
+    explicit CardView(game_model::Card &card, const sf::Texture &card_texture);
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
     sf::Sprite mSprite;
 };
-
-std::map<game_model::Color, int>unit_color;
 
 struct UnitView : public sf::Drawable, public sf::Transformable {
     explicit UnitView(const game_model::Unit &unit, const sf::Texture &unit_texture);

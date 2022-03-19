@@ -4,7 +4,20 @@
 namespace game_view {
 
 namespace textures {
-enum class ID { Card };
+enum class ID { CARDS, BACKGROUND, STARTTEXTURE, UNIT_BLACK, UNIT_BLUE, UNIT_GREEN, UNIT_RED, UNIT_YELLOW};
+
+std::map<game_model::Color, ID> unit_color {{game_model::Color::RED, ID::UNIT_RED},{game_model::Color::BLACK, ID::UNIT_BLACK},
+                                           {game_model::Color::BLUE, ID::UNIT_BLUE},{game_model::Color::GREEN, ID::UNIT_GREEN},
+                                           {game_model::Color::YELLOW, ID::UNIT_YELLOW}};
+
+const int CARD_TEXTURE_SIZE = 379;
+
+std::vector<std::pair<int,int>> cardCoordinates{{0,0}, {0,1}, {0,2}, {0,3},
+                                             {1,0}, {1,2}, {1,3},{2,1},
+                                             {2,3}, {3,0}, {3,1},{3,2},
+                                             {4,1}, {4,3}, {5,0}, {5,1},
+                                             {1,0}, {1,2}, {4,1}, {4,2},
+                                             {4,3}};
 
 } // namespace textures
 
