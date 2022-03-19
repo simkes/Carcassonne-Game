@@ -153,11 +153,12 @@ Game::Game(): mWindow(sf::VideoMode(1024, 700), "Carcassonne-Game"/*, sf::Style:
 }
 
 void Game::run() {
-    while (mWindow.isOpen())
-    {
-        process_events();
-        update();
-        render();
+    while(!gameOver) {
+        while (mWindow.isOpen() && !endOfState) {
+            process_events();
+            update();
+            render();
+        }
         change_state();
     }
 }
@@ -170,7 +171,7 @@ void Game::process_events() {
     defaultInteraction *currentInteraction = interaction[currentState].get();
     sf::Event event;
     while(mWindow.pollEvent(event)) {
-        currentInteraction->handleEvent(event);
+        currentInteraction->handleEvent(event, endOfState);
     }
 }
 
@@ -194,17 +195,26 @@ void Game::change_state() {
             currentPlayerIndex= (currentPlayerIndex++) % numberOfPlayers;
             currentPlayerPtr = &mPlayers[currentPlayerIndex];
             currentState = State::CARDPLACEMENT;
+            endOfState = false;
             break;
         }
-        case State::CARDPLACEMENT:
+        case State::CARDPLACEMENT: {
             currentState = State::UNITPLACEMENT;
+            endOfState = false;
             break;
-        case State::UNITPLACEMENT:
+        }
+        case State::UNITPLACEMENT: {
             currentState = State::DEFAULT;
+            endOfState = false;
             break;
+        }
     }
 }
 void Game::execute_cardPlacement() {
+    if(cardDeck.empty()) {
+        gameOver = true; // TODO: make end of game with score counted
+        return;
+    }
     placedCards.push_back(cardDeck.back());
     cardDeck.pop_back();
     currentCardPtr = &placedCards.back();

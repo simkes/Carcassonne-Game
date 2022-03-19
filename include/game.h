@@ -19,6 +19,8 @@ public:
     void run();
 
 private:
+    bool gameOver = false;
+
     Board mBoard;
     std::deque <Card> cardDeck;
     std::vector <Card> placedCards;
@@ -30,6 +32,7 @@ private:
     std::size_t numberOfPlayers;
 
     State currentState = State::CARDPLACEMENT;
+    bool endOfState = false;
     std::map<State, std::unique_ptr<defaultInteraction>> interaction;
 
     sf::RenderWindow mWindow;

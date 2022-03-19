@@ -11,7 +11,7 @@ enum class State { CARDPLACEMENT, UNITPLACEMENT, DEFAULT };
 
 struct defaultInteraction{
     explicit defaultInteraction(game_model::Board *gameBoard_) : gameBoard(gameBoard_) {};
-    virtual void handleEvent(sf::Event &event);
+    virtual void handleEvent(sf::Event &event, bool &endOfState);
     //virtual destructor??
     virtual ~defaultInteraction() = default;
 
@@ -23,7 +23,7 @@ struct cardPlacementInteraction: public defaultInteraction{
 
     explicit cardPlacementInteraction(game_model::Board *gameBoard_, game_model::Card *currentCard_)
         : defaultInteraction(gameBoard_), currentCard(currentCard_) {}
-    void handleEvent(sf::Event &event) override;
+    void handleEvent(sf::Event &event, bool &endOfState) override;
 
 private:
      //but its so strange, because in BoardView we have board, maybe make getter
@@ -35,7 +35,7 @@ struct unitPlacementInteraction: public defaultInteraction{
     explicit unitPlacementInteraction( game_model::Board *gameBoard_,
                                       game_model::Card *currentCard_, game_model::Player *currentPlayer_)
         : defaultInteraction(gameBoard_), currentCard(currentCard_), currentPlayer(currentPlayer_) {}
-    void handleEvent(sf::Event &event) override;
+    void handleEvent(sf::Event &event, bool &endOfState) override;
     //cardPlacementInteraction(game_model::Board &board, game_model::Card &card): Board(board), currentCardPtr(card){}
 
 private:

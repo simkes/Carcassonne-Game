@@ -2,7 +2,7 @@
 
 namespace interaction{
 
-void defaultInteraction::handleEvent(sf::Event &event) {
+void defaultInteraction::handleEvent(sf::Event &event, bool &endOfState) {
     game_view::BoardView mainView(*gameBoard);
     if (event.type == sf::Event::KeyPressed){
 
@@ -30,9 +30,10 @@ void defaultInteraction::handleEvent(sf::Event &event) {
         }
 
     }
+    //endOfState = true; ???
 }
 
-void cardPlacementInteraction::handleEvent(sf::Event &event) {
+void cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
     game_view::BoardView mainView(*gameBoard);
     if (event.type == sf::Event::KeyPressed){
 
@@ -69,12 +70,13 @@ void cardPlacementInteraction::handleEvent(sf::Event &event) {
 
             if (gameBoard->canAddCard(clickCoordinates, *currentCard)){
                 gameBoard->addCard(clickCoordinates, *currentCard);
+                endOfState = true;
             } // what to do with else: error? warning? nothing?
         }
     }
 }
 
-void unitPlacementInteraction::handleEvent(sf::Event &event) {
+void unitPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
     game_view::BoardView mainView(*gameBoard);
     if (event.type == sf::Event::KeyPressed){
 
@@ -108,7 +110,8 @@ void unitPlacementInteraction::handleEvent(sf::Event &event) {
     }
 
     if (event.type == sf::Event::MouseButtonPressed){
-
+    //TODO
+    endOfState = true;
     }
 }
 
