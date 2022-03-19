@@ -3,6 +3,7 @@
 namespace interaction{
 
 void defaultInteraction::handleEvent(sf::Event &event) {
+    game_view::BoardView mainView(*gameBoard);
     if (event.type == sf::Event::KeyPressed){
 
         if (event.key.code == sf::Keyboard::Left){
@@ -32,6 +33,7 @@ void defaultInteraction::handleEvent(sf::Event &event) {
 }
 
 void cardPlacementInteraction::handleEvent(sf::Event &event) {
+    game_view::BoardView mainView(*gameBoard);
     if (event.type == sf::Event::KeyPressed){
 
         if (event.key.code == sf::Keyboard::Left){
@@ -73,6 +75,7 @@ void cardPlacementInteraction::handleEvent(sf::Event &event) {
 }
 
 void unitPlacementInteraction::handleEvent(sf::Event &event) {
+    game_view::BoardView mainView(*gameBoard);
     if (event.type == sf::Event::KeyPressed){
 
         if (event.key.code == sf::Keyboard::Enter){

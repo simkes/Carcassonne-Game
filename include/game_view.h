@@ -18,8 +18,15 @@ private:
     std::map<textures::ID, std::unique_ptr<sf::Texture>> mTextureMap;
 };
 
-static TextureHolder Textures;
-static sf::Font font;
+inline TextureHolder &getTextures(){
+    static TextureHolder Textures;
+    return Textures;
+}
+
+inline sf::Font &getFont(){
+    static sf::Font font;
+    return font; //не знаю обязательно ли здесь было так делать, на всякий
+}
 
 struct BoardView : public sf::Drawable {
     //c-tor

@@ -96,11 +96,11 @@ void init_mPlayers(sf::RenderWindow &gameWindow, std::vector<Player> &players, s
 void Game::init_players() {
 
     sf::Sprite startSprite;
-    sf::Text title("Carcassonne-Game",  font, 30);
-    sf::Text invitation("",  font, 20);
-    sf::Text textEntered("",  font, 20);
+    sf::Text title("Carcassonne-Game",  getFont(), 30);
+    sf::Text invitation("",  getFont(), 20);
+    sf::Text textEntered("",  getFont(), 20);
 
-    startSprite.setTexture(*Textures.get_texture(game_view::textures::ID::STARTTEXTURE));
+    startSprite.setTexture(*getTextures().get_texture(game_view::textures::ID::STARTTEXTURE));
 
     startSprite.setPosition(100, 10);
 
@@ -135,14 +135,14 @@ void Game::init_cardDeck() {
 }
 
 void Game::init_interaction() {
-    interaction.emplace(State::DEFAULT, std::make_unique<defaultInteraction>(mBoardView));
-    interaction.emplace(State::CARDPLACEMENT, std::make_unique<cardPlacementInteraction>(mBoardView, &mBoard, currentCardPtr));
-    interaction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(mBoardView, &mBoard, currentCardPtr, currentPlayerPtr));
+    interaction.emplace(State::DEFAULT, std::make_unique<defaultInteraction>(&mBoard));
+    interaction.emplace(State::CARDPLACEMENT, std::make_unique<cardPlacementInteraction>( &mBoard, currentCardPtr));
+    interaction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(&mBoard, currentCardPtr, currentPlayerPtr));
 }
 
-Game::Game(): mWindow(sf::VideoMode(1024, 700), "Carcassonne-Game"/*, sf::Style::Fullscreen*/), mBoardView(mBoard) {
+Game::Game(): mWindow(sf::VideoMode(1024, 700), "Carcassonne-Game"/*, sf::Style::Fullscreen*/){
 
-    background.setTexture(*Textures.get_texture(game_view::textures::ID::BACKGROUND));
+    background.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND));
     background.setPosition(0,0);
 
     init_players();
@@ -178,12 +178,12 @@ void Game::update() {
 }
 
 void Game::render()
-{
+{   BoardView mainView(mBoard);
     mWindow.clear();
     mWindow.draw(background);
-    mBoardView.draw(mWindow,sf::RenderStates::Default); //TODO: RenderStates ??
+    mainView.draw(mWindow,sf::RenderStates::Default); //TODO: RenderStates ??
     if(currentState==State::CARDPLACEMENT){
-        CardView(*currentCardPtr, *Textures.get_texture(currentCardPtr->textureId < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2 )).draw(mWindow, sf::RenderStates::Default);
+        CardView(*currentCardPtr, *getTextures().get_texture(currentCardPtr->textureId < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2 )).draw(mWindow, sf::RenderStates::Default);
     }
     mWindow.display();
 }

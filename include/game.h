@@ -33,7 +33,7 @@ private:
     std::map<State, std::unique_ptr<defaultInteraction>> interaction;
 
     sf::RenderWindow mWindow;
-    BoardView mBoardView;
+ //   BoardView mBoardView;
     sf::Sprite background;
 
     void init_players();
