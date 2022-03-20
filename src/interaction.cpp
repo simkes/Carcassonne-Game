@@ -3,7 +3,6 @@
 namespace interaction{
 
 void defaultInteraction::handleEvent(sf::Event &event, bool &endOfState) {
-    game_view::BoardView mainView(*gameBoard);
     if (event.type == sf::Event::KeyPressed){
 
         if (event.key.code == sf::Keyboard::Left){
@@ -34,7 +33,6 @@ void defaultInteraction::handleEvent(sf::Event &event, bool &endOfState) {
 }
 
 void cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
-    game_view::BoardView mainView(*gameBoard);
 
     if (event.type == sf::Event::KeyPressed){
 
@@ -69,8 +67,8 @@ void cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
             clickCoordinates.x += (event.mouseButton.x - static_cast<int>(mainView.getView().getSize().x/2));
             clickCoordinates.y += (event.mouseButton.y - static_cast<int>(mainView.getView().getSize().y/2));//TODO: make coordinate convert easier
 
-            if (gameBoard->canAddCard(clickCoordinates, *currentCard)){
-                gameBoard->addCard(clickCoordinates, *currentCard);
+            if (gameBoard.canAddCard(clickCoordinates, *currentCard)){
+                gameBoard.addCard(clickCoordinates, *currentCard);
                 endOfState = true;
             } // what to do with else: error? warning? nothing?
         }
@@ -78,10 +76,10 @@ void cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
 }
 
 void unitPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
-    game_view::BoardView mainView(*gameBoard);
     if (event.type == sf::Event::KeyPressed){
 
         if (event.key.code == sf::Keyboard::Enter){
+            endOfState = true;
             return;
         }
 
@@ -111,8 +109,15 @@ void unitPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
     }
 
     if (event.type == sf::Event::MouseButtonPressed){
-    //TODO
-    endOfState = true;
+        if (event.mouseButton.button == sf::Mouse::Left){
+            sf::Vector2i clickCoordinates(mainView.getView().getCenter());
+            clickCoordinates.x += (event.mouseButton.x - static_cast<int>(mainView.getView().getSize().x/2));
+            clickCoordinates.y += (event.mouseButton.y - static_cast<int>(mainView.getView().getSize().y/2));//TODO: make coordinate convert easier
+
+
+            gameBoard.getTiles()[clickCoordinates].unit = currentPlayer->get_unit();
+            gameBoard.getTiles()[clickCoordinates].unit->tile = &gameBoard.getTiles()[clickCoordinates];
+        }
     }
 }
 

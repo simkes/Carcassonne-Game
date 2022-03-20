@@ -135,9 +135,9 @@ void Game::init_cardDeck() {
 }
 
 void Game::init_interaction() {
-    interaction.emplace(State::DEFAULT, std::make_unique<defaultInteraction>(&mBoard));
-    interaction.emplace(State::CARDPLACEMENT, std::make_unique<cardPlacementInteraction>( &mBoard, currentCardPtr));
-    interaction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(&mBoard, currentCardPtr, currentPlayerPtr));
+    interaction.emplace(State::DEFAULT, std::make_unique<defaultInteraction>(mBoard, mBoardView));
+    interaction.emplace(State::CARDPLACEMENT, std::make_unique<cardPlacementInteraction>(mBoard, mBoardView, currentCardPtr));
+    interaction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(mBoard, mBoardView, currentCardPtr, currentPlayerPtr));
 }
 
 void Game::set_currentCard() {

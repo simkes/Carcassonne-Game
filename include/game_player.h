@@ -17,8 +17,14 @@ struct Player {
             units.emplace_back(this);
         }
     }
-
+    Unit *get_unit(){
+        if (usedUnits == NUMBER_OF_UNITS){
+            return nullptr;
+        }
+        return &units[usedUnits++];
+    }
 private:
+    int usedUnits = 0;
     std::vector<Unit> units;
 };
 
