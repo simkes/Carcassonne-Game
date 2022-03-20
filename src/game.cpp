@@ -145,11 +145,12 @@ void Game::set_currentCard() {
         gameOver = true; // TODO: make end of game with score counted
         return;
     }
-    placedCards.push_back(cardDeck.back());
+    Card newCard = cardDeck.back();
+    newCard.id = static_cast<int>(placedCards.size());
+    newCard.setTiles();
+    placedCards.push_back(std::move(newCard));
     cardDeck.pop_back();
     currentCardPtr = &placedCards.back();
-    currentCardPtr->id = static_cast<int>(placedCards.size()-1);
-    currentCardPtr->setTiles();
 }
 
 void Game::place_first_card() {
@@ -158,7 +159,7 @@ void Game::place_first_card() {
     mBoard.addCard(pos,*currentCardPtr);
 }
 
-Game::Game(): mWindow(sf::VideoMode(1024, 700), "Carcassonne-Game"/*, sf::Style::Fullscreen*/){
+Game::Game(): mWindow(sf::VideoMode(1024, 700), "Carcassonne-Game"/*, sf::Style::Fullscreen*/), mBoardView(mBoard){
 
     background.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND));
     background.setPosition(0,0);
@@ -167,7 +168,8 @@ Game::Game(): mWindow(sf::VideoMode(1024, 700), "Carcassonne-Game"/*, sf::Style:
     init_cardDeck();
     init_interaction();
     place_first_card();
-    currentState = State::UNITPLACEMENT;
+    //currentState = State::UNITPLACEMENT;
+    currentState = State::CARDPLACEMENT;
     currentPlayerPtr = &mPlayers[currentPlayerIndex];
 }
 
@@ -200,10 +202,10 @@ void Game::update() {
 }
 
 void Game::render()
-{   BoardView mainView(mBoard);
+{
     mWindow.clear();
     mWindow.draw(background);
-    mainView.draw(mWindow,sf::RenderStates::Default); //TODO: RenderStates ??
+    mBoardView.draw(mWindow,sf::RenderStates::Default); //TODO: RenderStates ??
     if(currentState==State::CARDPLACEMENT){
         currentCardView(*currentCardPtr, *getTextures().get_texture(currentCardPtr->textureId < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2 )).draw(mWindow, sf::RenderStates::Default);
     }

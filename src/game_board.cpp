@@ -32,8 +32,9 @@ const std::vector<std::vector<Tile>> &Board::addCard(sf::Vector2i pos,
     for (int dx = 0; dx < CARD_DIMENSION; dx++) {
         for (int dy = 0; dy < CARD_DIMENSION; dy++) {
             //if (mTiles[{pos.x + dx, pos.y + dy}] == nullptr) {
-                mTiles.insert({{pos.x + dx, pos.y + dy}, card.getTile(dx, dy)});
                 card.getTile(dx,dy).position = {pos.x+dx, pos.y+dy};
+                mTiles.insert({{pos.x + dx, pos.y + dy}, card.getTile(dx, dy)});
+                
            // }
         }
     }

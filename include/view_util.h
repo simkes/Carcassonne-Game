@@ -25,7 +25,7 @@ inline std::vector<std::pair<int,int>> cardCoordinates{{0,0}, {0,1}, {0,2}, {0,3
 } // namespace textures
 
 inline sf::Vector2f transform_coordinates (sf::Vector2i vector) {
-    // transformation
+    return sf::Vector2f({static_cast<float>(vector.x + 100), static_cast<float>(vector.y + 100)}); // may be some const var-s
 }
 
 } // namespace game_view

@@ -43,6 +43,7 @@ CardView::CardView(game_model::Card &card,
     int y = textures::cardCoordinates[card.textureId].second;
     mSprite.setTextureRect(sf::IntRect (x*textures::CARD_TEXTURE_SIZE, y*textures::CARD_TEXTURE_SIZE, textures::CARD_TEXTURE_SIZE, textures::CARD_TEXTURE_SIZE));
     mSprite.setRotation(static_cast<float>(90 * card.rotation));
+    mSprite.setScale(0.4, 0.4);
     mSprite.setPosition(transform_coordinates(card.getTile(0, 0).position));
 }
 
