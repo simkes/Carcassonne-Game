@@ -147,8 +147,8 @@ void Game::set_currentCard() {
     }
     Card newCard = cardDeck.back();
     newCard.id = static_cast<int>(placedCards.size());
-    newCard.setTiles();
-    placedCards.push_back(std::move(newCard));
+    placedCards.push_back(newCard);
+    placedCards.back().setTiles();
     cardDeck.pop_back();
     currentCardPtr = &placedCards.back();
 }
@@ -164,6 +164,7 @@ Game::Game(): mWindow(sf::VideoMode(1024, 700), "Carcassonne-Game"/*, sf::Style:
     background.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND));
     background.setPosition(0,0);
 
+    placedCards.reserve(100);
     init_players();
     init_cardDeck();
     init_interaction();
