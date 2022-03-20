@@ -31,7 +31,7 @@ private:
     Player *currentPlayerPtr = nullptr;
     std::size_t numberOfPlayers;
 
-    State currentState = State::CARDPLACEMENT;
+    State currentState;
     bool endOfState = false;
     std::map<State, std::unique_ptr<defaultInteraction>> interaction;
 
@@ -42,12 +42,13 @@ private:
     void init_players();
     void init_cardDeck();
     void init_interaction();
+    void place_first_card();
 
-    void process_events();
+    void process_events(sf::Event &event);
     void update();
     void render();
     void change_state();
-    void execute_cardPlacement();
+    void set_currentCard();
     void execute_unitPlacement();
 
 };

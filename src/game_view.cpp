@@ -46,6 +46,20 @@ CardView::CardView(game_model::Card &card,
     mSprite.setPosition(transform_coordinates(card.getTile(0, 0)->position));
 }
 
+void currentCardView::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+    target.draw(mSprite, states);
+}
+
+currentCardView::currentCardView(game_model::Card &card,
+                                 const sf::Texture &card_texture) {
+    mSprite.setTexture(card_texture);
+    int x = textures::cardCoordinates[card.textureId].first;
+    int y = textures::cardCoordinates[card.textureId].second;
+    mSprite.setTextureRect(sf::IntRect(x*textures::CARD_TEXTURE_SIZE, y*textures::CARD_TEXTURE_SIZE, textures::CARD_TEXTURE_SIZE, textures::CARD_TEXTURE_SIZE));
+    mSprite.setScale(0.5,0.5);
+    mSprite.setPosition(800,50); // better make const variables
+}
+
 UnitView::UnitView(const game_model::Unit &unit,
                    const sf::Texture &unit_texture) {
     mSprite.setTexture(unit_texture);

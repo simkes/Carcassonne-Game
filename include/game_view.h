@@ -52,6 +52,15 @@ private:
     sf::Sprite mSprite;
 };
 
+struct currentCardView : public sf::Drawable, public sf::Transformable {
+    explicit currentCardView(game_model::Card &card, const sf::Texture &card_texture);
+
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+
+private:
+    sf::Sprite mSprite;
+};
+
 struct UnitView : public sf::Drawable, public sf::Transformable {
     explicit UnitView(const game_model::Unit &unit, const sf::Texture &unit_texture);
 

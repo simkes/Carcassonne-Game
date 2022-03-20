@@ -35,6 +35,7 @@ void defaultInteraction::handleEvent(sf::Event &event, bool &endOfState) {
 
 void cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
     game_view::BoardView mainView(*gameBoard);
+
     if (event.type == sf::Event::KeyPressed){
 
         if (event.key.code == sf::Keyboard::Left){

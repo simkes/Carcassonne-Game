@@ -140,6 +140,24 @@ void Game::init_interaction() {
     interaction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(&mBoard, currentCardPtr, currentPlayerPtr));
 }
 
+void Game::set_currentCard() {
+    if(cardDeck.empty()) {
+        gameOver = true; // TODO: make end of game with score counted
+        return;
+    }
+    placedCards.push_back(cardDeck.back());
+    cardDeck.pop_back();
+    currentCardPtr = &placedCards.back();
+    currentCardPtr->id = static_cast<int>(placedCards.size()-1);
+    currentCardPtr->setTiles();
+}
+
+void Game::place_first_card() {
+    set_currentCard();
+    sf::Vector2i pos(0,0);
+    mBoard.addCard(pos,*currentCardPtr);
+}
+
 Game::Game(): mWindow(sf::VideoMode(1024, 700), "Carcassonne-Game"/*, sf::Style::Fullscreen*/){
 
     background.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND));
@@ -148,14 +166,19 @@ Game::Game(): mWindow(sf::VideoMode(1024, 700), "Carcassonne-Game"/*, sf::Style:
     init_players();
     init_cardDeck();
     init_interaction();
-
+    place_first_card();
+    currentState = State::UNITPLACEMENT;
     currentPlayerPtr = &mPlayers[currentPlayerIndex];
 }
 
 void Game::run() {
     while(!gameOver) {
+        if(currentState == interaction::State::CARDPLACEMENT){
+            set_currentCard();
+        }
+        sf::Event event;
         while (mWindow.isOpen() && !endOfState) {
-            process_events();
+            process_events(event);
             update();
             render();
         }
@@ -164,13 +187,11 @@ void Game::run() {
 }
 
 
-void Game::process_events() {
-    if(currentState == interaction::State::CARDPLACEMENT){
-        execute_cardPlacement();
-    }
+void Game::process_events(sf::Event &event) {
     defaultInteraction *currentInteraction = interaction[currentState].get();
-    sf::Event event;
     while(mWindow.pollEvent(event)) {
+        if (event.type == sf::Event::Closed)
+            mWindow.close();
         currentInteraction->handleEvent(event, endOfState);
     }
 }
@@ -184,7 +205,7 @@ void Game::render()
     mWindow.draw(background);
     mainView.draw(mWindow,sf::RenderStates::Default); //TODO: RenderStates ??
     if(currentState==State::CARDPLACEMENT){
-        CardView(*currentCardPtr, *getTextures().get_texture(currentCardPtr->textureId < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2 )).draw(mWindow, sf::RenderStates::Default);
+        currentCardView(*currentCardPtr, *getTextures().get_texture(currentCardPtr->textureId < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2 )).draw(mWindow, sf::RenderStates::Default);
     }
     mWindow.display();
 }
@@ -210,17 +231,7 @@ void Game::change_state() {
         }
     }
 }
-void Game::execute_cardPlacement() {
-    if(cardDeck.empty()) {
-        gameOver = true; // TODO: make end of game with score counted
-        return;
-    }
-    placedCards.push_back(cardDeck.back());
-    cardDeck.pop_back();
-    currentCardPtr = &placedCards.back();
-    currentCardPtr->id = static_cast<int>(placedCards.size()-1);
-    currentCardPtr->setTiles();
-}
+
 void Game::execute_unitPlacement() {
     //TODO
 }
