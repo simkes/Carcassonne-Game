@@ -19,14 +19,14 @@ struct Board {
 
     const std::vector<std::vector<Tile>> &addCard(sf::Vector2i pos, Card &card);
 
-    std::map<sf::Vector2i, Tile *, Comp> &getTiles() {
+    std::map<sf::Vector2i, Tile, Comp> &getTiles() {
         return mTiles;
     }
 
 private:
     // TODO: wrap in unique ?
-    std::map<sf::Vector2i, Tile *, Comp> mTiles;
-    std::map<Type, std::vector<Tile *>> mTypeMap;
+    std::map<sf::Vector2i, Tile, Comp> mTiles;
+    std::map<Type, std::vector<Tile>> mTypeMap;
     size_t castleCount;
 };
 

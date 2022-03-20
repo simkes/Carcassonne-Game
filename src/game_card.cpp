@@ -2,7 +2,7 @@
 
 namespace game_model {
 
-Tile *Card::getTile(int x, int y) {
+Tile &Card::getTile(int x, int y) {
     return mTiles[y][x].get();
 }
 

@@ -28,7 +28,7 @@ struct Card {
     int rotation = 0;  // can be 0, 1, 2, 3, where the rotation angle is:
                    // (pi/2)*rotation counterClockWise
     int textureId;
-    [[nodiscard]] Tile *getTile(int x, int y);
+    [[nodiscard]] Tile &getTile(int x, int y);
     [[nodiscard]] const std::vector<std::vector<Tile>> &getTiles() const;
     std::vector<std::vector<Tile>> mTiles;
 };

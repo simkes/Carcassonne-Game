@@ -10,16 +10,16 @@ bool Board::canAddCard(sf::Vector2i pos, Card &card) {
     // TODO: debug, rewrite simpler
     for (int dy : {0, CARD_DIMENSION - 1}) {
         for (int dx = 0; dx < CARD_DIMENSION; dx++) {
-            if (mTiles[sf::Vector2i{pos.x + dx, pos.y + dy}]->type !=
-                card.getTile(dx, dy)->type) {
+            if (mTiles[sf::Vector2i{pos.x + dx, pos.y + dy}].type !=
+                card.getTile(dx, dy).type) {
                 return false;
             }
         }
     }
     for (auto dx : {0, CARD_DIMENSION - 1}) {
         for (int dy = 0; dx < CARD_DIMENSION; dx++) {
-            if (mTiles[sf::Vector2i{pos.x + dx, pos.y + dy}]->type !=
-                card.getTile(dx, dy)->type) {
+            if (mTiles[sf::Vector2i{pos.x + dx, pos.y + dy}].type !=
+                card.getTile(dx, dy).type) {
                 return false;
             }
         }
@@ -31,9 +31,10 @@ const std::vector<std::vector<Tile>> &Board::addCard(sf::Vector2i pos,
                                                       Card &card) {
     for (int dx = 0; dx < CARD_DIMENSION; dx++) {
         for (int dy = 0; dy < CARD_DIMENSION; dy++) {
-            if (mTiles[{pos.x + dx, pos.y + dy}] == nullptr) {
+            //if (mTiles[{pos.x + dx, pos.y + dy}] == nullptr) {
                 mTiles.insert({{pos.x + dx, pos.y + dy}, card.getTile(dx, dy)});
-            }
+                card.getTile(dx,dy).position = {pos.x+dx, pos.y+dy};
+           // }
         }
     }
     return card.getTiles();

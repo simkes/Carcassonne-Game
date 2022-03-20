@@ -9,8 +9,8 @@ struct Tile {
     explicit Tile(Type type_) : type(type_) {};
     Tile() = default;
 
-    Tile* get() {
-        return this;
+    Tile& get() {
+        return *this;
     }
 
     Type type;
