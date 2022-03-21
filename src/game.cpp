@@ -1,7 +1,8 @@
 #include "game.h"
 #include <algorithm>
 #include <random>
-std::mt19937 rng (239);
+#include <chrono>
+std::mt19937 rng ((std::uint32_t) std::chrono::steady_clock::now().time_since_epoch().count());
 
 namespace carcassonne_game {
 
@@ -151,7 +152,7 @@ void Game::set_currentCard() {
     placedCards.back().setTiles();
     int textureId = placedCards.back().textureId;
     placedCards.back().setSprite(*getTextures().get_texture(textureId < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2));
-    placedCards.back().setSpritePos({400,50});
+    placedCards.back().setSpritePos({800,50});
     cardDeck.pop_back();
     currentCardPtr = &placedCards.back();
 }
@@ -218,6 +219,19 @@ void Game::process_events(sf::Event &event) {
                 }
                 break;
             }
+//            case  sf::Event::KeyPressed :{
+//                if(currentState == State::CARDPLACEMENT) {
+//                    if (event.key.code == sf::Keyboard::A) {
+//                        currentCardPtr->rotateLeft();
+//                    }
+//
+//                    if (event.key.code == sf::Keyboard::D) {
+//                        currentCardPtr->rotateRight();
+//                    }
+//                }
+//
+//                break;
+//            }
             default :
                 break;
         }
