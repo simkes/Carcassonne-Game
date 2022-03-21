@@ -118,9 +118,9 @@ void Game::init_players() {
 }
 
 void Game::init_cardDeck() {
-    for(int i = 0; i < 21; i++){
+    for(int i = 1; i < 22; i++){
         std::string filename = "cardsdata/" + std::to_string(i) + ".txt";
-        if(i < 2){
+        if(i < 3){
             for (int j = 0; j < 9; j++){
                 cardDeck.emplace_back(Card(filename, i));
             }
@@ -219,19 +219,19 @@ void Game::process_events(sf::Event &event) {
                 }
                 break;
             }
-            case  sf::Event::KeyPressed :{
-                if(currentState == State::CARDPLACEMENT) {
-                    if (event.key.code == sf::Keyboard::A) {
-                        currentCardPtr->rotateLeft();
-                    }
-
-                    if (event.key.code == sf::Keyboard::D) {
-                        currentCardPtr->rotateRight();
-                    }
-                }
-
-                break;
-            }
+//            case  sf::Event::KeyPressed :{
+//                if(currentState == State::CARDPLACEMENT) {
+//                    if (event.key.code == sf::Keyboard::A) {
+//                        currentCardPtr->rotateLeft();
+//                    }
+//
+//                    if (event.key.code == sf::Keyboard::D) {
+//                        currentCardPtr->rotateRight();
+//                    }
+//                }
+//
+//                break;
+//            }
             default :
                 break;
         }
