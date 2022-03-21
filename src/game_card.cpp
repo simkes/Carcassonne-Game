@@ -21,6 +21,7 @@ void Card::rotateRight() {
     }
     rotation = (rotation + 3) % 4;
     mTiles = std::move(tempVector);
+    mSprite.setRotation(static_cast<float>(90 * rotation));
 }
 
 void Card::rotateLeft() {
@@ -28,6 +29,7 @@ void Card::rotateLeft() {
         rotateRight();
     }
     rotation = (rotation + 1) % 4;
+    mSprite.setRotation(static_cast<float>(90 * rotation));
 }
 
 void Card::setTiles() {
@@ -42,7 +44,7 @@ void Card::setSprite(const sf::Texture &card_texture) {
     mSprite.setTexture(card_texture);
     int x = game_view::textures::cardCoordinates[textureId].first;
     int y = game_view::textures::cardCoordinates[textureId].second;
-    mSprite.setTextureRect(sf::IntRect (x*game_view::textures::CARD_TEXTURE_SIZE, y*game_view::textures::CARD_TEXTURE_SIZE, game_view::textures::CARD_TEXTURE_SIZE, game_view::textures::CARD_TEXTURE_SIZE));
+    mSprite.setTextureRect(sf::IntRect (y*game_view::textures::CARD_TEXTURE_SIZE, x*game_view::textures::CARD_TEXTURE_SIZE, game_view::textures::CARD_TEXTURE_SIZE, game_view::textures::CARD_TEXTURE_SIZE));
 }
 void Card::setSpritePos(sf::Vector2f pos) {
     mSprite.setRotation(static_cast<float>(90 * rotation));
