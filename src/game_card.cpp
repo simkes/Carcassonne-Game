@@ -1,5 +1,7 @@
 #include "game_card.h"
 
+#include <utility>
+
 namespace game_model {
 
 Tile &Card::getTile(int x, int y) {
@@ -35,6 +37,16 @@ void Card::setTiles() {
             mTiles[CARD_DIMENSION - i - 1][j].card = this;
         }
     }
+}
+void Card::setSprite(const sf::Texture &card_texture) {
+    mSprite.setTexture(card_texture);
+    int x = game_view::textures::cardCoordinates[textureId].first;
+    int y = game_view::textures::cardCoordinates[textureId].second;
+    mSprite.setTextureRect(sf::IntRect (x*game_view::textures::CARD_TEXTURE_SIZE, y*game_view::textures::CARD_TEXTURE_SIZE, game_view::textures::CARD_TEXTURE_SIZE, game_view::textures::CARD_TEXTURE_SIZE));
+}
+void Card::setSpritePos(sf::Vector2f pos) {
+    mSprite.setRotation(static_cast<float>(90 * rotation));
+    mSprite.setPosition(pos);
 }
 
 }  // namespace game_model

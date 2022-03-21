@@ -17,11 +17,12 @@ sf::Texture *TextureHolder::get_texture(textures::ID id) {
 
 void BoardView::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     for (auto object : mBoard.getTiles()) {
-        if (object.first.x % CARD_DIMENSION == CARD_DIMENSION / 2 &&
-            object.first.y == CARD_DIMENSION / 2) {
-            CardView(*object.second.card,
-                     *getTextures().get_texture((object.second.card->textureId) < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2))
-                .draw(target, states);
+        if (object.first.x % (CARD_DIMENSION-1) == CARD_DIMENSION / 2 &&
+            object.first.y % (CARD_DIMENSION-1) == CARD_DIMENSION / 2) {
+//            CardView(*object.second.card,
+//                     *getTextures().get_texture((object.second.card->textureId) < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2))
+//                .draw(target, states);
+            target.draw(object.second.card->mSprite);
         }
     }
 
@@ -43,7 +44,6 @@ CardView::CardView(game_model::Card &card,
     int y = textures::cardCoordinates[card.textureId].second;
     mSprite.setTextureRect(sf::IntRect (x*textures::CARD_TEXTURE_SIZE, y*textures::CARD_TEXTURE_SIZE, textures::CARD_TEXTURE_SIZE, textures::CARD_TEXTURE_SIZE));
     mSprite.setRotation(static_cast<float>(90 * card.rotation));
-    mSprite.setScale(0.4, 0.4);
     mSprite.setPosition(transform_coordinates(card.getTile(0, 0).position));
 }
 
@@ -56,9 +56,9 @@ currentCardView::currentCardView(game_model::Card &card,
     mSprite.setTexture(card_texture);
     int x = textures::cardCoordinates[card.textureId].first;
     int y = textures::cardCoordinates[card.textureId].second;
-    mSprite.setTextureRect(sf::IntRect(x*textures::CARD_TEXTURE_SIZE, y*textures::CARD_TEXTURE_SIZE, textures::CARD_TEXTURE_SIZE, textures::CARD_TEXTURE_SIZE));
-    mSprite.setScale(0.5,0.5);
-    mSprite.setPosition(800,50); // better make const variables
+    mSprite.setTextureRect(sf::IntRect (x*textures::CARD_TEXTURE_SIZE, y*textures::CARD_TEXTURE_SIZE, textures::CARD_TEXTURE_SIZE, textures::CARD_TEXTURE_SIZE));
+    mSprite.setRotation(static_cast<float>(90 * card.rotation));
+    mSprite.setPosition(400, 50);
 }
 
 UnitView::UnitView(const game_model::Unit &unit,

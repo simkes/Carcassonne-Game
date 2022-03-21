@@ -23,11 +23,14 @@ struct Board {
         return mTiles;
     }
 
+    sf::Vector2i getEmptyPosition(sf::Vector2i position);
+
 private:
     // TODO: wrap in unique ?
     std::map<sf::Vector2i, Tile, Comp> mTiles;
     std::map<Type, std::vector<Tile>> mTypeMap;
-    size_t castleCount;
+    std::set<sf::Vector2i, Comp> emptyPositions;
+    size_t castleCount = 0;
 };
 
 }  // namespace game_model

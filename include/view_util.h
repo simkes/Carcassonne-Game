@@ -13,7 +13,7 @@ inline std::map<game_model::Color, ID> unit_color {{game_model::Color::RED, ID::
                                            {game_model::Color::BLUE, ID::UNIT_BLUE},{game_model::Color::GREEN, ID::UNIT_GREEN},
                                            {game_model::Color::YELLOW, ID::UNIT_YELLOW}};
 
-const int CARD_TEXTURE_SIZE = 379;
+const int CARD_TEXTURE_SIZE = 150;
 
 inline std::vector<std::pair<int,int>> cardCoordinates{{0,0}, {0,1}, {0,2}, {0,3},
                                              {1,0}, {1,2}, {1,3},{2,1},
@@ -25,7 +25,7 @@ inline std::vector<std::pair<int,int>> cardCoordinates{{0,0}, {0,1}, {0,2}, {0,3
 } // namespace textures
 
 inline sf::Vector2f transform_coordinates (sf::Vector2i vector) {
-    return sf::Vector2f({static_cast<float>(vector.x + 100), static_cast<float>(vector.y + 100)}); // may be some const var-s
+    return sf::Vector2f({static_cast<float>(vector.x), static_cast<float>(vector.y)}); // may be some const var-s
 }
 
 } // namespace game_view

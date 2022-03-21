@@ -3,8 +3,8 @@
 void init_textures_and_font() {
     carcassonne_game::getTextures().load(game_view::textures::ID::STARTTEXTURE, "gamestart.jpg");
     carcassonne_game::getTextures().load(game_view::textures::ID::BACKGROUND, "background.jpg");
-    carcassonne_game::getTextures().load(game_view::textures::ID::CARDS1, "cardsTextures1-16.png");
-    carcassonne_game::getTextures().load(game_view::textures::ID::CARDS2, "cardsTextures17-21.png");
+    carcassonne_game::getTextures().load(game_view::textures::ID::CARDS1, "cardsTextures1-16small.png");
+    carcassonne_game::getTextures().load(game_view::textures::ID::CARDS2, "cardsTextures17-21small.png");
     carcassonne_game::getTextures().load(game_view::textures::ID::UNIT_YELLOW, "meeplesTextures/yellowMeeple.png");
     carcassonne_game::getTextures().load(game_view::textures::ID::UNIT_RED, "meeplesTextures/redMeeple.png");
     carcassonne_game::getTextures().load(game_view::textures::ID::UNIT_GREEN, "meeplesTextures/greenMeeple.png");

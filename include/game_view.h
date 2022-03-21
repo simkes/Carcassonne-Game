@@ -1,7 +1,7 @@
 #ifndef GAME_VIEW_H_
 #define GAME_VIEW_H_
 
-#include <SFML/Graphics.hpp>
+
 #include <string>
 #include "game_board.h"
 #include "view_util.h"

@@ -27,18 +27,46 @@ bool Board::canAddCard(sf::Vector2i pos, Card &card) {
     return true;
 }
 
+const std::vector<sf::Vector2i> cardBounds{ {CARD_DIMENSION - 1,0}, {0, CARD_DIMENSION - 1},
+                                           {-CARD_DIMENSION + 1,0}, {0, -CARD_DIMENSION + 1}}; //TODO: rename
+
 const std::vector<std::vector<Tile>> &Board::addCard(sf::Vector2i pos,
                                                       Card &card) {
+
+    for (const auto &position : cardBounds){
+        sf::Vector2i newEmptyPos = {pos.x + position.x, pos.y + position.y};
+        sf::Vector2i cardCenterPos = {newEmptyPos.x + CARD_DIMENSION/2, newEmptyPos.y + CARD_DIMENSION/2};
+        if(mTiles.count(cardCenterPos) == 0){
+            emptyPositions.insert(newEmptyPos);
+        }
+    }
+
     for (int dx = 0; dx < CARD_DIMENSION; dx++) {
         for (int dy = 0; dy < CARD_DIMENSION; dy++) {
-            //if (mTiles[{pos.x + dx, pos.y + dy}] == nullptr) {
+            //if (mTiles[{pos.x + dx, pos.y + dy}] == nullptr) { // TODO: handle tiles belonging to 2 cards
                 card.getTile(dx,dy).position = {pos.x+dx, pos.y+dy};
                 mTiles.insert({{pos.x + dx, pos.y + dy}, card.getTile(dx, dy)});
                 
            // }
         }
     }
+
     return card.getTiles();
+}
+sf::Vector2i Board::getEmptyPosition(sf::Vector2i position) {
+    int x = position.x;
+    int y = position.y;
+    sf::Vector2i result;
+    int minDistSq = INT32_MAX;
+    for(const auto & pos : emptyPositions){
+        int distSq = (pos.x - x)*(pos.x - x) + (pos.y - y)*(pos.y - y);
+        if( distSq < minDistSq ){
+            minDistSq = distSq;
+            result = {pos.x, pos.y};
+        }
+    }
+    emptyPositions.erase(result);
+    return result;
 }
 
 }  // namespace game_model

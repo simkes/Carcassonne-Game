@@ -149,6 +149,9 @@ void Game::set_currentCard() {
     newCard.id = static_cast<int>(placedCards.size());
     placedCards.push_back(newCard);
     placedCards.back().setTiles();
+    int textureId = placedCards.back().textureId;
+    placedCards.back().setSprite(*getTextures().get_texture(textureId < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2));
+    placedCards.back().setSpritePos({400,50});
     cardDeck.pop_back();
     currentCardPtr = &placedCards.back();
 }
@@ -156,6 +159,7 @@ void Game::set_currentCard() {
 void Game::place_first_card() {
     set_currentCard();
     sf::Vector2i pos(0,0);
+    currentCardPtr->setSpritePos({0,0});
     mBoard.addCard(pos,*currentCardPtr);
 }
 
@@ -170,7 +174,7 @@ Game::Game(): mWindow(sf::VideoMode(1024, 700), "Carcassonne-Game"/*, sf::Style:
     init_interaction();
     place_first_card();
     //currentState = State::UNITPLACEMENT;
-    currentState = State::CARDPLACEMENT;
+    currentState = State::DEFAULT;
     currentPlayerPtr = &mPlayers[currentPlayerIndex];
 }
 
@@ -191,12 +195,33 @@ void Game::run() {
 
 
 void Game::process_events(sf::Event &event) {
-    defaultInteraction *currentInteraction = interaction[currentState].get();
+   // interaction[currentState]->handleEvent(event, endOfState);
     while(mWindow.pollEvent(event)) {
-        if (event.type == sf::Event::Closed)
-            mWindow.close();
-        currentInteraction->handleEvent(event, endOfState);
-    }
+        switch (event.type) {
+            case sf::Event::Closed:
+                mWindow.close();
+                break;
+            case sf::Event::MouseButtonPressed: {
+                if(currentState == State::CARDPLACEMENT) {
+                    if (event.mouseButton.button == sf::Mouse::Left) {
+                        sf::Vector2i position = sf::Mouse::getPosition(mWindow);
+                        sf::Vector2i cardPos =
+                            mBoard.getEmptyPosition(position);
+                        sf::Vector2f cardSpritePos = transform_coordinates({(cardPos.x/(CARD_DIMENSION-1))*textures::CARD_TEXTURE_SIZE, (cardPos.y/(CARD_DIMENSION-1))*textures::CARD_TEXTURE_SIZE});
+                        currentCardPtr->mSprite.setPosition(cardSpritePos);
+                        mBoard.addCard(cardPos, *currentCardPtr);
+                        endOfState = true;
+                    }
+                }
+                else {
+                    endOfState = true;
+                }
+                break;
+            }
+            default :
+                break;
+        }
+   }
 }
 
 void Game::update() {
@@ -207,8 +232,10 @@ void Game::render()
     mWindow.clear();
     mWindow.draw(background);
     mBoardView.draw(mWindow,sf::RenderStates::Default); //TODO: RenderStates ??
+   // mWindow.draw(mBoardView);
     if(currentState==State::CARDPLACEMENT){
-        currentCardView(*currentCardPtr, *getTextures().get_texture(currentCardPtr->textureId < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2 )).draw(mWindow, sf::RenderStates::Default);
+        mWindow.draw(currentCardPtr->mSprite);
+       // currentCardView (*currentCardPtr, *getTextures().get_texture((currentCardPtr->textureId) < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2)) .draw(mWindow,sf::RenderStates::Default);;
     }
     mWindow.display();
 }
@@ -223,7 +250,8 @@ void Game::change_state() {
             break;
         }
         case State::CARDPLACEMENT: {
-            currentState = State::UNITPLACEMENT;
+            //currentState = State::UNITPLACEMENT;
+            currentState = State::DEFAULT;
             endOfState = false;
             break;
         }

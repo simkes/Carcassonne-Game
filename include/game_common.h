@@ -3,8 +3,10 @@
 
 #include <vector>
 #include <map>
+#include <set>
 #include <SFML/System.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics.hpp>
 #include <fstream>
 #include <string>
 #include <memory>
