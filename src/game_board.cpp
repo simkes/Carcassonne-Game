@@ -59,8 +59,8 @@ sf::Vector2i Board::getEmptyPosition(sf::Vector2i position) {
     sf::Vector2i result;
     int minDistSq = INT32_MAX;
     for(const auto & pos : emptyPositions){
-        int screenPosX = (pos.x/(CARD_DIMENSION-1))*game_view::textures::CARD_TEXTURE_SIZE;
-        int screenPosY = (pos.y/(CARD_DIMENSION-1))*game_view::textures::CARD_TEXTURE_SIZE;
+        int screenPosX = (pos.x /(CARD_DIMENSION-1))*game_view::textures::CARD_TEXTURE_SIZE + game_view::textures::CARD_TEXTURE_SIZE/2;
+        int screenPosY = (pos.y/(CARD_DIMENSION-1))*game_view::textures::CARD_TEXTURE_SIZE + game_view::textures::CARD_TEXTURE_SIZE/2;
         int distSq = (screenPosX - x)*(screenPosX - x) + (screenPosY - y)*(screenPosY - y);
         if( distSq < minDistSq ){
             minDistSq = distSq;
