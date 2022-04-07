@@ -1,8 +1,4 @@
 #include "game.h"
-#include <algorithm>
-#include <random>
-#include <chrono>
-std::mt19937 rng ((std::uint32_t) std::chrono::steady_clock::now().time_since_epoch().count());
 
 namespace carcassonne_game {
 
@@ -117,24 +113,6 @@ void Game::init_players() {
     init_mPlayers(mWindow, mPlayers, numberOfPlayers, invitation, textEntered, startSprite, background, title);
 }
 
-void Game::init_cardDeck() {
-    for(int i = 1; i < 22; i++){
-        std::string filename = "cardsdata/" + std::to_string(i) + ".txt";
-        if(i < 3){
-            for (int j = 0; j < 9; j++){
-                cardDeck.emplace_back(Card(filename, i-1));
-            }
-        }
-        else {
-            for (int j = 0; j < 4; j++){
-                cardDeck.emplace_back(Card(filename, i-1));
-            }
-        }
-    }
-
-    std::shuffle(cardDeck.begin(), cardDeck.end(), rng);
-}
-
 void Game::init_interaction() {
     interaction.emplace(State::DEFAULT, std::make_unique<defaultInteraction>(mBoard, mBoardView));
     interaction.emplace(State::CARDPLACEMENT, std::make_unique<cardPlacementInteraction>(mBoard, mBoardView, currentCardPtr));
@@ -142,18 +120,17 @@ void Game::init_interaction() {
 }
 
 void Game::set_currentCard() {
-    if(cardDeck.empty()) {
+    if(mCardDeck.empty()) {
         gameOver = true; // TODO: make end of game with score counted
         return;
     }
-    Card newCard = cardDeck.back();
+    Card newCard = mCardDeck.get_card();
     newCard.id = static_cast<int>(placedCards.size());
     placedCards.push_back(newCard);
     placedCards.back().setTiles();
     int textureId = placedCards.back().textureId;
     placedCards.back().setSprite(*getTextures().get_texture(textureId < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2));
     placedCards.back().setSpritePos({874,124});
-    cardDeck.pop_back();
     currentCardPtr = &placedCards.back();
 }
 
@@ -164,14 +141,13 @@ void Game::place_first_card() {
     mBoard.addCard(pos,*currentCardPtr);
 }
 
-Game::Game(): mWindow(sf::VideoMode(1024, 700), "Carcassonne-Game"/*, sf::Style::Fullscreen*/), mBoardView(mBoard){
+Game::Game(): mWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Carcassonne-Game"), mBoardView(mBoard){
 
     background.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND));
     background.setPosition(0,0);
 
     placedCards.reserve(100);
     init_players();
-    init_cardDeck();
     init_interaction();
     place_first_card();
     //currentState = State::UNITPLACEMENT;

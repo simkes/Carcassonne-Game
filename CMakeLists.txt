@@ -19,12 +19,16 @@ add_executable(${EXECUTABLE_NAME}
         include/interaction.h
         include/game_view.h
         include/view_util.h
+        include/game_cardDeck.h
+#        include/game_render.h
         src/game_board.cpp
         src/game_card.cpp
         src/game_view.cpp
         src/game.cpp
         src/main.cpp
         src/interaction.cpp
+        src/game_cardDeck.cpp
+#        src/game_render.cpp
         )
 add_executable(main_debug
         src/main.cpp

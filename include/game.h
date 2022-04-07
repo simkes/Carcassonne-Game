@@ -1,11 +1,11 @@
 #ifndef GAME_H_
 #define GAME_H_
 
-#include <deque>
 #include "game_board.h"
 #include "game_player.h"
 #include "interaction.h"
 #include "game_view.h"
+#include "game_cardDeck.h"
 
 namespace carcassonne_game{
 
@@ -22,7 +22,7 @@ private:
     bool gameOver = false;
 
     Board mBoard;
-    std::deque <Card> cardDeck;
+    CardDeck mCardDeck;
     std::vector <Card> placedCards;
     Card *currentCardPtr = nullptr;
 
@@ -40,7 +40,6 @@ private:
     sf::Sprite background;
 
     void init_players();
-    void init_cardDeck();
     void init_interaction();
     void place_first_card();
 

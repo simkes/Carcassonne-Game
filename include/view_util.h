@@ -6,6 +6,9 @@
 
 namespace game_view {
 
+const int WINDOW_WIDTH = 1024;
+const int WINDOW_HEIGHT = 700;
+
 namespace textures {
 enum class ID { CARDS1, CARDS2, BACKGROUND, STARTTEXTURE, UNIT_BLACK, UNIT_BLUE, UNIT_GREEN, UNIT_RED, UNIT_YELLOW};
 
