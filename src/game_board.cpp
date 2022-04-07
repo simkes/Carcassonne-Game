@@ -45,6 +45,7 @@ const std::vector<std::vector<Tile>> &Board::addCard(sf::Vector2i pos,
         for (int dy = 0; dy < CARD_DIMENSION; dy++) {
             //if (mTiles[{pos.x + dx, pos.y + dy}] == nullptr) { // TODO: handle tiles belonging to 2 cards
                 card.getTile(dx,dy).position = {pos.x+dx, pos.y+dy};
+                //card.mSprite.setOrigin(game_view::transform_coordinates(card.getTile(2, 2).position));
                 mTiles.insert({{pos.x + dx, pos.y + dy}, card.getTile(dx, dy)});
                 
            // }

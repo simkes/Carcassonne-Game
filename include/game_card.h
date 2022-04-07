@@ -8,7 +8,7 @@ namespace game_model {
 
 struct Card {
     Card() = default;
-    explicit Card(const std::string &filename, int texture_id){
+    explicit Card(const std::string &filename, int texture_id) {
         mTiles.resize(CARD_DIMENSION);
         textureId = texture_id;
         std::ifstream ss(filename);
@@ -19,10 +19,12 @@ struct Card {
                 mTiles[CARD_DIMENSION - i - 1].emplace_back(typesVector[temp]);
             }
         }
+        mSprite.setOrigin(74, 74);
     }
 
     void setSprite(const sf::Texture &card_texture);
     void setSpritePos(sf::Vector2f pos);
+
 
     void rotateLeft();   // counterclockwise
     void rotateRight();  // clockwise

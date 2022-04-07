@@ -19,15 +19,15 @@ void Card::rotateRight() {
             tempVector[i][CARD_DIMENSION - j - 1] = mTiles[j][i];
         }
     }
-    rotation = (rotation + 3) % 4;
+    rotation = (rotation + 1) % 4;
     mTiles = std::move(tempVector);
+    mSprite.setRotation(90 * rotation);
 }
 
 void Card::rotateLeft() {
     for (int i = 0; i < 3; i++) {
         rotateRight();
     }
-    rotation = (rotation + 1) % 4;
 }
 
 void Card::setTiles() {

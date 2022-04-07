@@ -152,7 +152,7 @@ void Game::set_currentCard() {
     placedCards.back().setTiles();
     int textureId = placedCards.back().textureId;
     placedCards.back().setSprite(*getTextures().get_texture(textureId < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2));
-    placedCards.back().setSpritePos({800,50});
+    placedCards.back().setSpritePos({874,124});
     cardDeck.pop_back();
     currentCardPtr = &placedCards.back();
 }
@@ -160,7 +160,7 @@ void Game::set_currentCard() {
 void Game::place_first_card() {
     set_currentCard();
     sf::Vector2i pos(0,0);
-    currentCardPtr->setSpritePos({0,0});
+    currentCardPtr->setSpritePos({74,74});
     mBoard.addCard(pos,*currentCardPtr);
 }
 
@@ -208,7 +208,7 @@ void Game::process_events(sf::Event &event) {
                         sf::Vector2i position = sf::Mouse::getPosition(mWindow);
                         sf::Vector2i cardPos =
                             mBoard.getEmptyPosition(position);
-                        sf::Vector2f cardSpritePos = transform_coordinates({(cardPos.x/(CARD_DIMENSION-1))*textures::CARD_TEXTURE_SIZE, (cardPos.y/(CARD_DIMENSION-1))*textures::CARD_TEXTURE_SIZE});
+                        sf::Vector2f cardSpritePos = transform_coordinates({(cardPos.x/(CARD_DIMENSION-1))*textures::CARD_TEXTURE_SIZE + 74, (cardPos.y/(CARD_DIMENSION-1))*textures::CARD_TEXTURE_SIZE + 74});
                         currentCardPtr->mSprite.setPosition(cardSpritePos);
                         mBoard.addCard(cardPos, *currentCardPtr);
                         endOfState = true;
@@ -219,19 +219,19 @@ void Game::process_events(sf::Event &event) {
                 }
                 break;
             }
-//            case  sf::Event::KeyPressed :{
-//                if(currentState == State::CARDPLACEMENT) {
-//                    if (event.key.code == sf::Keyboard::A) {
-//                        currentCardPtr->rotateLeft();
-//                    }
-//
-//                    if (event.key.code == sf::Keyboard::D) {
-//                        currentCardPtr->rotateRight();
-//                    }
-//                }
-//
-//                break;
-//            }
+            case  sf::Event::KeyPressed :{
+                if(currentState == State::CARDPLACEMENT) {
+                    if (event.key.code == sf::Keyboard::A) {
+                        currentCardPtr->rotateLeft();
+                    }
+
+                    if (event.key.code == sf::Keyboard::D) {
+                        currentCardPtr->rotateRight();
+                    }
+                }
+
+                break;
+            }
             default :
                 break;
         }
