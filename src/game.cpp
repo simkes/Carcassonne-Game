@@ -10,9 +10,9 @@ for(const auto &p : players){
 }
 
 void Game::init_interaction() {
-//    mInteraction.emplace(State::DEFAULT, std::make_unique<defaultInteraction>(mBoard, mBoardView));
-//    mInteraction.emplace(State::CARDPLACEMENT, std::make_unique<cardPlacementInteraction>(mBoard, mBoardView, currentCardPtr));
-//    mInteraction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(mBoard, mBoardView, currentCardPtr, currentPlayerPtr));
+    mInteraction.emplace(State::DEFAULT, std::make_unique<defaultInteraction>(mBoard, mGameRenderPtr->get_boardView()));
+    mInteraction.emplace(State::CARDPLACEMENT, std::make_unique<cardPlacementInteraction>(mBoard, mGameRenderPtr->get_boardView(), currentCardPtr));
+    mInteraction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(mBoard, mGameRenderPtr->get_boardView(), currentCardPtr, currentPlayerPtr));
 }
 
 void Game::set_currentCard() {
@@ -65,7 +65,7 @@ void Game::run() {
 
 
 void Game::process_events(sf::Event &event) {
-   // mInteraction[currentState]->handleEvent(event, endOfState);
+    mInteraction[currentState]->handleEvent(event, endOfState);
     while(mGameRenderPtr->window().pollEvent(event)) {
         switch (event.type) {
             case sf::Event::Closed:

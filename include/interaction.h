@@ -10,13 +10,13 @@ namespace interaction {
 struct defaultInteraction {
     explicit defaultInteraction(game_model::Board &gameBoard_,
                                 game_view::BoardView &mainView_)
-        : gameBoard(gameBoard_), mainView(mainView_){};
+        : gameBoard(gameBoard_), mainView(&mainView_){};
     virtual void handleEvent(sf::Event &event, bool &endOfState);
     // virtual destructor??
     virtual ~defaultInteraction() = default;
 
 protected:
-    game_view::BoardView mainView;
+    game_view::BoardView *mainView; // <- needed pointer cuz view is changing
     game_model::Board gameBoard;
 };  // may be better to name baseInteraction or smt
 

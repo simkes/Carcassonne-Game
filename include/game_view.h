@@ -29,11 +29,11 @@ inline sf::Font &getFont(){
 
 struct BoardView : public sf::Drawable {
     //c-tor
-    BoardView() = default;
-    explicit BoardView(game_model::Board *Board) : mBoard(Board) {};
 
     void setBoard(game_model::Board *board) {
         mBoard = board;
+        mView.setSize(1024, 700);
+        mView.setCenter(0, 0);
     }
 
     sf::View &getView() {
