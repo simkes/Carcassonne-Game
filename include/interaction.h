@@ -7,8 +7,6 @@
 
 namespace interaction {
 
-enum class State { CARDPLACEMENT, UNITPLACEMENT, DEFAULT };
-
 struct defaultInteraction {
     explicit defaultInteraction(game_model::Board &gameBoard_,
                                 game_view::BoardView &mainView_)
@@ -53,6 +51,6 @@ private:
     game_model::Player *currentPlayer;
 };
 
-}  // namespace interaction
+}  // namespace mInteraction
 
 #endif  // INTERACTION_H_

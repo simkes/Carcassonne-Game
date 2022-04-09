@@ -1,7 +1,6 @@
 #ifndef GAME_VIEW_H_
 #define GAME_VIEW_H_
 
-
 #include <string>
 #include "game_board.h"
 #include "view_util.h"
@@ -30,7 +29,12 @@ inline sf::Font &getFont(){
 
 struct BoardView : public sf::Drawable {
     //c-tor
-    explicit BoardView(game_model::Board &Board) : mBoard(Board) {};
+    BoardView() = default;
+    explicit BoardView(game_model::Board *Board) : mBoard(Board) {};
+
+    void setBoard(game_model::Board *board) {
+        mBoard = board;
+    }
 
     sf::View &getView() {
         return mView;
@@ -39,7 +43,7 @@ struct BoardView : public sf::Drawable {
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
-    game_model::Board &mBoard;
+    game_model::Board *mBoard = nullptr;
     sf::View mView;
 };
 

@@ -3,6 +3,7 @@
 
 #include <map>
 #include <vector>
+#include <SFML/Graphics.hpp>
 
 namespace game_view {
 

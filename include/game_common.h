@@ -32,4 +32,9 @@ struct Board;
 
 }  // namespace game_model
 
+namespace carcassonne_game{
+enum class State { CARDPLACEMENT, UNITPLACEMENT, DEFAULT };
+class Game;
+}// namespace carcassonne_game
+
 #endif  // GAME_COMMON_H_

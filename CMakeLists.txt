@@ -20,7 +20,8 @@ add_executable(${EXECUTABLE_NAME}
         include/game_view.h
         include/view_util.h
         include/game_cardDeck.h
-#        include/game_render.h
+        include/game_render.h
+        include/game_menu.h
         src/game_board.cpp
         src/game_card.cpp
         src/game_view.cpp
@@ -28,8 +29,8 @@ add_executable(${EXECUTABLE_NAME}
         src/main.cpp
         src/interaction.cpp
         src/game_cardDeck.cpp
-#        src/game_render.cpp
-        )
+        src/game_render.cpp
+        src/game_menu.cpp)
 add_executable(main_debug
         src/main.cpp
         )

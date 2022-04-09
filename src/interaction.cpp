@@ -132,4 +132,4 @@ void unitPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
     }
 }
 
-}  // namespace interaction
+}  // namespace mInteraction

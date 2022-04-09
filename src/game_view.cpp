@@ -16,7 +16,7 @@ sf::Texture *TextureHolder::get_texture(textures::ID id) {
 }
 
 void BoardView::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    for (auto object : mBoard.getTiles()) {
+    for (auto object : mBoard->getTiles()) {
         if (object.first.x % (CARD_DIMENSION-1) == CARD_DIMENSION / 2 &&
             object.first.y % (CARD_DIMENSION-1) == CARD_DIMENSION / 2) {
 //            CardView(*object.second.card,
@@ -26,7 +26,7 @@ void BoardView::draw(sf::RenderTarget &target, sf::RenderStates states) const {
         }
     }
 
-    for (auto object : mBoard.getTiles()) {
+    for (auto object : mBoard->getTiles()) {
         if (object.second.unit != nullptr) {
             UnitView(*object.second.unit, *getTextures().get_texture(textures::unit_color[object.second.unit->owner->color]));
         }

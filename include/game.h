@@ -5,6 +5,7 @@
 #include "game_player.h"
 #include "interaction.h"
 #include "game_view.h"
+#include "game_render.h"
 #include "game_cardDeck.h"
 
 namespace carcassonne_game{
@@ -15,31 +16,32 @@ using namespace game_view;
 
 class Game {
 public:
-    Game();
+    explicit Game(std::vector<std::pair<std::string, game_model::Color>> players, GameRender *gameRenderPtr);
     void run();
 
+    State get_curState(){
+        return currentState;
+    }
+
+    Card *currentCardPtr = nullptr;
 private:
     bool gameOver = false;
 
     Board mBoard;
     CardDeck mCardDeck;
     std::vector <Card> placedCards;
-    Card *currentCardPtr = nullptr;
 
     std::vector <Player> mPlayers;
     std::size_t currentPlayerIndex = 0;
-    Player *currentPlayerPtr = nullptr;
     std::size_t numberOfPlayers;
+    Player *currentPlayerPtr = nullptr;
 
     State currentState;
     bool endOfState = false;
-    std::map<State, std::unique_ptr<defaultInteraction>> interaction;
+    std::map<State, std::unique_ptr<defaultInteraction>> mInteraction;
+    GameRender *mGameRenderPtr;
 
-    sf::RenderWindow mWindow;
-    BoardView mBoardView;
-    sf::Sprite background;
-
-    void init_players();
+    void init_players(std::vector<std::pair<std::string, game_model::Color>> &players);
     void init_interaction();
     void place_first_card();
 

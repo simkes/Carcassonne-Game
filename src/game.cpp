@@ -2,121 +2,17 @@
 
 namespace carcassonne_game {
 
-int get_numberOfPlayers(sf::RenderWindow &gameWindow, sf::Text &invitation, sf::Text &textEntered, sf::Sprite &startSprite, sf::Sprite &background, sf::Text &title) {
-
-    int numberOfPlayers = 0;
-    sf::String stringEntered;
-    sf::Event event;
-
-    invitation.setString("Enter number of players");
-
-    while (gameWindow.isOpen()) {
-
-        while (gameWindow.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
-                gameWindow.close();
-            if (event.type == sf::Event::TextEntered) {
-                stringEntered = event.text.unicode;
-                textEntered.setString(stringEntered);
-                std::string tmpString = stringEntered;
-                numberOfPlayers = std::stoi(tmpString);
-            }
-            if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::Enter &&
-                    numberOfPlayers > 1 && numberOfPlayers < 6) {
-                    return numberOfPlayers;
-                }
-            }
-        }
-
-        gameWindow.clear();
-        gameWindow.draw(background);
-        gameWindow.draw(startSprite);
-        gameWindow.draw(title);
-        gameWindow.draw(invitation);
-        gameWindow.draw(textEntered);
-        gameWindow.display();
-    }
-
-    return 0;
+void Game::init_players(std::vector<std::pair<std::string, game_model::Color>> &players) {
+numberOfPlayers = players.size();
+for(const auto &p : players){
+    mPlayers.emplace_back(p.first,p.second);
 }
-
-void init_mPlayers(sf::RenderWindow &gameWindow, std::vector<Player> &players, std::size_t numberOfPlayers, sf::Text &invitation, sf::Text &textEntered, sf::Sprite &startSprite, sf::Sprite &background, sf::Text &title){
-
-    sf::String stringEntered;
-    sf::Event event;
-
-    textEntered.setString("");
-    int counter = 1;
-
-    while (gameWindow.isOpen() && counter <= numberOfPlayers) {
-
-        invitation.setString("Player " + std::to_string(counter) + "\nEnter your name:");
-
-        while(gameWindow.pollEvent(event)){
-
-            if (event.type == sf::Event::Closed)
-                gameWindow.close();
-
-            if (event.type == sf::Event::TextEntered) {
-                if (event.text.unicode > 47 && event.text.unicode < 123) {
-                    stringEntered += event.text.unicode;
-                    textEntered.setString(stringEntered);
-                }
-            }
-
-            if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::Enter){
-                    players.emplace_back(stringEntered, colorsVector[counter-1]);
-                    counter ++;
-                    stringEntered = "";
-                    textEntered.setString("");
-                }
-                if(event.key.code == sf::Keyboard::BackSpace) {
-                    stringEntered.erase(stringEntered.getSize()-1);
-                    textEntered.setString(stringEntered);
-                }
-            }
-
-        }
-
-        gameWindow.clear();
-        gameWindow.draw(background);
-        gameWindow.draw(startSprite);
-        gameWindow.draw(title);
-        gameWindow.draw(invitation);
-        gameWindow.draw(textEntered);
-        gameWindow.display();
-    }
-}
-
-void Game::init_players() {
-
-    sf::Sprite startSprite;
-    sf::Text title("Carcassonne-Game",  getFont(), 30);
-    sf::Text invitation("",  getFont(), 20);
-    sf::Text textEntered("",  getFont(), 20);
-
-    startSprite.setTexture(*getTextures().get_texture(game_view::textures::ID::STARTTEXTURE));
-
-    startSprite.setPosition(100, 10);
-
-    title.setFillColor(sf::Color::Black);
-    invitation.setFillColor(sf::Color::Black);
-    textEntered.setFillColor(sf::Color::Black);
-    
-    title.setPosition(120,50);
-    invitation.setPosition(120,120);
-    textEntered.setPosition(120, 160);
-
-    numberOfPlayers = get_numberOfPlayers(mWindow, invitation, textEntered, startSprite, background, title);
-    init_mPlayers(mWindow, mPlayers, numberOfPlayers, invitation, textEntered, startSprite, background, title);
 }
 
 void Game::init_interaction() {
-    interaction.emplace(State::DEFAULT, std::make_unique<defaultInteraction>(mBoard, mBoardView));
-    interaction.emplace(State::CARDPLACEMENT, std::make_unique<cardPlacementInteraction>(mBoard, mBoardView, currentCardPtr));
-    interaction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(mBoard, mBoardView, currentCardPtr, currentPlayerPtr));
+//    mInteraction.emplace(State::DEFAULT, std::make_unique<defaultInteraction>(mBoard, mBoardView));
+//    mInteraction.emplace(State::CARDPLACEMENT, std::make_unique<cardPlacementInteraction>(mBoard, mBoardView, currentCardPtr));
+//    mInteraction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(mBoard, mBoardView, currentCardPtr, currentPlayerPtr));
 }
 
 void Game::set_currentCard() {
@@ -141,13 +37,10 @@ void Game::place_first_card() {
     mBoard.addCard(pos,*currentCardPtr);
 }
 
-Game::Game(): mWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Carcassonne-Game"), mBoardView(mBoard){
-
-    background.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND));
-    background.setPosition(0,0);
-
+Game::Game(std::vector<std::pair<std::string, game_model::Color>> players, GameRender *gameRenderPtr) : mGameRenderPtr(gameRenderPtr) {
+    mGameRenderPtr->set_boardView(&mBoard);
     placedCards.reserve(100);
-    init_players();
+    init_players(players);
     init_interaction();
     place_first_card();
     //currentState = State::UNITPLACEMENT;
@@ -157,11 +50,11 @@ Game::Game(): mWindow(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Carcassonne-G
 
 void Game::run() {
     while(!gameOver) {
-        if(currentState == interaction::State::CARDPLACEMENT){
+        if(currentState == State::CARDPLACEMENT){
             set_currentCard();
         }
         sf::Event event;
-        while (mWindow.isOpen() && !endOfState) {
+        while (mGameRenderPtr->window().isOpen() && !endOfState) {
             process_events(event);
             update();
             render();
@@ -172,16 +65,16 @@ void Game::run() {
 
 
 void Game::process_events(sf::Event &event) {
-   // interaction[currentState]->handleEvent(event, endOfState);
-    while(mWindow.pollEvent(event)) {
+   // mInteraction[currentState]->handleEvent(event, endOfState);
+    while(mGameRenderPtr->window().pollEvent(event)) {
         switch (event.type) {
             case sf::Event::Closed:
-                mWindow.close();
+                mGameRenderPtr->window().close();
                 break;
             case sf::Event::MouseButtonPressed: {
                 if(currentState == State::CARDPLACEMENT) {
                     if (event.mouseButton.button == sf::Mouse::Left) {
-                        sf::Vector2i position = sf::Mouse::getPosition(mWindow);
+                        sf::Vector2i position = sf::Mouse::getPosition(mGameRenderPtr->window());
                         sf::Vector2i cardPos =
                             mBoard.getEmptyPosition(position);
                         sf::Vector2f cardSpritePos = transform_coordinates({(cardPos.x/(CARD_DIMENSION-1))*textures::CARD_TEXTURE_SIZE + 74, (cardPos.y/(CARD_DIMENSION-1))*textures::CARD_TEXTURE_SIZE + 74});
@@ -217,17 +110,13 @@ void Game::process_events(sf::Event &event) {
 void Game::update() {
 }
 
-void Game::render()
-{
-    mWindow.clear();
-    mWindow.draw(background);
-    mBoardView.draw(mWindow,sf::RenderStates::Default); //TODO: RenderStates ??
-   // mWindow.draw(mBoardView);
-    if(currentState==State::CARDPLACEMENT){
-        mWindow.draw(currentCardPtr->mSprite);
-       // currentCardView (*currentCardPtr, *getTextures().get_texture((currentCardPtr->textureId) < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2)) .draw(mWindow,sf::RenderStates::Default);;
-    }
-    mWindow.display();
+void Game::render() {
+if(currentState == State::CARDPLACEMENT) {
+    mGameRenderPtr->render_with_card(currentCardPtr);
+}
+else {
+    mGameRenderPtr->render();
+}
 }
 
 void Game::change_state() {
