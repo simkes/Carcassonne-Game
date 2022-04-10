@@ -37,6 +37,7 @@ void defaultInteraction::handleEvent(sf::Event &event, bool &endOfState) {
         if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
             mainView->getView().zoom(
                 static_cast<float>(1.0 + 0.1 * event.mouseWheelScroll.delta));
+            event.type = sf::Event::JoystickMoved;
         }
     }
     // endOfState = true; ???
@@ -70,11 +71,11 @@ void cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
             currentCard->rotateRight();
         }
     }
-    // not works too
     if (event.type == sf::Event::MouseWheelScrolled) {
         if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
             mainView->getView().zoom(
                 static_cast<float>(1.0 + 0.1 * event.mouseWheelScroll.delta));
+            event.type = sf::Event::JoystickMoved;
         }
     }
 
@@ -125,6 +126,7 @@ void unitPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
         if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
             mainView->getView().zoom(
                 static_cast<float>(1.0 + 0.1 * event.mouseWheelScroll.delta));
+            event.type = sf::Event::JoystickMoved;
         }
     }
 
