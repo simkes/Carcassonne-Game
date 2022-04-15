@@ -10,9 +10,9 @@ for(const auto &p : players){
 }
 
 void Game::init_interaction() {
-    mInteraction.emplace(State::DEFAULT, std::make_unique<defaultInteraction>(mBoard, mGameRenderPtr->get_boardView()));
-    mInteraction.emplace(State::CARDPLACEMENT, std::make_unique<cardPlacementInteraction>(mBoard, mGameRenderPtr->get_boardView(), currentCardPtr));
-    mInteraction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(mBoard, mGameRenderPtr->get_boardView(), currentCardPtr, currentPlayerPtr));
+    mInteraction.emplace(State::DEFAULT, std::make_unique<defaultInteraction>(mBoard, mGameRenderPtr->get_boardView(), mGameRenderPtr->window()));
+    mInteraction.emplace(State::CARDPLACEMENT, std::make_unique<cardPlacementInteraction>(mBoard, mGameRenderPtr->get_boardView(), &currentCardPtr, mGameRenderPtr->window()));
+    mInteraction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(mBoard, mGameRenderPtr->get_boardView(), currentCardPtr, currentPlayerPtr, mGameRenderPtr->window()));
 }
 
 void Game::set_currentCard() {
@@ -65,45 +65,46 @@ void Game::run() {
 
 
 void Game::process_events(sf::Event &event) {
-    mInteraction[currentState]->handleEvent(event, endOfState);
     while(mGameRenderPtr->window().pollEvent(event)) {
-        switch (event.type) {
-            case sf::Event::Closed:
-                mGameRenderPtr->window().close();
-                break;
-            case sf::Event::MouseButtonPressed: {
-                if(currentState == State::CARDPLACEMENT) {
-                    if (event.mouseButton.button == sf::Mouse::Left) {
-                        sf::Vector2i position = sf::Mouse::getPosition(mGameRenderPtr->window());
-                        sf::Vector2i cardPos =
-                            mBoard.getEmptyPosition(position);
-                        sf::Vector2f cardSpritePos = transform_coordinates({(cardPos.x/(CARD_DIMENSION-1))*textures::CARD_TEXTURE_SIZE + 74, (cardPos.y/(CARD_DIMENSION-1))*textures::CARD_TEXTURE_SIZE + 74});
-                        currentCardPtr->mSprite.setPosition(cardSpritePos);
-                        mBoard.addCard(cardPos, *currentCardPtr);
-                        endOfState = true;
-                    }
-                }
-                else {
-                    endOfState = true;
-                }
-                break;
-            }
-            case  sf::Event::KeyPressed :{
-                if(currentState == State::CARDPLACEMENT) {
-                    if (event.key.code == sf::Keyboard::A) {
-                        currentCardPtr->rotateLeft();
-                    }
-
-                    if (event.key.code == sf::Keyboard::D) {
-                        currentCardPtr->rotateRight();
-                    }
-                }
-
-                break;
-            }
-            default :
-                break;
-        }
+        mInteraction[currentState]->handleEvent(event, endOfState);
+//        switch (event.type) {
+//            case sf::Event::Closed:
+//                mGameRenderPtr->window().close();
+//                break;
+//            case sf::Event::MouseButtonPressed: {
+//
+//                if(currentState == State::CARDPLACEMENT) {
+//                    if (event.mouseButton.button == sf::Mouse::Left) {
+//                        sf::Vector2i position = sf::Mouse::getPosition(mGameRenderPtr->window());
+//                        sf::Vector2i cardPos =
+//                            mBoard.getEmptyPosition(position);
+//                        sf::Vector2f cardSpritePos = transform_coordinates({(cardPos.x/(CARD_DIMENSION-1))*textures::CARD_TEXTURE_SIZE + 74, (cardPos.y/(CARD_DIMENSION-1))*textures::CARD_TEXTURE_SIZE + 74});
+//                        currentCardPtr->mSprite.setPosition(cardSpritePos);
+//                        mBoard.addCard(cardPos, *currentCardPtr);
+//                        endOfState = true;
+//                    }
+//                }
+//                else {
+//                    endOfState = true;
+//                }
+//                break;
+//            }
+//            case  sf::Event::KeyPressed :{
+//                if(currentState == State::CARDPLACEMENT) {
+//                    if (event.key.code == sf::Keyboard::A) {
+//                        currentCardPtr->rotateLeft();
+//                    }
+//
+//                    if (event.key.code == sf::Keyboard::D) {
+//                        currentCardPtr->rotateRight();
+//                    }
+//                }
+//
+//                break;
+//            }
+//            default :
+//                break;
+//        }
    }
 }
 

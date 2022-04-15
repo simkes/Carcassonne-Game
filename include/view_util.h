@@ -32,6 +32,14 @@ inline sf::Vector2f transform_coordinates (sf::Vector2i vector) {
     return sf::Vector2f({static_cast<float>(vector.x), static_cast<float>(vector.y)}); // may be some const var-s
 }
 
+inline sf::Vector2i to_tiles_coords (sf::Vector2f vector) {
+    return sf::Vector2i({static_cast<int>(vector.x / 30), static_cast<int>(vector.y / 30)});
+}
+
+inline sf::Vector2f align_card_coords (sf::Vector2f vector) {
+    return {static_cast<float>(static_cast<int>(vector.x / game_view::textures::CARD_TEXTURE_SIZE) * game_view::textures::CARD_TEXTURE_SIZE + 74),
+           static_cast<float>(static_cast<int>(vector.y / game_view::textures::CARD_TEXTURE_SIZE) * game_view::textures::CARD_TEXTURE_SIZE + 74)};
+}
 } // namespace game_view
 
 #endif // GAME_VIEW_UTIL_H_

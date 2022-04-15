@@ -1,4 +1,5 @@
 #include "game.h"
+#include <iostream>
 
 void init_textures_and_font() {
     carcassonne_game::getTextures().load(game_view::textures::ID::STARTTEXTURE, "gamestart.jpg");
@@ -13,9 +14,13 @@ void init_textures_and_font() {
     carcassonne_game::getFont().loadFromFile("CyrilicOld.TTF");
 }
 
-int main(){
-init_textures_and_font();
-game_view::GameRender gameRender;
-carcassonne_game::Game newGame(gameRender.startGame(), &gameRender);
-newGame.run();
+int main() {
+    init_textures_and_font();
+    game_view::GameRender gameRender;
+    carcassonne_game::Game newGame(gameRender.startGame(), &gameRender);
+    try {
+        newGame.run();
+    } catch (const std::exception &exc) {
+        std::cout << exc.what();
+    }
 }
