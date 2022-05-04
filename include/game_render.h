@@ -22,7 +22,7 @@ public:
     };
     void render();
     void render_with_card(game_model::Card* curCardPtr);
-    std::vector<std::pair<std::string, game_model::Color>> startGame();
+    std::vector<std::pair<std::string, game_model::Color>> start_game();
     void set_boardView(game_model::Board *board);
     BoardView &get_boardView() {
         return mBoardView;

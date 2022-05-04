@@ -8,22 +8,23 @@ namespace game_view {
 struct Menu {
 private:
     sf::RenderWindow &window;
-    sf::Text title;
-    sf::Text invitation;
-    sf::Text textEntered;
-    sf::String stringEntered;
+
+    sf::Sprite title;
+    sf::Texture startTexture;
     sf::Sprite startSprite;
     sf::Sprite background;
-    int numberOfPlayers = 0; // delete
-    int counter = 1;
-    std::vector<std::pair<std::string, game_model::Color>> players;
-    bool numberReceived = false;
+    sf::Vector2f startSprPos = {212, 150};
 
-    void handle_event(sf::Event &event);
+    std::vector<std::pair<std::string, game_model::Color>> players;
+
+    void execute_start();
+    int get_number();
+    void get_players(int number);
+
 public:
     explicit Menu(sf::RenderWindow &window_);
-    void render() const;
-    std::vector<std::pair<std::string, game_model::Color>> init_players();
+    std::vector<std::pair<std::string, game_model::Color>> start_game();
+
 };
 
 } // game_view

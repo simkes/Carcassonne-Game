@@ -30,8 +30,8 @@ void GameRender::render_with_card(game_model::Card *curCardPtr) {
     mWindow.display();
 }
 
-std::vector<std::pair<std::string, game_model::Color>> GameRender::startGame() {
-    return mMenu.init_players();
+std::vector<std::pair<std::string, game_model::Color>> GameRender::start_game() {
+    return mMenu.start_game();
 }
 
 void GameRender::set_boardView(game_model::Board *board) {
