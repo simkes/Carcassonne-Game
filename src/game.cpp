@@ -32,8 +32,8 @@ void Game::set_currentCard() {
 
 void Game::place_first_card() {
     set_currentCard();
-    sf::Vector2i pos(0,0);
-    currentCardPtr->setSpritePos({74,74});
+    sf::Vector2i pos(102,102);
+    currentCardPtr->setSpritePos({3074,3074});
     mBoard.addCard(pos,*currentCardPtr);
 }
 

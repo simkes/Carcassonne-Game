@@ -17,14 +17,12 @@ sf::Texture *TextureHolder::get_texture(textures::ID id) {
 
 void BoardView::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     for (auto object : mBoard->getTiles()) {
-        if (object.first.x % (CARD_DIMENSION-1) == CARD_DIMENSION / 2 &&
-            object.first.y % (CARD_DIMENSION-1) == CARD_DIMENSION / 2) {
-//            CardView(*object.second.card,
-//                     *getTextures().get_texture((object.second.card->textureId) < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2))
-//                .draw(target, states);
-            target.draw(object.second.card->mSprite);
+            if (object.first.x % (CARD_DIMENSION - 1) == CARD_DIMENSION / 2 &&
+                object.first.y % (CARD_DIMENSION - 1) == CARD_DIMENSION / 2 &&
+                object.second.card != nullptr) {
+                    target.draw(object.second.card->mSprite);
+            }
         }
-    }
 
     for (auto object : mBoard->getTiles()) {
         if (object.second.unit != nullptr) {

@@ -57,15 +57,17 @@ void cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
                 {event.mouseButton.x, event.mouseButton.y},
                 mainView->getView());
 
-            // if
-            // (gameBoard->canAddCard(game_view::to_tiles_coords(worldCoords),
-            // *currentCard)) {
+             if
+             (gameBoard->canAddCard(game_view::to_tiles_coords(worldCoords),
+             **currentCard)) {
             gameBoard->addCard(game_view::to_tiles_coords(worldCoords),
                                **currentCard);
-            sf::Vector2f spritePos = game_view::align_card_coords(worldCoords);
-            (*currentCard)->setSpritePos(spritePos);
-            endOfState = true;
-            //}  // what to do with else: error? warning? nothing?
+                sf::Vector2f spritePos = game_view::align_card_coords(worldCoords);
+                (*currentCard)->setSpritePos(spritePos);
+                endOfState = true;
+            } else {
+                // something
+            }
         }
     }
 }

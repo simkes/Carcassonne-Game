@@ -33,7 +33,7 @@ struct BoardView : public sf::Drawable {
     void setBoard(game_model::Board *board) {
         mBoard = board;
         mView.setSize(1024, 700);
-        mView.setCenter(0, 0);
+        mView.setCenter(3074, 3074);
     }
 
     sf::View &getView() {
