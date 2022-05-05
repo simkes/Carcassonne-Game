@@ -36,7 +36,6 @@ add_executable(${EXECUTABLE_NAME}
         src/game_cardDeck.cpp
         src/game_render.cpp
         src/game_menu.cpp
-        src/visitors_abstract.cpp
         src/visitors_castle.cpp
         src/visitors_field.cpp
         src/visitors_monastery.cpp
