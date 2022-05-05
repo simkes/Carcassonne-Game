@@ -2,11 +2,6 @@
 
 namespace visitors{
 
-const std::vector<sf::Vector2i> directions { {CARD_DIMENSION,0}, {0, CARD_DIMENSION},
-                                           {-CARD_DIMENSION,0}, {0, -CARD_DIMENSION},
-                                           {CARD_DIMENSION,CARD_DIMENSION}, {-CARD_DIMENSION, CARD_DIMENSION},
-                                           {CARD_DIMENSION,-CARD_DIMENSION}, {-CARD_DIMENSION, -CARD_DIMENSION} };
-
 void visitors::MonasteryVisitor::visit(sf::Vector2i pos) {
     for (auto &tile : boardPtr->getTypeMap()[Type::MONASTERY]){
         if (tile.unit){
