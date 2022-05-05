@@ -25,6 +25,10 @@ struct Board {
 
     sf::Vector2i getEmptyPosition(sf::Vector2i position);
 
+    std::map<Type, std::vector<Tile>> &getTypeMap(){
+        return mTypeMap;
+    }
+
 private:
     // TODO: wrap in unique ?
     std::map<sf::Vector2i, Tile, Comp> mTiles;
