@@ -6,6 +6,7 @@ namespace visitors{
 
 class RoadVisitor final : public AbstractVisitor {
 public:
+    explicit RoadVisitor(Board *boardPtr_) : AbstractVisitor(boardPtr_) {}
     void visit() final;
 private:
     const std::vector<sf::Vector2i> directions { {1,0}, {0, 1}, {-1,0}, {0,-1} };

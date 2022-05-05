@@ -6,6 +6,7 @@ namespace visitors{
 
 class CastleVisitor final : public AbstractVisitor { // TODO: handle shield
 public:
+    explicit CastleVisitor(Board *boardPtr_) : AbstractVisitor(boardPtr_) {}
     void visit() final;
 private:
     const std::vector<sf::Vector2i> directions { {1,0}, {0, 1}, {-1,0}, {0,-1} };

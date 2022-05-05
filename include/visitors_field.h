@@ -1,11 +1,12 @@
-#ifndef VISITORS_ROAD_H_
-#define VISITORS_ROAD_H_
+#ifndef VISITORS_FIELD_H_
+#define VISITORS_FIELD_H_
 #include "visitors_abstract.h"
 
 namespace visitors{
 
 class FieldVisitor final : public AbstractVisitor {
 public:
+    explicit FieldVisitor(Board *boardPtr_) : AbstractVisitor(boardPtr_) {}
     void visit() final;
 private:
     const std::vector<sf::Vector2i> directions { {1,0}, {0, 1}, {-1,0}, {0,-1} };
@@ -31,4 +32,4 @@ private:
 
 } // namespace visitors
 
-#endif // VISITORS_ROAD_H_
+#endif // VISITORS_FIELD_H_

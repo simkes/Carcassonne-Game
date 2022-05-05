@@ -16,8 +16,9 @@ public:
     explicit AbstractVisitor(Board *boardPtr_) : boardPtr(boardPtr_) {}
     virtual void visit() = 0;
     // some connectivity ?
-
+    virtual ~AbstractVisitor() = default;
 };
+
 } // namespace visitors
 
 #endif // VISITORS_ABSTRACT_H_
