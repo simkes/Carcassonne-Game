@@ -2,7 +2,7 @@
 
 namespace visitors{
 
-void visitors::MonasteryVisitor::visit(sf::Vector2i pos) {
+void visitors::MonasteryVisitor::visit() {
     for (auto &tile : boardPtr->getTypeMap()[Type::MONASTERY]){
         if (tile.unit){
             sf::Vector2i tilePos = tile.position;

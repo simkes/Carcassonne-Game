@@ -1,4 +1,0 @@
-
-namespace visitors{
-
-} // namespace visitors

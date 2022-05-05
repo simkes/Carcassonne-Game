@@ -2,7 +2,7 @@
 
 namespace visitors{
 
-void visitors::CastleVisitor::visit(sf::Vector2i pos) {
+void visitors::CastleVisitor::visit() {
     clear_marked();
     for (auto &tile : boardPtr->getTypeMap()[Type::CASTLE]){
         if(!marked[tile.position]){

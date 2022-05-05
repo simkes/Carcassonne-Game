@@ -6,7 +6,7 @@ namespace visitors{
 
 class CastleVisitor final : public AbstractVisitor { // TODO: handle shield
 public:
-    void visit(sf::Vector2i pos) final;
+    void visit() final;
 private:
     const std::vector<sf::Vector2i> directions { {1,0}, {0, 1}, {-1,0}, {0,-1} };
     std::map <sf::Vector2i , int, Comp> marked;
