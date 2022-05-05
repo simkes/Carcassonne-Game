@@ -17,7 +17,7 @@ Menu::Menu(sf::RenderWindow &window_) :  window(window_) {
 
 }
 
-std::vector<std::pair<std::string, game_model::Color>> Menu::start_game() {
+std::vector<std::pair<sf::String, game_model::Color>> Menu::start_game() {
     execute_start();
     get_players(get_number());
 

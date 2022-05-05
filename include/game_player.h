@@ -6,13 +6,13 @@
 namespace game_model {
 
 struct Player {
-    const std::string name;
+    const sf::String name;
     const Color color;
     int score = 0;
     const bool human;
 
-    Player(std::string name_, Color color_)
-        : name(std::move(name_)), color(color_), human(true) {
+    Player(const sf::String& name_, Color color_)
+        : name(name_), color(color_), human(true) {
         for(int i = 0; i < NUMBER_OF_UNITS; i++){
             units.emplace_back(this);
         }

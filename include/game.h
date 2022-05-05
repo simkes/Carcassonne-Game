@@ -16,7 +16,7 @@ using namespace game_view;
 
 class Game {
 public:
-    explicit Game(std::vector<std::pair<std::string, game_model::Color>> players, GameRender *gameRenderPtr);
+    explicit Game(std::vector<std::pair<sf::String, game_model::Color>> players, GameRender *gameRenderPtr);
     void run();
 
     State get_curState(){
@@ -41,7 +41,7 @@ private:
     std::map<State, std::unique_ptr<defaultInteraction>> mInteraction;
     GameRender *mGameRenderPtr;
 
-    void init_players(std::vector<std::pair<std::string, game_model::Color>> &players);
+    void init_players(std::vector<std::pair<sf::String, game_model::Color>> &players);
     void init_interaction();
     void place_first_card();
 

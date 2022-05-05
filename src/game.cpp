@@ -2,7 +2,7 @@
 
 namespace carcassonne_game {
 
-void Game::init_players(std::vector<std::pair<std::string, game_model::Color>> &players) {
+void Game::init_players(std::vector<std::pair<sf::String, game_model::Color>> &players) {
 numberOfPlayers = players.size();
 for(const auto &p : players){
     mPlayers.emplace_back(p.first,p.second);
@@ -26,7 +26,7 @@ void Game::set_currentCard() {
     placedCards.back().setTiles();
     int textureId = placedCards.back().textureId;
     placedCards.back().setSprite(*getTextures().get_texture(textureId < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2));
-    placedCards.back().setSpritePos({874,124});
+    placedCards.back().setSpritePos({115,205});
     currentCardPtr = &placedCards.back();
 }
 
@@ -37,14 +37,14 @@ void Game::place_first_card() {
     mBoard.addCard(pos,*currentCardPtr);
 }
 
-Game::Game(std::vector<std::pair<std::string, game_model::Color>> players, GameRender *gameRenderPtr) : mGameRenderPtr(gameRenderPtr) {
+Game::Game(std::vector<std::pair<sf::String, game_model::Color>> players, GameRender *gameRenderPtr) : mGameRenderPtr(gameRenderPtr) {
     mGameRenderPtr->set_boardView(&mBoard);
     placedCards.reserve(100);
     init_players(players);
     init_interaction();
     place_first_card();
     //currentState = State::UNITPLACEMENT;
-    currentState = State::DEFAULT;
+    currentState = State::CARDPLACEMENT;
     currentPlayerPtr = &mPlayers[currentPlayerIndex];
 }
 
@@ -113,17 +113,17 @@ void Game::update() {
 
 void Game::render() {
 if(currentState == State::CARDPLACEMENT) {
-    mGameRenderPtr->render_with_card(currentCardPtr);
+    mGameRenderPtr->render_with_card(currentCardPtr, currentPlayerPtr->name);
 }
 else {
-    mGameRenderPtr->render();
+    mGameRenderPtr->render(currentPlayerPtr->name);
 }
 }
 
 void Game::change_state() {
     switch (currentState) {
         case State::DEFAULT:{
-            currentPlayerIndex= (currentPlayerIndex++) % numberOfPlayers;
+            currentPlayerIndex= (currentPlayerIndex + 1 ) % numberOfPlayers;
             currentPlayerPtr = &mPlayers[currentPlayerIndex];
             currentState = State::CARDPLACEMENT;
             endOfState = false;

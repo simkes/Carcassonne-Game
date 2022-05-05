@@ -15,7 +15,7 @@ private:
     sf::Sprite background;
     sf::Vector2f startSprPos = {212, 150};
 
-    std::vector<std::pair<std::string, game_model::Color>> players;
+    std::vector<std::pair<sf::String, game_model::Color>> players;
 
     void execute_start();
     int get_number();
@@ -23,7 +23,7 @@ private:
 
 public:
     explicit Menu(sf::RenderWindow &window_);
-    std::vector<std::pair<std::string, game_model::Color>> start_game();
+    std::vector<std::pair<sf::String, game_model::Color>> start_game();
 
 };
 

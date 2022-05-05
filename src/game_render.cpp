@@ -4,14 +4,25 @@ namespace game_view {
 
 GameRender::GameRender()
     : mWindow    (sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Carcassonne-Game"),
-      mMenu      (mWindow) {
-    mBackground.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND));
-    mBackground.setPosition(0, 0);
+      mMenu      (mWindow), mText("", getFont(), 50), invitation("", getFont(), 40) {
+    mBackground1.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND));
+    mBackground1.setPosition(0, 0);
+
+    mTitle.setTexture(*getTextures().get_texture(game_view::textures::ID::TITLE));
+    mTitle.setPosition((float)WINDOW_WIDTH/3,5);
+
+    mText.setFillColor(sf::Color::Black);
+    mText.setPosition(10,5);
+    invitation.setFillColor(sf::Color::Black);
+    invitation.setPosition(10,70);
 }
 
-void GameRender::render() {
+void GameRender::render(const sf::String &name) {
+    mText.setString(name + "'s Move");
     mWindow.clear();
-    mWindow.draw(mBackground);
+    mWindow.draw(mBackground1);
+    mWindow.draw(mTitle);
+    mWindow.draw(mText);
     mWindow.setView(mBoardView.getView());
     mBoardView.draw(mWindow,
                     sf::RenderStates::Default);  // TOD: RenderStates ??
@@ -19,9 +30,15 @@ void GameRender::render() {
     mWindow.display();
 }
 
-void GameRender::render_with_card(game_model::Card *curCardPtr) {
+void GameRender::render_with_card(game_model::Card *curCardPtr, const sf::String &name) {
+    mText.setString(name + "'s Move");
+    invitation.setString("Place the card");
+
     mWindow.clear();
-    mWindow.draw(mBackground);
+    mWindow.draw(mBackground1);
+    mWindow.draw(mTitle);
+    mWindow.draw(mText);
+    mWindow.draw(invitation);
     mWindow.setView(mBoardView.getView());
     mBoardView.draw(mWindow,
                     sf::RenderStates::Default);  // TOD: RenderStates ??
@@ -30,7 +47,7 @@ void GameRender::render_with_card(game_model::Card *curCardPtr) {
     mWindow.display();
 }
 
-std::vector<std::pair<std::string, game_model::Color>> GameRender::start_game() {
+std::vector<std::pair<sf::String, game_model::Color>> GameRender::start_game() {
     return mMenu.start_game();
 }
 
