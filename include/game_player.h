@@ -18,13 +18,14 @@ struct Player {
         }
     }
     Unit *get_unit(){
-        if (usedUnits == NUMBER_OF_UNITS){
-            return nullptr;
+        for (int i = 0; i < NUMBER_OF_UNITS; i++){
+            if(units[i].tile == nullptr){
+                return &units[i];
+            }
         }
-        return &units[usedUnits++];
+        return nullptr;
     }
 private:
-    int usedUnits = 0;
     std::vector<Unit> units;
 };
 

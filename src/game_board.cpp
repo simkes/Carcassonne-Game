@@ -52,7 +52,7 @@ const std::vector<std::vector<Tile>> &Board::addCard(sf::Vector2i pos,
                 card.getTile(dx,dy).position = {pos.x+dx, pos.y+dy};
                 //card.mSprite.setOrigin(game_view::transform_coordinates(card.getTile(2, 2).position));
                 mTiles[{pos.x + dx, pos.y + dy}] = card.getTile(dx, dy);
-                
+                mTypeMap[card.getTile(dx, dy).type].push_back(card.getTile(dx, dy));
            // }
         }
     }

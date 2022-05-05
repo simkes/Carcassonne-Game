@@ -37,4 +37,8 @@ enum class State { CARDPLACEMENT, UNITPLACEMENT, DEFAULT };
 class Game;
 }// namespace carcassonne_game
 
+namespace visitors {
+class AbstractVisitor;
+} // namespace visitors
+
 #endif  // GAME_COMMON_H_

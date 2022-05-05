@@ -7,6 +7,10 @@
 #include "game_view.h"
 #include "game_render.h"
 #include "game_cardDeck.h"
+#include "visitors_road.h"
+#include "visitors_castle.h"
+#include "visitors_monastery.h"
+#include "visitors_field.h"
 
 namespace carcassonne_game{
 
@@ -36,12 +40,16 @@ private:
     std::size_t numberOfPlayers;
     Player *currentPlayerPtr = nullptr;
 
+    std::vector<std::unique_ptr<visitors::AbstractVisitor>> mVisitors;
+
     State currentState;
     bool endOfState = false;
     std::map<State, std::unique_ptr<defaultInteraction>> mInteraction;
+
     GameRender *mGameRenderPtr;
 
     void init_players(std::vector<std::pair<sf::String, game_model::Color>> &players);
+    void init_visitors();
     void init_interaction();
     void place_first_card();
 

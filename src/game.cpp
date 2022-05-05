@@ -1,5 +1,6 @@
 #include "game.h"
 
+
 namespace carcassonne_game {
 
 void Game::init_players(std::vector<std::pair<sf::String, game_model::Color>> &players) {
@@ -7,6 +8,13 @@ numberOfPlayers = players.size();
 for(const auto &p : players){
     mPlayers.emplace_back(p.first,p.second);
 }
+}
+
+void Game::init_visitors() {
+    mVisitors.emplace_back(std::make_unique<visitors::RoadVisitor>(&mBoard));
+    mVisitors.emplace_back(std::make_unique<visitors::CastleVisitor>(&mBoard));
+    mVisitors.emplace_back(std::make_unique<visitors::MonasteryVisitor>(&mBoard));
+    mVisitors.emplace_back(std::make_unique<visitors::FieldVisitor>(&mBoard));
 }
 
 void Game::init_interaction() {
@@ -41,6 +49,7 @@ Game::Game(std::vector<std::pair<sf::String, game_model::Color>> players, GameRe
     mGameRenderPtr->set_boardView(&mBoard);
     placedCards.reserve(100);
     init_players(players);
+    init_visitors();
     init_interaction();
     place_first_card();
     //currentState = State::UNITPLACEMENT;
@@ -109,6 +118,9 @@ void Game::process_events(sf::Event &event) {
 }
 
 void Game::update() {
+    for(int i = 0; i < 3; i++){ //FieldVisitor goes in the end
+        mVisitors[i]->visit();
+    }
 }
 
 void Game::render() {

@@ -8,8 +8,8 @@ namespace game_model {
 struct Unit {
     explicit Unit(Player *owner_) : owner(owner_) {
     }
-    const Tile *tile = nullptr;
-    const Player *owner = nullptr;
+    Tile *tile = nullptr;
+    Player *owner = nullptr;
 };
 
 }  // namespace game_model

@@ -22,6 +22,11 @@ add_executable(${EXECUTABLE_NAME}
         include/game_cardDeck.h
         include/game_render.h
         include/game_menu.h
+        include/visitors_abstract.h
+        include/visitors_castle.h
+        include/visitors_field.h
+        include/visitors_monastery.h
+        include/visitors_road.h
         src/game_board.cpp
         src/game_card.cpp
         src/game_view.cpp
@@ -30,7 +35,12 @@ add_executable(${EXECUTABLE_NAME}
         src/interaction.cpp
         src/game_cardDeck.cpp
         src/game_render.cpp
-        src/game_menu.cpp)
+        src/game_menu.cpp
+        src/visitors_castle.cpp
+        src/visitors_field.cpp
+        src/visitors_monastery.cpp
+        src/visitors_road.cpp
+        )
 add_executable(main_debug
         src/main.cpp
         )
