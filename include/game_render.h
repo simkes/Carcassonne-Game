@@ -12,12 +12,20 @@ private:
     BoardView mBoardView;
     sf::Sprite mBackground1;
     sf::Sprite mTitle;
+    sf::Sprite mScoreSprite;
     sf::Text mText;
+    sf::Text mScoreText;
     Menu mMenu;
 
+    std::vector<game_model::Player> *players = nullptr; //for scoreboard
     sf::Text invitation;
+
+    void update_scoreboard();
 public:
     GameRender();
+    void set_players(std::vector<game_model::Player> *players_) {
+        players = players_;
+    }
     sf::RenderWindow& window() {
         return mWindow;
     };

@@ -11,6 +11,7 @@ void init_textures_and_font() {
     carcassonne_game::getTextures().load(game_view::textures::ID::UNIT_BLUE, "meeplesTextures/blueMeeple.png");
     carcassonne_game::getTextures().load(game_view::textures::ID::UNIT_BLACK, "meeplesTextures/blackMeeple.png");
     carcassonne_game::getTextures().load(game_view::textures::ID::TITLE, "carcasonne_title.png");
+    carcassonne_game::getTextures().load(game_view::textures::ID::SCORE, "score.png");
 
     carcassonne_game::getFont().loadFromFile("CyrilicOld.TTF");
 }

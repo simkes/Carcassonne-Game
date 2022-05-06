@@ -49,6 +49,7 @@ Game::Game(std::vector<std::pair<sf::String, game_model::Color>> players, GameRe
     mGameRenderPtr->set_boardView(&mBoard);
     placedCards.reserve(100);
     init_players(players);
+    mGameRenderPtr->set_players(&mPlayers);
     init_visitors();
     init_interaction();
     place_first_card();

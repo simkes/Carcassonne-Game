@@ -11,7 +11,7 @@ const int WINDOW_WIDTH = 1024;
 const int WINDOW_HEIGHT = 700;
 
 namespace textures {
-enum class ID { CARDS1, CARDS2, BACKGROUND, BACKGROUND2, UNIT_BLACK, UNIT_BLUE, UNIT_GREEN, UNIT_RED, UNIT_YELLOW, TITLE};
+enum class ID { CARDS1, CARDS2, BACKGROUND, UNIT_BLACK, UNIT_BLUE, UNIT_GREEN, UNIT_RED, UNIT_YELLOW, TITLE, SCORE};
 
 inline std::map<game_model::Color, ID> unit_color {{game_model::Color::RED, ID::UNIT_RED},{game_model::Color::BLACK, ID::UNIT_BLACK},
                                            {game_model::Color::BLUE, ID::UNIT_BLUE},{game_model::Color::GREEN, ID::UNIT_GREEN},

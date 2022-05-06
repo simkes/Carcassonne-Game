@@ -43,10 +43,10 @@ void defaultInteraction::defaultInterfaceInteraction(sf::Event &event) {
 void cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
     defaultInterfaceInteraction(event);
     if (event.type == sf::Event::KeyPressed) {
-        if (event.key.code == sf::Keyboard::Q) {
+        if (event.key.code == sf::Keyboard::A) {
             (*currentCard)->rotateLeft();
         }
-        if (event.key.code == sf::Keyboard::E) {
+        if (event.key.code == sf::Keyboard::D) {
             (*currentCard)->rotateRight();
         }
     }
