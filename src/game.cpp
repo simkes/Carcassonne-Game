@@ -33,7 +33,7 @@ void Game::set_currentCard() {
     placedCards.push_back(newCard);
     placedCards.back().setTiles();
     int textureId = placedCards.back().textureId;
-    placedCards.back().setSprite(*getTextures().get_texture(textureId < 17 ? textures::ID::CARDS1 : textures::ID::CARDS2));
+    placedCards.back().setSprite(*getTextures().get_texture(textureId < 16 ? textures::ID::CARDS1 : textures::ID::CARDS2));
     placedCards.back().setSpritePos({115,205});
     currentCardPtr = &placedCards.back();
 }

@@ -16,7 +16,7 @@ struct Card {
             for (int j = 0; j < CARD_DIMENSION; j++){
                 int temp;
                 ss >> temp;
-                mTiles[CARD_DIMENSION - i - 1].emplace_back(typesVector[temp]);
+                mTiles[j].emplace_back(typesVector[temp]);
             }
         }
         mSprite.setOrigin(74, 74);

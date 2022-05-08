@@ -12,7 +12,6 @@ bool Board::canAddCard(sf::Vector2i pos, Card &card) {
         pos.y % (CARD_DIMENSION - 1) != 0) {
         return false;
     }
-    // TODO: debug, rewrite simpler
     for (int dy : {0, CARD_DIMENSION - 1}) {
         for (int dx = 0; dx < CARD_DIMENSION; dx++) {
             auto board_tile = mTiles[sf::Vector2i{pos.x + dx , pos.y + dy}];

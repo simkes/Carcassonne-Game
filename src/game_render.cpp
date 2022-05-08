@@ -8,7 +8,9 @@ GameRender::GameRender()
       mScoreText("", getFont(), 30) {
     mBackground1.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND));
     mBackground1.setPosition(0, 0);
-
+    getTextures().get_texture(game_view::textures::ID::BACKGROUND_TILE)->setRepeated(true);
+    mBackground2.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND_TILE));
+    mBackground2.setTextureRect({0, 0, 6000, 6000});
     mTitle.setTexture(*getTextures().get_texture(game_view::textures::ID::TITLE));
     mTitle.setPosition((float)WINDOW_WIDTH/3,5);
 
@@ -38,6 +40,9 @@ void GameRender::render(const sf::String &name) {
     mText.setString(name + "'s Move");
     mWindow.clear();
     mWindow.draw(mBackground1);
+    mWindow.setView(mBoardView.getView());
+    mWindow.draw(mBackground2);
+    mWindow.setView(mWindow.getDefaultView());
     mWindow.draw(mScoreSprite);
     mWindow.draw(mScoreText);
     mWindow.draw(mTitle);
@@ -56,6 +61,9 @@ void GameRender::render_with_card(game_model::Card *curCardPtr, const sf::String
 
     mWindow.clear();
     mWindow.draw(mBackground1);
+    mWindow.setView(mBoardView.getView());
+    mWindow.draw(mBackground2);
+    mWindow.setView(mWindow.getDefaultView());
     mWindow.draw(mScoreSprite);
     mWindow.draw(mScoreText);
     mWindow.draw(mTitle);

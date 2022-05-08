@@ -3,6 +3,7 @@
 #include "game_board.h"
 #include "game_unit.h"
 #include "game_player.h"
+#include <unordered_map>
 
 using namespace game_model;
 

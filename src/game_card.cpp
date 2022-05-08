@@ -5,7 +5,7 @@
 namespace game_model {
 
 Tile &Card::getTile(int x, int y) {
-    return mTiles[y][x].get();
+    return mTiles[x][y].get();
 }
 
 const std::vector<std::vector<Tile>> &Card::getTiles() const{
@@ -16,7 +16,7 @@ void Card::rotateRight() {
     std::vector<std::vector<Tile>> tempVector(CARD_DIMENSION,std::vector<Tile>(CARD_DIMENSION));
     for (int j = 0; j < CARD_DIMENSION; j++) {
         for (int i = 0; i < CARD_DIMENSION; i++) {
-            tempVector[i][CARD_DIMENSION - j - 1] = mTiles[j][i];
+            tempVector[CARD_DIMENSION - i - 1][j] = mTiles[j][i];
         }
     }
     rotation = (rotation + 1) % 4;

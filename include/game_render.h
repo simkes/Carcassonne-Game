@@ -11,6 +11,7 @@ private:
     sf::RenderWindow mWindow;
     BoardView mBoardView;
     sf::Sprite mBackground1;
+    sf::Sprite mBackground2;
     sf::Sprite mTitle;
     sf::Sprite mScoreSprite;
     sf::Text mText;
