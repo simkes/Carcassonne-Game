@@ -57,12 +57,12 @@ void cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
                 {event.mouseButton.x, event.mouseButton.y},
                 mainView->getView());
 
-             if
-             (gameBoard->canAddCard(game_view::to_tiles_coords(worldCoords),
-             **currentCard)) {
-            gameBoard->addCard(game_view::to_tiles_coords(worldCoords),
-                               **currentCard);
-                sf::Vector2f spritePos = game_view::align_card_coords(worldCoords);
+            if (gameBoard->canAddCard(game_view::to_tiles_coords(worldCoords),
+                                      **currentCard)) {
+                gameBoard->addCard(game_view::to_tiles_coords(worldCoords),
+                                   **currentCard);
+                sf::Vector2f spritePos =
+                    game_view::align_card_coords(worldCoords);
                 (*currentCard)->setSpritePos(spritePos);
                 endOfState = true;
             } else {
@@ -74,6 +74,11 @@ void cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
 
 void unitPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
     defaultInterfaceInteraction(event);
+
+    if (!currentPlayer->get_unit()) {
+        return;
+    }
+
     if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Enter) {
             endOfState = true;
@@ -82,21 +87,44 @@ void unitPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
     }
 
     if (event.type == sf::Event::MouseButtonPressed) {
-        if (event.mouseButton.button == sf::Mouse::Left) {
-            sf::Vector2i clickCoordinates(mainView->getView().getCenter());
-            clickCoordinates.x +=
-                (event.mouseButton.x -
-                 static_cast<int>(mainView->getView().getSize().x / 2));
-            clickCoordinates.y +=
-                (event.mouseButton.y -
-                 static_cast<int>(mainView->getView().getSize().y / 2));
+        if (event.mouseButton.button == sf::Mouse::Right) {
+            /*sf::Vector2f worldCoords = mWindow->mapPixelToCoords(
+                {event.mouseButton.x, event.mouseButton.y},
+                mainView->getView());
 
-            gameBoard->getTiles()[clickCoordinates].unit =
-                currentPlayer->get_unit();
-            gameBoard->getTiles()[clickCoordinates].unit->tile =
-                &gameBoard->getTiles()[clickCoordinates];
+            if (gameBoard->canAddCard(game_view::to_tiles_coords(worldCoords),
+                                      **currentCard)) {
+                gameBoard->addCard(game_view::to_tiles_coords(worldCoords),
+                                   **currentCard);
+                sf::Vector2f spritePos =
+                    game_view::align_card_coords(worldCoords);
+                (*currentCard)->setSpritePos(spritePos);
+                endOfState = true;*/
+            sf::Vector2i worldCoords =
+                game_view::to_tiles_coords(mWindow->mapPixelToCoords(
+                    {event.mouseButton.x, event.mouseButton.y},
+                    mainView->getView()));
+
+            game_model::Tile &currentTile =
+                gameBoard->getTiles()[worldCoords].get();
+
+            if (currentTile.type == game_model::Type::NOTHING ||
+                currentTile.type == game_model::Type::JUNCTION ||
+                currentTile.type == game_model::Type::CASTLEWITHSHIELD) {
+                // may be text jn window
+            } else {
+
+                currentTile.unit = currentPlayer->get_unit();
+                currentTile.unit->tile = &currentTile;
+
+                /*gameBoard->getTiles()[worldCoords].unit =
+                    currentPlayer->get_unit();
+                gameBoard->getTiles()[worldCoords].unit->tile =
+                    &gameBoard->getTiles()[worldCoords];*/
+            }
         }
     }
+
 }
 
 }  // namespace interaction

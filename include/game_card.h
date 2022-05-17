@@ -39,6 +39,7 @@ struct Card {
     std::vector<std::vector<Tile>> mTiles;
 
     sf::Sprite mSprite;
+    sf::Vector2f mPosition;
 };
 
 }  // namespace game_model

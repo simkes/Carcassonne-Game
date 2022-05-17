@@ -14,9 +14,10 @@ struct Player {
     Player(const sf::String& name_, Color color_)
         : name(name_), color(color_), human(true) {
         for(int i = 0; i < NUMBER_OF_UNITS; i++){
-            units.emplace_back(this);
+            units.emplace_back(this); //?
         }
     }
+
     Unit *get_unit(){
         for (int i = 0; i < NUMBER_OF_UNITS; i++){
             if(units[i].tile == nullptr){

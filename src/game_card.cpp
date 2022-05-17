@@ -47,6 +47,7 @@ void Card::setSprite(const sf::Texture &card_texture) {
 void Card::setSpritePos(sf::Vector2f pos) {
     mSprite.setRotation(static_cast<float>(90 * rotation));
     mSprite.setPosition(pos);
+    mPosition = pos;
 }
 
 }  // namespace game_model

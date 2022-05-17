@@ -40,7 +40,7 @@ private:
 struct unitPlacementInteraction : public defaultInteraction {
     explicit unitPlacementInteraction(game_model::Board &gameBoard_,
                                       game_view::BoardView &mainView_,
-                                      game_model::Card *currentCard_,
+                                      game_model::Card **currentCard_,
                                       game_model::Player *currentPlayer_,
                                           sf::RenderWindow &mWindow_)
         : defaultInteraction(gameBoard_, mainView_, mWindow_),
@@ -52,7 +52,7 @@ struct unitPlacementInteraction : public defaultInteraction {
     // &card): Board(board), currentCardPtr(card){}
 
 private:
-    game_model::Card *currentCard;
+    game_model::Card **currentCard;
     game_model::Player *currentPlayer;
 };
 

@@ -20,7 +20,7 @@ void Game::init_visitors() {
 void Game::init_interaction() {
     mInteraction.emplace(State::DEFAULT, std::make_unique<defaultInteraction>(mBoard, mGameRenderPtr->get_boardView(), mGameRenderPtr->window()));
     mInteraction.emplace(State::CARDPLACEMENT, std::make_unique<cardPlacementInteraction>(mBoard, mGameRenderPtr->get_boardView(), &currentCardPtr, mGameRenderPtr->window()));
-    mInteraction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(mBoard, mGameRenderPtr->get_boardView(), currentCardPtr, currentPlayerPtr, mGameRenderPtr->window()));
+    mInteraction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(mBoard, mGameRenderPtr->get_boardView(), &currentCardPtr, currentPlayerPtr, mGameRenderPtr->window()));
 }
 
 void Game::set_currentCard() {
