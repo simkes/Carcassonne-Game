@@ -11,21 +11,23 @@ struct Player {
     int score = 0;
     const bool human;
 
-    Player(const sf::String& name_, Color color_)
+    Player(const sf::String &name_, Color color_)
         : name(name_), color(color_), human(true) {
-        for(int i = 0; i < NUMBER_OF_UNITS; i++){
-            units.emplace_back(this); //?
-        }
+        units.resize(NUMBER_OF_UNITS, this);
+        /*for(int i = 0; i < NUMBER_OF_UNITS; i++){
+            units[i] = this;
+        }*/
     }
 
-    Unit *get_unit(){
-        for (int i = 0; i < NUMBER_OF_UNITS; i++){
-            if(units[i].tile == nullptr){
+    Unit *get_unit() {
+        for (int i = 0; i < NUMBER_OF_UNITS; i++) {
+            if (units[i].tile == nullptr) {
                 return &units[i];
             }
         }
         return nullptr;
     }
+
 private:
     std::vector<Unit> units;
 };

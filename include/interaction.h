@@ -9,7 +9,8 @@ namespace interaction {
 
 struct defaultInteraction {
     explicit defaultInteraction(game_model::Board &gameBoard_,
-                                game_view::BoardView &mainView_, sf::RenderWindow &mWindow_)
+                                game_view::BoardView &mainView_,
+                                sf::RenderWindow &mWindow_)
         : gameBoard(&gameBoard_), mainView(&mainView_), mWindow(&mWindow_){};
     virtual void handleEvent(sf::Event &event, bool &endOfState);
 
@@ -18,7 +19,7 @@ struct defaultInteraction {
     virtual ~defaultInteraction() = default;
 
 protected:
-    game_view::BoardView *mainView; // <- needed pointer cuz view is changing
+    game_view::BoardView *mainView;  // <- needed pointer cuz view is changing
     game_model::Board *gameBoard;
     sf::RenderWindow *mWindow;
 };  // may be better to name baseInteraction or smt
@@ -27,8 +28,9 @@ struct cardPlacementInteraction : public defaultInteraction {
     explicit cardPlacementInteraction(game_model::Board &gameBoard_,
                                       game_view::BoardView &mainView_,
                                       game_model::Card **currentCard_,
-                                          sf::RenderWindow &mWindow_)
-        : defaultInteraction(gameBoard_, mainView_, mWindow_), currentCard(currentCard_) {
+                                      sf::RenderWindow &mWindow_)
+        : defaultInteraction(gameBoard_, mainView_, mWindow_),
+          currentCard(currentCard_) {
     }
     void handleEvent(sf::Event &event, bool &endOfState) override;
 
@@ -42,12 +44,15 @@ struct unitPlacementInteraction : public defaultInteraction {
                                       game_view::BoardView &mainView_,
                                       game_model::Card **currentCard_,
                                       game_model::Player *currentPlayer_,
-                                          sf::RenderWindow &mWindow_)
+                                      sf::RenderWindow &mWindow_)
         : defaultInteraction(gameBoard_, mainView_, mWindow_),
           currentCard(currentCard_),
           currentPlayer(currentPlayer_) {
     }
     void handleEvent(sf::Event &event, bool &endOfState) override;
+
+    void setCurrentPlayer(game_model::Player *newPlayer);
+
     // cardPlacementInteraction(game_model::Board &board, game_model::Card
     // &card): Board(board), currentCardPtr(card){}
 
@@ -56,6 +61,6 @@ private:
     game_model::Player *currentPlayer;
 };
 
-}  // namespace mInteraction
+}  // namespace interaction
 
 #endif  // INTERACTION_H_

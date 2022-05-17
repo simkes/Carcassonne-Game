@@ -6,7 +6,7 @@
 namespace game_model {
 
 struct Unit {
-    explicit Unit(Player *owner_) : owner(owner_) {
+    Unit(Player *owner_) : owner(owner_) {
     }
     Tile *tile = nullptr;
     Player *owner = nullptr;

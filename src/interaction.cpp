@@ -72,12 +72,12 @@ void cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
     }
 }
 
+void unitPlacementInteraction::setCurrentPlayer(game_model::Player *newPlayer) {
+    currentPlayer = newPlayer;
+}
+
 void unitPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
     defaultInterfaceInteraction(event);
-
-    if (!currentPlayer->get_unit()) {
-        return;
-    }
 
     if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Enter) {
@@ -87,6 +87,10 @@ void unitPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
     }
 
     if (event.type == sf::Event::MouseButtonPressed) {
+        if (!currentPlayer->get_unit()) {
+            return;
+        }
+
         if (event.mouseButton.button == sf::Mouse::Right) {
             /*sf::Vector2f worldCoords = mWindow->mapPixelToCoords(
                 {event.mouseButton.x, event.mouseButton.y},
@@ -111,9 +115,8 @@ void unitPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
             if (currentTile.type == game_model::Type::NOTHING ||
                 currentTile.type == game_model::Type::JUNCTION ||
                 currentTile.type == game_model::Type::CASTLEWITHSHIELD) {
-                // may be text jn window
+                // may be text in window
             } else {
-
                 currentTile.unit = currentPlayer->get_unit();
                 currentTile.unit->tile = &currentTile;
 
@@ -124,7 +127,6 @@ void unitPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState) {
             }
         }
     }
-
 }
 
 }  // namespace interaction
