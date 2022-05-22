@@ -40,6 +40,8 @@ add_executable(${EXECUTABLE_NAME}
         src/visitors_field.cpp
         src/visitors_monastery.cpp
         src/visitors_road.cpp
+        src/server.cpp
+        src/serverGame.cpp
         )
 add_executable(main_debug
         src/main.cpp

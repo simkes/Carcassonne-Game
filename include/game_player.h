@@ -2,6 +2,7 @@
 #define GAME_PLAYER_H_
 
 #include "game_unit.h"
+#include <SFML/Network.hpp>
 
 namespace game_model {
 
@@ -28,8 +29,14 @@ struct Player {
         return nullptr;
     }
 
+    [[nodiscard]] int get_index() const {
+        return index;
+    }
+
 private:
     std::vector<Unit> units;
+    int index;
+    // sf::TcpSocket socket;
 };
 
 }  // namespace game_model
