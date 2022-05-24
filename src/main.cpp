@@ -22,13 +22,14 @@ int main() {
 
     carcassonne_game::game_client::Client client;
     client.is_host(); // ask client to be a host/to connect
-    unsigned short port = client.get_mRender().menu().ask_port(); // ask port
+    unsigned short port =
+        client.get_mRender().get_menu().ask_port(); // ask port
     sf::IpAddress ip = sf::IpAddress::LocalHost; // default IP  = sf::IpAddress::LocalHost
     if(client.is_host()) {
         //carcassonne_game::game_server::Server server(port); // con-r from port
         // client connects to server and smt
     } else {
-        //sf::IpAddress ip(client.get_mRender().menu().ask_IP()); // ask IP
+        //sf::IpAddress ip(client.get_mRender().get_menu().ask_IP()); // ask IP
     }
 
     if(client.connect(ip,port, sf::seconds(5.f)) != sf::TcpSocket::Done) {

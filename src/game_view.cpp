@@ -15,58 +15,73 @@ sf::Texture *TextureHolder::get_texture(textures::ID id) {
     return mTextureMap[id].get();
 }
 
-void BoardView::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    for (auto object : mBoard->getTiles()) {
-            if (object.first.x % (CARD_DIMENSION - 1) == CARD_DIMENSION / 2 &&
-                object.first.y % (CARD_DIMENSION - 1) == CARD_DIMENSION / 2 &&
-                object.second.card != nullptr) {
-                    target.draw(object.second.card->mSprite);
-            }
-        }
+CardView::CardView(int texture_id, sf::Vector2f position, int rotation) {
+    mSprite.setTexture(*getTextures().get_texture(texture_id < 16 ? textures::ID::CARDS1 : textures::ID::CARDS2));
+    int x = game_view::textures::cardCoordinates[texture_id].first;
+    int y = game_view::textures::cardCoordinates[texture_id].second;
+    mSprite.setTextureRect(sf::IntRect (y*game_view::textures::CARD_TEXTURE_SIZE,
+                                       x*game_view::textures::CARD_TEXTURE_SIZE,
+                                       game_view::textures::CARD_TEXTURE_SIZE,
+                                       game_view::textures::CARD_TEXTURE_SIZE));
+    mSprite.setOrigin(textures::CARD_TEXTURE_SIZE/2, textures::CARD_TEXTURE_SIZE/2);
+    mSprite.setRotation(90 * rotation);
+    mSprite.setPosition(position);
+}
 
-    for (auto object : mBoard->getTiles()) {
-        if (object.second.unit != nullptr) {
-            UnitView(*object.second.unit, *getTextures().get_texture(textures::unit_color[object.second.unit->owner->color]));
-        }
+void CardView::draw(sf::RenderTarget &target) const {
+    target.draw(mSprite);
+}
+
+UnitView::UnitView(int color, sf::Vector2f position) {
+    game_model::Color col = game_model::colorsVector[color];
+    mSprite.setTexture(*getTextures().get_texture(textures::unit_color[col]));
+    mSprite.setPosition(position);
+}
+
+void UnitView::draw(sf::RenderTarget &target) const {
+    target.draw(mSprite);
+}
+
+void BoardView::add_card(int texture_id, sf::Vector2f position, int rotation) {
+    CardView new_card(texture_id, position, rotation);
+    placedCards.push_back(new_card);
+}
+
+void BoardView::add_unit(int color, sf::Vector2i position) {
+    UnitView new_unit(color, transform_coordinates(position)); //TODO
+    units.insert({position,new_unit});
+}
+
+void BoardView::delete_unit(sf::Vector2i position) {
+    units.erase(position);
+}
+
+void BoardView::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+    for (const auto& object : placedCards) {
+        object.draw(target);
+    }
+    for (const auto& object :units) {
+        object.second.draw(target);
     }
 }
 
-void CardView::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    target.draw(mSprite, states);
+void CurrentCardView::set_texture(int texture_id) {
+    mSprite.setTexture(*getTextures().get_texture(texture_id < 16 ? textures::ID::CARDS1 : textures::ID::CARDS2));
+    int x = game_view::textures::cardCoordinates[texture_id].first;
+    int y = game_view::textures::cardCoordinates[texture_id].second;
+    mSprite.setTextureRect(sf::IntRect (y*game_view::textures::CARD_TEXTURE_SIZE,
+                                       x*game_view::textures::CARD_TEXTURE_SIZE,
+                                       game_view::textures::CARD_TEXTURE_SIZE,
+                                       game_view::textures::CARD_TEXTURE_SIZE));
 }
 
-CardView::CardView(game_model::Card &card,
-                   const sf::Texture &card_texture) {
-    mSprite.setTexture(card_texture);
-    int x = textures::cardCoordinates[card.textureId].first;
-    int y = textures::cardCoordinates[card.textureId].second;
-    mSprite.setTextureRect(sf::IntRect (x*textures::CARD_TEXTURE_SIZE, y*textures::CARD_TEXTURE_SIZE, textures::CARD_TEXTURE_SIZE, textures::CARD_TEXTURE_SIZE));
-    mSprite.setRotation(static_cast<float>(90 * card.rotation));
-    mSprite.setPosition(transform_coordinates(card.getTile(0, 0).position));
+void CurrentCardView::set_rotation(int rotation) {
+    mSprite.setRotation(90 * rotation);
 }
 
-void currentCardView::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    target.draw(mSprite, states);
+void CurrentCardView::draw(sf::RenderTarget &target) const {
+    target.draw(mSprite);
 }
 
-currentCardView::currentCardView(game_model::Card &card,
-                                 const sf::Texture &card_texture) {
-    mSprite.setTexture(card_texture);
-    int x = textures::cardCoordinates[card.textureId].first;
-    int y = textures::cardCoordinates[card.textureId].second;
-    mSprite.setTextureRect(sf::IntRect (x*textures::CARD_TEXTURE_SIZE, y*textures::CARD_TEXTURE_SIZE, textures::CARD_TEXTURE_SIZE, textures::CARD_TEXTURE_SIZE));
-    mSprite.setRotation(static_cast<float>(90 * card.rotation));
-    mSprite.setPosition(400, 50);
-}
-
-UnitView::UnitView(const game_model::Unit &unit,
-                   const sf::Texture &unit_texture) {
-    mSprite.setTexture(unit_texture);
-    mSprite.setPosition(transform_coordinates(unit.tile->position));
-}
-
-void UnitView::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    target.draw(mSprite, states);
-}
 
 }  // namespace game_view

@@ -10,6 +10,9 @@ class GameRender {
 private:
     sf::RenderWindow mWindow;
     BoardView mBoardView;
+    CurrentCardView mCurCardView;
+    sf::String mCurPlayer;
+
     sf::Sprite mBackground1;
     sf::Sprite mBackground2;
     sf::Sprite mTitle;
@@ -30,16 +33,25 @@ public:
     sf::RenderWindow& window() {
         return mWindow;
     };
-    Menu& menu() {
+    Menu& get_menu() {
         return mMenu;
     }
+    CurrentCardView& get_curCardView(){
+        return mCurCardView;
+    }
+    BoardView &get_boardView() {
+        return mBoardView;
+    }
+
+    void set_curPlayer(const std::string& name) {
+        mCurPlayer = name;
+    }
+
     void render(const sf::String &name);
     void render_with_card(game_model::Card* curCardPtr,const sf::String &name);
  //   std::vector<std::pair<sf::String, game_model::Color>> execute_menu();
     void set_boardView(game_model::Board *board);
-    BoardView &get_boardView() {
-        return mBoardView;
-    }
+
 };
 
 } // game_view

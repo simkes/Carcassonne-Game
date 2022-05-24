@@ -21,7 +21,7 @@ public:
 
     bool is_host() {
         if (host == -1) {
-            host = mRender.menu().execute_start();
+            host = mRender.get_menu().execute_start();
         }
         return host;
     }
@@ -30,9 +30,10 @@ public:
     }
 
     sf::Socket::Status connect(const sf::IpAddress & IP, unsigned short port, sf::Time timeout);
-    sf::Socket::Status place_card (PacketType type, sf::Packet packet);
-    sf::Socket::Status place_unit (PacketType type, sf::Packet packet);
     sf::Socket::Status receive();
+    sf::Socket::Status place_card ();
+    sf::Socket::Status place_unit ();
+    sf::Socket::Status new_turn(sf::Packet packet);
     sf::Socket::Status update(sf::Packet packet);
 };
 
