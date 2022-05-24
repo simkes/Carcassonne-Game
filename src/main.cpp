@@ -1,4 +1,5 @@
-#include "game.h"
+#include "client.h"
+#include "server.h"
 #include <iostream>
 
 void init_textures_and_font() {
@@ -18,11 +19,28 @@ void init_textures_and_font() {
 
 int main() {
     init_textures_and_font();
-    game_view::GameRender gameRender;
-    carcassonne_game::Game newGame(gameRender.start_game(), &gameRender);
-    try {
-        newGame.run();
-    } catch (const std::exception &exc) {
-        std::cout << exc.what();
+
+    carcassonne_game::game_client::Client client;
+    client.is_host(); // ask client to be a host/to connect
+    unsigned short port = client.get_mRender().menu().ask_port(); // ask port
+    sf::IpAddress ip = sf::IpAddress::LocalHost; // default IP  = sf::IpAddress::LocalHost
+    if(client.is_host()) {
+        //carcassonne_game::game_server::Server server(port); // con-r from port
+        // client connects to server and smt
+    } else {
+        //sf::IpAddress ip(client.get_mRender().menu().ask_IP()); // ask IP
     }
+
+    if(client.connect(ip,port, sf::seconds(5.f)) != sf::TcpSocket::Done) {
+        std::cout << "Failed to connect\n";
+    }
+
+
+
+   // carcassonne_game::Game newGame(gameRender.run(), &gameRender);
+//    try {
+//        newGame.run();
+//    } catch (const std::exception &exc) {
+//        std::cout << exc.what();
+//    }
 }

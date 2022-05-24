@@ -15,15 +15,15 @@ private:
     sf::Sprite background;
     sf::Vector2f startSprPos = {212, 150};
 
-    std::vector<std::pair<sf::String, game_model::Color>> players;
-
-    void execute_start();
-    int get_number();
-    void get_players(int number);
+  //  int get_number();
+   // void get_players(int number);
 
 public:
     explicit Menu(sf::RenderWindow &window_);
-    std::vector<std::pair<sf::String, game_model::Color>> start_game();
+    bool execute_start(); // returns true if client chose to be a host, otherwise false - connect to a host
+    int ask_port();
+    sf::String ask_IP();
+
 
 };
 

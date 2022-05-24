@@ -77,9 +77,9 @@ void GameRender::render_with_card(game_model::Card *curCardPtr, const sf::String
     mWindow.display();
 }
 
-std::vector<std::pair<sf::String, game_model::Color>> GameRender::start_game() {
-    return mMenu.start_game();
-}
+//std::vector<std::pair<sf::String, game_model::Color>> GameRender::execute_menu() {
+//    return mMenu.run();
+//}
 
 void GameRender::set_boardView(game_model::Board *board) {
     mBoardView.setBoard(board);

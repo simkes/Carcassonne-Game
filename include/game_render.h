@@ -30,9 +30,12 @@ public:
     sf::RenderWindow& window() {
         return mWindow;
     };
+    Menu& menu() {
+        return mMenu;
+    }
     void render(const sf::String &name);
     void render_with_card(game_model::Card* curCardPtr,const sf::String &name);
-    std::vector<std::pair<sf::String, game_model::Color>> start_game();
+ //   std::vector<std::pair<sf::String, game_model::Color>> execute_menu();
     void set_boardView(game_model::Board *board);
     BoardView &get_boardView() {
         return mBoardView;

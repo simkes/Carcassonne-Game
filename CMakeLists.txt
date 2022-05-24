@@ -27,6 +27,7 @@ add_executable(${EXECUTABLE_NAME}
         include/visitors_field.h
         include/visitors_monastery.h
         include/visitors_road.h
+        include/server.h
         src/game_board.cpp
         src/game_card.cpp
         src/game_view.cpp
@@ -42,7 +43,7 @@ add_executable(${EXECUTABLE_NAME}
         src/visitors_road.cpp
         src/server.cpp
         src/serverGame.cpp
-        )
+        include/client.h src/client.cpp include/server_common.h)
 add_executable(main_debug
         src/main.cpp
         )
