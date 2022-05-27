@@ -70,10 +70,15 @@ struct CurrentCardView {
         mSprite.setOrigin(textures::CARD_TEXTURE_SIZE/2, textures::CARD_TEXTURE_SIZE/2);
     }
     void set_texture(int texture_id);
-    void set_rotation(int rotation);
+    void rotate_R();
+    void rotate_L();
+    int get_rotation(){
+        return rotation;
+    }
     void draw(sf::RenderTarget &target) const;
 private:
     sf::Sprite mSprite;
+    int rotation = 0;
 };
 
 }  // namespace game_view

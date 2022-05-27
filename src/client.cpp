@@ -2,6 +2,12 @@
 
 namespace carcassonne_game::game_client {
 
+void Client::init_interaction() {
+    mInteraction.emplace(State::DEFAULT, std::make_unique<defaultInteraction>(&mRender));
+    mInteraction.emplace(State::CARDPLACEMENT, std::make_unique<cardPlacementInteraction>(&mRender));
+    mInteraction.emplace(State::UNITPLACEMENT, std::make_unique<unitPlacementInteraction>(&mRender));
+}
+
 sf::Socket::Status Client::connect(const sf::IpAddress &IP,
                                    unsigned short port, sf::Time timeout) {
     return mSocket.connect(IP, port, timeout);
@@ -51,13 +57,14 @@ sf::Socket::Status Client::receive() {
             break;
         }
         case PLACE_CARD: { // just packet type ?
-            return place_card();
+            return place_card(); // sends (type), (int,int) coordinates of tile where wants to put card and rotation
         }
         case PLACE_UNIT: { // just packet type ?
-            return place_unit();
+            return place_unit(); // sends (type), (int,int) coordinates of tile where wants to put unit
         }
         case NEW_TURN: { // receives (string) current player name, (int) texture of new current card id
-            return new_turn(packet);
+            new_turn(packet);
+            break;
         }
         case UPDATE: { // receives texture id of placed card, (int, int) its coordinates (cardX, cardY), (int) rotation
                        // when game starts receives first card (as in game.cpp place_first_card)
@@ -66,29 +73,57 @@ sf::Socket::Status Client::receive() {
                        // make visitors return vector<Vector2i> position of units returned to players and pass it to packet TODO
                        // it may be size of vector and then n pairs (int,int)
                        // current score?
-            return update(packet);
+            update(packet);
+            break;
+        }
+        case GAME_OVER: {
+            //TODO: print smt and end
+            break;
         }
     }
     return status;
 }
 
 sf::Socket::Status Client::place_card() {
-    return sf::Socket::NotReady;
+    endOfState = false;
+    sf::Event event{};
+    interaction::result ans;
+    while (mRender.window().isOpen() && !endOfState) { // ?
+        while (mRender.window().pollEvent(event)) {
+            ans = mInteraction[State::CARDPLACEMENT]->handleEvent(
+                event, endOfState);
+        }
+        mRender.render(true);
+    }
+    sf::Packet packet;
+    packet << PLACE_CARD << ans.tile_coordinates.x << ans.tile_coordinates.y << ans.card_rotation; // sends (type), (int,int) coordinates of tile where wants to put card and rotation
+    return mSocket.send(packet);
 }
 
 sf::Socket::Status Client::place_unit() {
-    return sf::Socket::NotReady;
+    endOfState = false;
+    sf::Event event{};
+    interaction::result ans;
+    while (mRender.window().isOpen() && !endOfState) {
+        while (mRender.window().pollEvent(event)) {
+            ans = mInteraction[State::UNITPLACEMENT]->handleEvent(event,
+                                                                  endOfState);
+        }
+        mRender.render(true);
+    }
+    sf::Packet packet;
+    packet << PLACE_CARD << ans.tile_coordinates.x << ans.tile_coordinates.y; // sends (type), (int,int) coordinates of tile where wants to put unit
+    return mSocket.send(packet);
 }
-sf::Socket::Status Client::new_turn(sf::Packet packet) {
+void Client::new_turn(sf::Packet packet) {
     std::string cur_player_name;
     int cur_card_texture;
     packet >> cur_player_name >> cur_card_texture;
     mRender.get_curCardView().set_texture(cur_card_texture);
     mRender.set_curPlayer(cur_player_name);
-    return sf::Socket::Done; // idk what should return
 }
 
-sf::Socket::Status Client::update(sf::Packet packet) {
+void Client::update(sf::Packet packet) {
     int texture_id;
     sf::Vector2i placed_card_coords;
     int rotation;
@@ -109,7 +144,7 @@ sf::Socket::Status Client::update(sf::Packet packet) {
         mRender.get_boardView().delete_unit(deleted_unit_coords);
     }
     // packet >> some score
-    return sf::Socket::Done;
 }
+
 
 }

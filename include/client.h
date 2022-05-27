@@ -15,9 +15,14 @@ private:
     int host = -1;
 
     game_view::GameRender mRender;
+    bool endOfState = false;
+    std::map<State, std::unique_ptr<defaultInteraction>> mInteraction;
+    void init_interaction();
 
 public:
-    Client() = default;
+    Client() {
+        init_interaction();
+    }
 
     bool is_host() {
         if (host == -1) {
@@ -33,8 +38,8 @@ public:
     sf::Socket::Status receive();
     sf::Socket::Status place_card ();
     sf::Socket::Status place_unit ();
-    sf::Socket::Status new_turn(sf::Packet packet);
-    sf::Socket::Status update(sf::Packet packet);
+    void new_turn(sf::Packet packet);
+    void update(sf::Packet packet);
 };
 
 }

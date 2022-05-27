@@ -4,6 +4,12 @@
 #include "game_common.h"
 #include "game_menu.h"
 
+namespace interaction {
+struct defaultInteraction; // declaration
+struct cardPlacementInteraction;
+struct unitPlacementInteraction;
+}
+
 namespace game_view{
 
 class GameRender {
@@ -47,11 +53,13 @@ public:
         mCurPlayer = name;
     }
 
-    void render(const sf::String &name);
-    void render_with_card(game_model::Card* curCardPtr,const sf::String &name);
+    void render(bool card);
  //   std::vector<std::pair<sf::String, game_model::Color>> execute_menu();
-    void set_boardView(game_model::Board *board);
+ //   void set_boardView(game_model::Board *board);
 
+    friend interaction::defaultInteraction;
+    friend interaction::cardPlacementInteraction;
+    friend interaction::unitPlacementInteraction;
 };
 
 } // game_view

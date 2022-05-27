@@ -2,7 +2,8 @@
 
 namespace visitors{
 
-void visitors::MonasteryVisitor::visit() {
+std::vector<sf::Vector2i> visitors::MonasteryVisitor::visit() {
+    std::vector<sf::Vector2i> deleted_units;
     for (auto &tile : boardPtr->getTypeMap()[Type::MONASTERY]){
         if (tile.unit){
             sf::Vector2i tilePos = tile.position;
@@ -14,12 +15,14 @@ void visitors::MonasteryVisitor::visit() {
                 }
             }
             if (surrounded) {
+             deleted_units.push_back(tile.position);
              tile.unit->owner->score+=9;
              tile.unit->tile = nullptr;
              tile.unit = nullptr;
             }
         }
     }
+    return deleted_units;
 }
 
 } // namespace visitors

@@ -14,6 +14,7 @@ const PacketType PLACE_CARD = 3;
 const PacketType PLACE_UNIT = 4;
 const PacketType NEW_TURN = 5;
 const PacketType UPDATE = 6;
+const PacketType GAME_OVER = 7;
 
 } // namespace carcassonne_game
 

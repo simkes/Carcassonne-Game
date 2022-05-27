@@ -7,7 +7,7 @@ namespace visitors{
 class MonasteryVisitor final : public AbstractVisitor {
 public:
     explicit MonasteryVisitor(Board *boardPtr_) : AbstractVisitor(boardPtr_) {}
-    void visit() final;
+    std::vector<sf::Vector2i> visit() final;
 private:
     const std::vector<sf::Vector2i> directions { {CARD_DIMENSION,0}, {0, CARD_DIMENSION},
                                                {-CARD_DIMENSION,0}, {0, -CARD_DIMENSION},

@@ -75,13 +75,17 @@ void CurrentCardView::set_texture(int texture_id) {
                                        game_view::textures::CARD_TEXTURE_SIZE));
 }
 
-void CurrentCardView::set_rotation(int rotation) {
-    mSprite.setRotation(90 * rotation);
-}
-
 void CurrentCardView::draw(sf::RenderTarget &target) const {
     target.draw(mSprite);
 }
-
+void CurrentCardView::rotate_R() {
+    rotation = (rotation + 1) % 4;
+    mSprite.setRotation(90 * rotation);
+}
+void CurrentCardView::rotate_L() {
+    for (int i = 0; i < 3; i++) {
+        rotate_R();
+    }
+}
 
 }  // namespace game_view

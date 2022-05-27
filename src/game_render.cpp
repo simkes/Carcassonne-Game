@@ -35,9 +35,12 @@ void GameRender::update_scoreboard() {
     mScoreText.setString(text);
 }
 
-void GameRender::render(const sf::String &name) {
+void GameRender::render(bool card) {
     update_scoreboard();
-    mText.setString(name + "'s Move");
+    mText.setString(mCurPlayer + "'s Move");
+    if(card) {
+        invitation.setString("Place the card");
+    }
     mWindow.clear();
     mWindow.draw(mBackground1);
     mWindow.setView(mBoardView.getView());
@@ -51,40 +54,21 @@ void GameRender::render(const sf::String &name) {
     mBoardView.draw(mWindow,
                     sf::RenderStates::Default);  // TOD: RenderStates ??
     mWindow.setView(mWindow.getDefaultView());
-    mWindow.display();
-}
-
-void GameRender::render_with_card(game_model::Card *curCardPtr, const sf::String &name) {
-    update_scoreboard();
-    mText.setString(name + "'s Move");
-    invitation.setString("Place the card");
-
-    mWindow.clear();
-    mWindow.draw(mBackground1);
-    mWindow.setView(mBoardView.getView());
-    mWindow.draw(mBackground2);
-    mWindow.setView(mWindow.getDefaultView());
-    mWindow.draw(mScoreSprite);
-    mWindow.draw(mScoreText);
-    mWindow.draw(mTitle);
-    mWindow.draw(mText);
-    mWindow.draw(invitation);
-    mWindow.setView(mBoardView.getView());
-    mBoardView.draw(mWindow,
-                    sf::RenderStates::Default);  // TOD: RenderStates ??
-    mWindow.setView(mWindow.getDefaultView());
-    mWindow.draw(curCardPtr->mSprite);
+    if(card) {
+        mWindow.draw(invitation);
+        mCurCardView.draw(mWindow);
+    }
     mWindow.display();
 }
 
 //std::vector<std::pair<sf::String, game_model::Color>> GameRender::execute_menu() {
 //    return mMenu.run();
 //}
-
-void GameRender::set_boardView(game_model::Board *board) {
-    mBoardView.setBoard(board);
-    //mWindow.setView(mBoardView.getView());
-}
+//
+//void GameRender::set_boardView(game_model::Board *board) {
+//    mBoardView.setBoard(board);
+//    //mWindow.setView(mBoardView.getView());
+//}
 
 
 }  // namespace game_view
