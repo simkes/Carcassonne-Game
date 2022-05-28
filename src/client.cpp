@@ -13,54 +13,74 @@ sf::Socket::Status Client::connect(const sf::IpAddress &IP,
     return mSocket.connect(IP, port, timeout);
 }
 
+void Client::process_game() {
+    interaction::result ans;
+    sf::Event event{};
+    while (mRender.window().pollEvent(event)) {
+        ans = mInteraction[currentState]->handleEvent(event,
+                                                      interactionEnd);
+    }
+    mRender.render(currentState == State::CARDPLACEMENT);
+    if (interactionEnd && currentState != State::DEFAULT) {
+        sf::Packet packet;
+        packet << curType << ans.tile_coordinates.x << ans.tile_coordinates.y
+               << ans.card_rotation;
+        while(mSocket.send(packet) != sf::Socket::Done){}
+    }
+    interactionEnd = false;
+}
+
+void Client::render_lobby() {
+    bool game_started = mRender.get_menu().lobby();
+    if(game_started) {
+        sf::Packet send_packet;
+        send_packet << curType << game_started;  // sends (type) WAIT_START (int) game_started
+        while(mSocket.send(send_packet) != sf::Socket::Done) {}
+    }
+}
+
+void Client::run() {
+    while(mRender.window().isOpen()){
+        receive();
+        if(curType == WAIT_START){
+            render_lobby();
+        } else if (curType > WAIT_START && curType < GAME_OVER) {
+            process_game();
+        }
+    }
+}
+
 sf::Socket::Status Client::receive() {
     sf::Packet packet;
     sf::Socket::Status status = mSocket.receive(packet);
-    PacketType type; // At the beginning of the packet goes its type (server_common.h)
-    packet>>type;
-    switch (type) {
+    if(status == sf::Socket::NotReady) { // no packet to receive
+        return status;
+    }
+    // At the beginning of the packet goes its type (server_common.h)
+    packet>>curType;
+
+    switch (curType) {
         case INITIAL: {
-            int n;  // receives n - number of colors available, n available colors indexes
-            packet >> n;
-            std::vector<int> available_colors(n);
-            for (int i = 0; i < n; i++) {
-                packet >> available_colors[i];  // index of color ( in game_common: 0 = RED, 1 = YELLOW, 2 = GREEN, 3 = BLUE, 4 = BLACK)
-            }
-            std::pair<std::string, int> answer =
-                mRender.get_menu().ask_name_color(available_colors);
-            sf::Packet send_packet;
-            send_packet
-                << type << answer.first
-                << answer.second;  // sends (type) INITIAL (string) name (int) color
-            return mSocket.send(send_packet);
+            init(packet);
+            break;
         }
         case WAIT_START: {
-            PacketType n; // receives n - number of players, n strings - names
-            packet >> n;
-            std::vector<std::string> players_list(n);
-            for(int i = 0; i < n; i++){
-                packet >> players_list[i]; // names of players in lobby
-            }
-            bool game_started = mRender.get_menu().start_game(host, players_list); // if client is host returns true - game started, otherwise returns false,
-                                                                               // prints list of players in lobby
-            if(game_started) {
-                sf::Packet send_packet;
-                send_packet << type << game_started;  // sends (type) WAIT_START (int) game_started
-                return mSocket.send(send_packet);
-            }
+            wait_start(packet);
             break;
         }
         case ERROR:{ // receives some error message
             std::string error_msg;
             packet >> error_msg;
-            //print msg
+            mRender.set_errorMessage(error_msg);
             break;
         }
-        case PLACE_CARD: { // just packet type ?
-            return place_card(); // sends (type), (int,int) coordinates of tile where wants to put card and rotation
+        case PLACE_CARD: {
+            currentState = State::CARDPLACEMENT; // sends (type), (int,int) coordinates of tile where wants to put card and rotation
+            break;
         }
-        case PLACE_UNIT: { // just packet type ?
-            return place_unit(); // sends (type), (int,int) coordinates of tile where wants to put unit
+        case PLACE_UNIT: {
+            currentState = State::UNITPLACEMENT; // sends (type),  (int,int) coordinates of tile where wants to put unit
+            break;
         }
         case NEW_TURN: { // receives (string) current player name, (int) texture of new current card id
             new_turn(packet);
@@ -88,38 +108,33 @@ sf::Socket::Status Client::receive() {
     return status;
 }
 
-sf::Socket::Status Client::place_card() {
-    endOfState = false;
-    sf::Event event{};
-    interaction::result ans;
-    while (mRender.window().isOpen() && !endOfState) { // ?
-        while (mRender.window().pollEvent(event)) {
-            ans = mInteraction[State::CARDPLACEMENT]->handleEvent(
-                event, endOfState);
-        }
-        mRender.render(true);
+void Client::init(sf::Packet &packet) {
+    PacketType n;  // receives n - number of colors available, n available colors indexes
+    packet >> n;
+    std::vector<int> available_colors(n);
+    for (int i = 0; i < n; i++) {
+        packet >> available_colors[i];  // index of color ( in game_common: 0 = RED, 1 = YELLOW, 2 = GREEN, 3 = BLUE, 4 = BLACK)
     }
-    sf::Packet packet;
-    packet << PLACE_CARD << ans.tile_coordinates.x << ans.tile_coordinates.y << ans.card_rotation; // sends (type), (int,int) coordinates of tile where wants to put card and rotation
-    return mSocket.send(packet);
+    std::pair<std::string, int> answer =
+        mRender.get_menu().ask_name_color(available_colors);
+    sf::Packet send_packet;
+    send_packet
+        << curType << answer.first
+        << answer.second;  // sends (type) INITIAL (string) name (int) color
+     while(mSocket.send(send_packet) != sf::Socket::Done) {}
 }
 
-sf::Socket::Status Client::place_unit() {
-    endOfState = false;
-    sf::Event event{};
-    interaction::result ans;
-    while (mRender.window().isOpen() && !endOfState) {
-        while (mRender.window().pollEvent(event)) {
-            ans = mInteraction[State::UNITPLACEMENT]->handleEvent(event,
-                                                                  endOfState);
-        }
-        mRender.render(true);
+void Client::wait_start(sf::Packet &packet) {
+    PacketType n; // receives n - number of players, n strings - names
+    packet >> n;
+    std::vector<std::string> players_list(n);
+    for(int i = 0; i < n; i++){
+        packet >> players_list[i]; // names of players in lobby
     }
-    sf::Packet packet;
-    packet << PLACE_CARD << ans.tile_coordinates.x << ans.tile_coordinates.y; // sends (type), (int,int) coordinates of tile where wants to put unit
-    return mSocket.send(packet);
+    mRender.get_menu().set_list(players_list);
 }
-void Client::new_turn(sf::Packet packet) {
+
+void Client::new_turn(sf::Packet &packet) {
     std::string cur_player_name;
     int cur_card_texture;
     packet >> cur_player_name >> cur_card_texture;
@@ -127,7 +142,8 @@ void Client::new_turn(sf::Packet packet) {
     mRender.set_curPlayer(cur_player_name);
 }
 
-void Client::update(sf::Packet packet) {
+void Client::update(sf::Packet &packet) {
+    currentState = State::DEFAULT;
     int texture_id;
     sf::Vector2i placed_card_coords;
     int rotation;

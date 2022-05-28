@@ -15,15 +15,25 @@ private:
     int host = -1;
 
     game_view::GameRender mRender;
-    bool endOfState = false;
     std::map<State, std::unique_ptr<defaultInteraction>> mInteraction;
-    void init_interaction();
 
+    State currentState = State::DEFAULT;
+    bool interactionEnd = false;
+    PacketType curType = INITIAL;
+
+    void init_interaction();
+    void process_game();
+    void render_lobby();
+    void init(sf::Packet &packet);
+    void wait_start(sf::Packet &packet);
+    void new_turn(sf::Packet &packet);
+    void update(sf::Packet &packet);
+    sf::Socket::Status receive();
 public:
     Client() {
+        mSocket.setBlocking(false); // non blocking socket
         init_interaction();
     }
-
     bool is_host() {
         if (host == -1) {
             host = mRender.get_menu().execute_start();
@@ -33,13 +43,8 @@ public:
     game_view::GameRender& get_mRender(){
         return mRender;
     }
-
+    void run();
     sf::Socket::Status connect(const sf::IpAddress & IP, unsigned short port, sf::Time timeout);
-    sf::Socket::Status receive();
-    sf::Socket::Status place_card ();
-    sf::Socket::Status place_unit ();
-    void new_turn(sf::Packet packet);
-    void update(sf::Packet packet);
 };
 
 }

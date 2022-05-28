@@ -62,7 +62,8 @@ bool Menu::execute_start() { // returns true if client chose to be a host, other
         window.display();
 
     }
-    return (2-button);
+    host = 2-button;
+    return host;
 }
 
 int Menu::ask_port() {
@@ -277,7 +278,7 @@ std::pair<sf::String, int> Menu::ask_name_color( const std::vector<int>& availab
         noColor.setFillColor(sf::Color(  123, 36, 28  ));
         noColor.setPosition(invPos.x, invPos.y + 190);
 
-        while (window.isOpen() && !end) {
+        while (!end) {
             window.clear();
             cols.pick(window);
             if ( cols.number != -1) {
@@ -329,8 +330,7 @@ std::pair<sf::String, int> Menu::ask_name_color( const std::vector<int>& availab
     }
     return {stringEntered,cols.number};
 }
-
-bool Menu::start_game(bool host, const std::vector<std::string> &players_list) {
+bool Menu::lobby() {
     bool game_started = false;
     bool button = false;
     sf::Event event{};
@@ -348,7 +348,6 @@ bool Menu::start_game(bool host, const std::vector<std::string> &players_list) {
     sf::Text invitation("Start Game", getFont(), 70);
     invitation.setPosition(startSprPos.x + 20, startSprPos.y + 350); // 350 x 70
 
-    while (window.isOpen()) {
         if(host) {
             invitation.setFillColor(sf::Color::White);
             button = false;
@@ -372,7 +371,6 @@ bool Menu::start_game(bool host, const std::vector<std::string> &players_list) {
             window.draw(invitation);
         }
         window.display();
-    }
 
     return game_started;
 }
