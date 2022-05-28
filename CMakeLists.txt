@@ -14,7 +14,7 @@ add_executable(${EXECUTABLE_NAME}
         include/game_common.h
         include/game_tile.h
         include/game_player.h
-        include/game.h
+#        include/game.h
         include/game_unit.h
         include/interaction.h
         include/game_view.h
@@ -31,7 +31,7 @@ add_executable(${EXECUTABLE_NAME}
         src/game_board.cpp
         src/game_card.cpp
         src/game_view.cpp
-        src/game.cpp
+#        src/game.cpp
         src/main.cpp
         src/interaction.cpp
         src/game_cardDeck.cpp
