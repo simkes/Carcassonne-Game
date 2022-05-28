@@ -7,7 +7,7 @@ Menu::Menu(sf::RenderWindow &window_) :  window(window_) {
     background.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND));
     background.setPosition(0,0);
 
-    startTexture.loadFromFile("get_menu/gamestart.jpg");
+    startTexture.loadFromFile("menu/gamestart.jpg");
     startSprite.setTexture(startTexture);
     startSprite.setPosition(startSprPos);
 
@@ -21,7 +21,7 @@ bool Menu::execute_start() { // returns true if client chose to be a host, other
     int button = 0; // 0 - nothing , 1 - be a host, 2 - connect
     sf::Event event{};
     sf::Texture bigTitleTexture;
-    bigTitleTexture.loadFromFile("get_menu/carcasonne_title_big.png");
+    bigTitleTexture.loadFromFile("menu/carcasonne_title_big.png");
     sf::Sprite bigTitle;
     bigTitle.setTexture(bigTitleTexture);
     bigTitle.setPosition(150,30); // 735 x 200

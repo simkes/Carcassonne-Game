@@ -125,7 +125,7 @@ std::vector<Player> Server::waitConnections() {
             for (auto obj : mSockets) {
                 if (obj != nullptr) {
                     sf::Packet packet;
-                    packet <<  WAIT_START << (int)lobby.size();
+                    packet <<  WAIT_START << static_cast<int>(lobby.size());
                     for (auto pl : lobby) {
                         packet << pl.first;
                     }

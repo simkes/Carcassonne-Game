@@ -14,6 +14,18 @@ namespace game_server {
 
 struct Server {
 
+    explicit Server(unsigned int port) {
+        mListener.listen(port);
+        mListener.setBlocking(false);
+
+        mSockets[0] = &s1;
+        mSockets[1] = &s2;
+        mSockets[2] = &s3;
+        mSockets[3] = &s4;
+        mSockets[4] = &s5;
+
+    }
+
     friend struct ServerGame;
 
     void startGame(std::vector<Player> players);
@@ -39,12 +51,20 @@ struct Server {
     // bool send_data(sf::Vector2i pos, size_t card_index);
 
 private:
+    sf::TcpSocket s1;
+    sf::TcpSocket s2;
+    sf::TcpSocket s3;
+    sf::TcpSocket s4;
+    sf::TcpSocket s5;
+
+
+    std::vector<sf::TcpSocket> sockets;
     std::vector<sf::TcpSocket *> mSockets = std::vector<sf::TcpSocket *>(5, nullptr);
     sf::TcpListener mListener;
     std::map<Player, int> playerInd;
     std::map<int, Player> indPlayer;
     std::map<size_t, sf::TcpSocket*> indSocket;
-    std::vector<int> colors;
+    std::vector<int> colors = std::vector<int>(5, 0);
     std::set<std::pair<std::string, int>>lobby;
     int availableCol = 5;
 };
@@ -67,7 +87,7 @@ private:
     Board mBoard;
     CardDeck mCardDeck;
     std::vector<Card> placedCards;
-    Server mServer;
+    Server mServer = Server(0);
 
     std::vector<Player> mPlayers;
     std::size_t currentPlayerIndex = 0;

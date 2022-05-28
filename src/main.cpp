@@ -1,5 +1,6 @@
 #include "client.h"
 #include "server.h"
+#include <SFML/System/Thread.hpp>
 #include <iostream>
 
 void init_textures_and_font() {
@@ -26,11 +27,17 @@ int main() {
         client.get_mRender().get_menu().ask_port(); // ask port
     sf::IpAddress ip = sf::IpAddress::LocalHost; // default IP  = sf::IpAddress::LocalHost
     if(client.is_host()) {
-        //carcassonne_game::game_server::Server server(port); // con-r from port
-        // client connects to server and smt
+        carcassonne_game::game_server::Server server(port); // con-r from port
+        sf::Thread hosted_server([&]() {
+            server.waitConnections();
+        });
+        hosted_server.launch();
+        sf::Socket::Status status = client.connect(ip, port, sf::seconds(5.f));
+        client.run();
     } else {
         //sf::IpAddress ip(client.get_mRender().get_menu().ask_IP()); // ask IP
     }
+
 
     if(client.connect(ip,port, sf::seconds(5.f)) != sf::TcpSocket::Done) {
         std::cout << "Failed to connect\n";
