@@ -29,6 +29,7 @@ private:
 
     std::vector<game_model::Player> *players = nullptr; //for scoreboard
     sf::Text invitation;
+    sf::Text errorMessage; //TODO
 
     void update_scoreboard();
 public:
@@ -53,9 +54,11 @@ public:
         mCurPlayer = name;
     }
 
+    void set_errorMessage(const std::string& msg) {
+        errorMessage.setString(msg);
+    }
+
     void render(bool card);
- //   std::vector<std::pair<sf::String, game_model::Color>> execute_menu();
- //   void set_boardView(game_model::Board *board);
 
     friend interaction::defaultInteraction;
     friend interaction::cardPlacementInteraction;
