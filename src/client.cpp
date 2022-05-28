@@ -20,7 +20,7 @@ sf::Socket::Status Client::receive() {
     packet>>type;
     switch (type) {
         case INITIAL: {
-            PacketType n;  // receives n - number of colors available, n available colors indexes
+            int n;  // receives n - number of colors available, n available colors indexes
             packet >> n;
             std::vector<int> available_colors(n);
             for (int i = 0; i < n; i++) {

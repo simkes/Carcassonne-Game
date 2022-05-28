@@ -38,7 +38,7 @@ void ServerGame::run() {
             }
         }
         if (currentState == State::UNITPLACEMENT) {
-            // t ODO
+
             change_state();
         }
         currentPlayerIndex = (currentPlayerIndex + 1) % mPlayers.size();

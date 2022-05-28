@@ -39,11 +39,14 @@ struct Server {
     // bool send_data(sf::Vector2i pos, size_t card_index);
 
 private:
-    std::vector<sf::TcpSocket *> mSockets;
+    std::vector<sf::TcpSocket *> mSockets = std::vector<sf::TcpSocket *>(5, nullptr);
     sf::TcpListener mListener;
     std::map<Player, int> playerInd;
     std::map<int, Player> indPlayer;
     std::map<size_t, sf::TcpSocket*> indSocket;
+    std::vector<int> colors;
+    std::set<std::pair<std::string, int>>lobby;
+    int availableCol = 5;
 };
 
 struct ServerGame {
