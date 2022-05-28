@@ -31,7 +31,6 @@ add_executable(${EXECUTABLE_NAME}
         src/game_board.cpp
         src/game_card.cpp
         src/game_view.cpp
-        src/game.cpp
         src/main.cpp
         src/interaction.cpp
         src/game_cardDeck.cpp
