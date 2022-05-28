@@ -10,7 +10,10 @@ void Client::init_interaction() {
 
 sf::Socket::Status Client::connect(const sf::IpAddress &IP,
                                    unsigned short port, sf::Time timeout) {
-    return mSocket.connect(IP, port, timeout);
+   // std::cout << port << ' ' << IP;
+   sf::Socket::Status status =  mSocket.connect(IP, port, timeout);
+   mSocket.setBlocking(false);
+   return status;
 }
 
 void Client::process_game() {
@@ -125,7 +128,7 @@ void Client::init(sf::Packet &packet) {
 }
 
 void Client::wait_start(sf::Packet &packet) {
-    PacketType n; // receives n - number of players, n strings - names
+    int n; // receives n - number of players, n strings - names
     packet >> n;
     std::vector<std::string> players_list(n);
     for(int i = 0; i < n; i++){

@@ -19,7 +19,7 @@ private:
 
     State currentState = State::DEFAULT;
     bool interactionEnd = false;
-    PacketType curType = INITIAL;
+    PacketType curType = PAUSE;
 
     void init_interaction();
     void process_game();
@@ -31,7 +31,7 @@ private:
     sf::Socket::Status receive();
 public:
     Client() {
-        mSocket.setBlocking(false); // non blocking socket
+ //       mSocket.setBlocking(false); // non blocking socket
         init_interaction();
     }
     bool is_host() {

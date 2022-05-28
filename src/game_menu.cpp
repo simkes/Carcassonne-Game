@@ -346,16 +346,16 @@ bool Menu::lobby() {
     list.setPosition(listPos);
 
     sf::Text invitation("Start Game", getFont(), 70);
-    invitation.setPosition(startSprPos.x + 20, startSprPos.y + 350); // 350 x 70
+    invitation.setPosition(startSprPos.x + 40, startSprPos.y + 300); // 350 x 70
 
         if(host) {
             invitation.setFillColor(sf::Color::White);
             button = false;
             window.clear();
 
-            if (sf::IntRect(350, 350, 320, 70)
+            if (sf::IntRect(startSprPos.x + 40, startSprPos.y + 300, 320, 70)
                     .contains(sf::Mouse::getPosition(window))) {
-                invitation.setFillColor(sf::Color(133, 193, 233));
+                invitation.setFillColor(sf::Color::Black);
                 button = true;
             }
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && button) {
