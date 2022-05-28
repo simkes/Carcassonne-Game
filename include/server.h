@@ -16,9 +16,10 @@ struct Server {
 
     explicit Server(unsigned int port) {
         mListener.listen(port);
-        mListener.setBlocking(false);
+        mListener.setBlocking(true);
 
         mSockets[0] = &s1;
+        s1.setBlocking(false);
         mSockets[1] = &s2;
         mSockets[2] = &s3;
         mSockets[3] = &s4;
@@ -72,7 +73,7 @@ private:
 struct ServerGame {
     // friend struct Server;
 
-    explicit ServerGame(std::vector<std::pair<sf::String, game_model::Color>> players);
+    explicit ServerGame(unsigned short port);
     void run();
 
     State get_curState() {
@@ -103,7 +104,7 @@ private:
     // GameRender *mGameRenderPtr;
 
     void init_players(
-        std::vector<std::pair<sf::String, game_model::Color>> &players);
+        const std::vector<Player> &players);
     void init_visitors();
     // void init_interaction();
     void place_first_card();

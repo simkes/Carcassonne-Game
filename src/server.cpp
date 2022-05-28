@@ -1,4 +1,5 @@
 #include "server.h"
+#include <iostream>
 
 namespace carcassonne_game::game_server {
 
@@ -103,10 +104,14 @@ std::vector<Player> Server::waitConnections() {
 //            }
 //
         if (mListener.accept(*mSockets[cur_index]) == sf::Socket::Done) {
+            mSockets[cur_index]->setBlocking(true);
+            std::cout << "connected\n";
             sf::Packet packet;
             packet << INITIAL << availableCol;
             for (int i = 0; i < colorsVector.size(); i++) {
-                packet << i;
+                if (!colors[i]) {
+                    packet << i;
+                }
             }
             mSockets[cur_index]->send(packet);
             packet = sf::Packet();
@@ -118,12 +123,13 @@ std::vector<Player> Server::waitConnections() {
                     int color;
                     packet >> name >> color;
                     colors[color] = 1;
+                    availableCol--;
                     lobby.insert({name, color});
-                    indSocket[cur_index] = mSockets[cur_index];
+                    indSocket[cur_index] = mSockets[cur_index++];
                 }
             }
             for (auto obj : mSockets) {
-                if (obj != nullptr) {
+                if (obj->getRemotePort()) {
                     sf::Packet packet;
                     packet <<  WAIT_START << static_cast<int>(lobby.size());
                     for (auto pl : lobby) {
@@ -132,6 +138,7 @@ std::vector<Player> Server::waitConnections() {
                     obj->send(packet);
                 }
             }
+            mSockets[cur_index - 1]->setBlocking(false);
         }
     } while (mSockets[0]->receive(from_host) != sf::Socket::Done);
     for (auto &obj : lobby) {

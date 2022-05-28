@@ -3,16 +3,15 @@
 namespace carcassonne_game::game_server {
 
 void ServerGame::init_players(
-    std::vector<std::pair<sf::String, game_model::Color>> &players) {
+    const std::vector<Player> &players) {
     numberOfPlayers = players.size();
     for (const auto &p : players) {
-        mPlayers.emplace_back(p.first, p.second);
+        mPlayers.emplace_back(p.name, p.color);
     }
 }
 
-ServerGame::ServerGame(std::vector<std::pair<sf::String, game_model::Color>> players) : numberOfPlayers(players.size()) {
+ServerGame::ServerGame(unsigned short port) : mServer(port) {
     placedCards.reserve(100);
-    init_players(players);
     init_visitors();
     currentPlayerPtr = &mPlayers[currentPlayerIndex];
     place_first_card();
@@ -22,7 +21,8 @@ ServerGame::ServerGame(std::vector<std::pair<sf::String, game_model::Color>> pla
 }
 
 void ServerGame::run() {
-
+    auto play = mServer.waitConnections();
+    init_players(play);
     mServer.startGame(mPlayers);
     while (!gameOver) {
         if (currentState == State::CARDPLACEMENT) {

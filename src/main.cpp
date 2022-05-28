@@ -2,6 +2,8 @@
 #include "server.h"
 #include <SFML/System/Thread.hpp>
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 void init_textures_and_font() {
     carcassonne_game::getTextures().load(game_view::textures::ID::BACKGROUND, "background.jpg");
@@ -25,24 +27,27 @@ int main() {
     client.is_host(); // ask client to be a host/to connect
     unsigned short port =
         client.get_mRender().get_menu().ask_port(); // ask port
-    sf::IpAddress ip = sf::IpAddress::LocalHost; // default IP  = sf::IpAddress::LocalHost
-    if(client.is_host()) {
-        carcassonne_game::game_server::Server server(port); // con-r from port
+    sf::IpAddress ip = sf::IpAddress::LocalHost;
+    std::cout << ip << '\n';// default IP  = sf::IpAddress::LocalHost
+    if(client.is_host()) {// con-r from port
         sf::Thread hosted_server([&]() {
-            server.waitConnections();
+            carcassonne_game::game_server::ServerGame newGame(port);
+            newGame.run();
         });
         hosted_server.launch();
+        std::this_thread::sleep_for(std::chrono::seconds(5));
         sf::Socket::Status status = client.connect(ip, port, sf::seconds(5.f));
         client.run();
     } else {
-        //sf::IpAddress ip(client.get_mRender().get_menu().ask_IP()); // ask IP
+        // sf::IpAddress ip(client.get_mRender().get_menu().ask_IP()); // ask IP
+        sf::Socket::Status status = client.connect(ip, port, sf::seconds(5.f));
+        client.run();
     }
 
 
     if(client.connect(ip,port, sf::seconds(5.f)) != sf::TcpSocket::Done) {
         std::cout << "Failed to connect\n";
     }
-
 
 
    // carcassonne_game::Game newGame(gameRender.run(), &gameRender);
