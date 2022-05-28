@@ -80,6 +80,10 @@ sf::Socket::Status Client::receive() {
             //TODO: print smt and end
             break;
         }
+        case PAUSE: {
+            //TODO:
+            break;
+        }
     }
     return status;
 }

@@ -2,6 +2,8 @@
 #define CARCASSONNE_GAME_SERVER_H
 
 #include "game.h"
+#include "game_common.h"
+#include "server_common.h"
 #include <SFML/Network/TcpSocket.hpp>
 #include <SFML/Network/TcpListener.hpp>
 #include <SFML/Network/Packet.hpp>
@@ -22,11 +24,15 @@ struct Server {
 
     sf::Vector2i getCardPlacement(size_t index);
 
-    bool getUnitPlacement(size_t index);
+    std::optional<sf::Vector2i> getUnitPlacement(size_t index);
 
     void sendPause();
 
     void finishGame();
+
+    void sendError(const std::string &error_msg, size_t index);
+
+    void turnDone(size_t index, Card card);
 
     std::vector<Player> waitConnections();
 
@@ -36,6 +42,7 @@ private:
     std::vector<sf::TcpSocket *> mSockets;
     sf::TcpListener mListener;
     std::map<Player, int> playerInd;
+    std::map<int, Player> indPlayer;
     std::map<size_t, sf::TcpSocket*> indSocket;
 };
 

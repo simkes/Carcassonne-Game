@@ -12,7 +12,7 @@ struct Player {
     int score = 0;
     const bool human;
 
-    Player(const sf::String &name_, Color color_)
+    Player(const sf::String &name_ = "", Color color_ = RED)
         : name(name_), color(color_), human(true) {
         units.resize(NUMBER_OF_UNITS, this);
         /*for(int i = 0; i < NUMBER_OF_UNITS; i++){
