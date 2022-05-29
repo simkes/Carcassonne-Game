@@ -59,7 +59,7 @@ result cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState)
             sf::Vector2f worldCoords = mRender->mWindow.mapPixelToCoords(
                 {event.mouseButton.x, event.mouseButton.y},
                 mRender->mBoardView.getView());
-            cardRes.tile_coordinates = game_view::to_tiles_coords(worldCoords);
+            cardRes.tile_coordinates = game_view::to_tiles_coords(game_view::align_card_coords(worldCoords));
             cardRes.card_rotation = mRender->mCurCardView.get_rotation();
 //                sf::Vector2f spritePos =
 //                    game_view::align_card_coords(worldCoords);

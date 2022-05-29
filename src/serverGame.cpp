@@ -18,6 +18,7 @@ ServerGame::ServerGame(unsigned short port) : mServer(port) {
     // currentState = State::UNITPLACEMENT;
     currentState = State::CARDPLACEMENT;
     // currentPlayerPtr = &mPlayers[currentPlayerIndex];
+    mCardDeck.init();
 }
 
 void ServerGame::run() {
@@ -25,16 +26,17 @@ void ServerGame::run() {
     play = mServer.waitConnections(play);
     init_players(play);
     mServer.startGame(mPlayers);
+    place_first_card();
     while (!gameOver) {
         if (currentState == State::CARDPLACEMENT) {
-             // mServer.newTurn(currentPlayerIndex, );
             set_currentCard();
+            mServer.newTurn(currentPlayerIndex, *currentCardPtr);
             while (currentState == State::CARDPLACEMENT) {
                 sf::Vector2i coords =
                     mServer.getCardPlacement(currentPlayerIndex);
                 if (mBoard.canAddCard(coords, *currentCardPtr)) {
                     mBoard.addCard(coords, *currentCardPtr);
-                    mServer.newTurn(currentPlayerIndex, *currentCardPtr);
+                    mServer.turnDone(currentPlayerIndex, *currentCardPtr);
                     change_state();
                 }
             }
@@ -83,6 +85,7 @@ void ServerGame::place_first_card() {
     set_currentCard();
     sf::Vector2i pos(102, 102);
     mBoard.addCard(pos, *currentCardPtr);
+    mServer.turnDone(0, *currentCardPtr);
 }
 
 void ServerGame::set_currentCard() {

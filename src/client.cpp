@@ -19,16 +19,18 @@ sf::Socket::Status Client::connect(const sf::IpAddress &IP,
 void Client::process_game() {
     interaction::result ans;
     sf::Event event{};
-    while (mRender.window().pollEvent(event)) {
+    if (mRender.window().pollEvent(event)) {
         ans = mInteraction[currentState]->handleEvent(event,
                                                       interactionEnd);
     }
-    mRender.render(currentState == State::CARDPLACEMENT);
+    mRender.render(1);
     if (interactionEnd && currentState != State::DEFAULT) {
         sf::Packet packet;
         packet << curType << ans.tile_coordinates.x << ans.tile_coordinates.y
                << ans.card_rotation;
+        mSocket.setBlocking(true);
         while(mSocket.send(packet) != sf::Socket::Done){}
+        mSocket.setBlocking(false);
     }
     interactionEnd = false;
 }
@@ -144,9 +146,10 @@ void Client::wait_start(sf::Packet &packet) {
 }
 
 void Client::new_turn(sf::Packet &packet) {
+    std::cout << "get turn\n";
     std::string cur_player_name;
     int cur_card_texture;
-    packet >> cur_player_name >> cur_card_texture;
+    packet  >> cur_card_texture >> cur_player_name;
     mRender.get_curCardView().set_texture(cur_card_texture);
     mRender.set_curPlayer(cur_player_name);
 }
@@ -156,6 +159,7 @@ void Client::update(sf::Packet &packet) {
     int texture_id;
     sf::Vector2i placed_card_coords;
     int rotation;
+    std::cout << "get upd\n";
     packet >> texture_id >> placed_card_coords.x >> placed_card_coords.y >> rotation;
     mRender.get_boardView().add_card(texture_id, transform_coordinates(placed_card_coords), rotation); //TODO: make transform coordinates
                                                                                                        // return tiles (2i) to world (2f)

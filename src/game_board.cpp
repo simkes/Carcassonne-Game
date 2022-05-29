@@ -42,9 +42,9 @@ const std::vector<sf::Vector2i> cardBounds{ {CARD_DIMENSION - 1,0}, {0, CARD_DIM
 
 const std::vector<std::vector<Tile>> &Board::addCard(sf::Vector2i pos,
                                                       Card &card) {
+    card.mPosition = {pos.x, pos.y};
     pos.x = pos.x / (CARD_DIMENSION-1) * (CARD_DIMENSION - 1);
     pos.y = pos.y / (CARD_DIMENSION-1) * (CARD_DIMENSION - 1);
-
     for (int dx = 0; dx < CARD_DIMENSION; dx++) {
         for (int dy = 0; dy < CARD_DIMENSION; dy++) {
             //if (mTiles[{pos.x + dx, pos.y + dy}] == nullptr) { // TODO: handle tiles belonging to 2 cards

@@ -58,7 +58,6 @@ struct Server {
 
     bool check_start();
 
-    // bool send_data(sf::Vector2i pos, size_t card_index);
 
 private:
 

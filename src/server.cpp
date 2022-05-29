@@ -17,9 +17,14 @@ void Server::startGame(std::vector<Player> players) {
 
 sf::Vector2i Server::getCardPlacement(size_t index) {
     sf::Packet packet;
+    sf::Packet invite;
     // handle errors
     // how to check if received correct packet, naive solution is set types to packets as first its bytes
+    invite << PLACE_CARD;
+    indSocket[index]->setBlocking(true);
+    indSocket[index]->send(invite);
     indSocket[index]->receive(packet);
+    indSocket[index]->setBlocking(false);
     PacketType type;
     packet >> type;
     if (type == PLACE_CARD) {
@@ -40,9 +45,13 @@ void Server::sendError(const std::string &error_msg, size_t index) {
 
 std::optional<sf::Vector2i> Server::getUnitPlacement(size_t index) {
     sf::Packet packet;
+    sf::Packet invite;
+    invite << PLACE_UNIT;
     // handle errors
-
+    indSocket[index]->setBlocking(true);
+    indSocket[index]->send(invite);
     indSocket[index]->receive(packet);
+    indSocket[index]->setBlocking(false);
     PacketType type;
     packet >> type;
     if (type == PLACE_UNIT) {
@@ -60,18 +69,23 @@ std::optional<sf::Vector2i> Server::getUnitPlacement(size_t index) {
 void Server::turnDone(size_t index, Card card) {
     for (auto &obj : indSocket) {
         sf::Packet packet;
-        packet <<  UPDATE << indPlayer[index].name << card.textureId << card.mPosition.x << card.mPosition.y << card.rotation;
+        packet << UPDATE << card.textureId << card.mPosition.x << card.mPosition.y << card.rotation << -1 << -1;
         // handle errors
+
+        obj.second->setBlocking(true);
         obj.second->send(packet);
+        obj.second->setBlocking(false);
     }
 }
 
 void Server::newTurn(size_t index, Card card) {
     for (auto &obj : indSocket) {
         sf::Packet packet;
-        packet << NEW_TURN  << indPlayer[index].name << card.textureId;
+        packet << NEW_TURN << card.textureId << indPlayer[index].name;
         // handle errors
+        obj.second->setBlocking(true);
         obj.second->send(packet);
+        obj.second->setBlocking(false);
     }
 }
 
@@ -155,10 +169,11 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
             }
             mSockets[cur_index++]->setBlocking(false);
         }
-    } while (!check_start());
+    } while (/*!check_start()*/ cur_index < 1);
     int iter = 0;
     for (auto obj : lobby) {
-        players.emplace_back(iter++, obj.first, static_cast<Color>(obj.second));
+        players.emplace_back(iter, obj.first, static_cast<Color>(obj.second));
+        indPlayer.insert({iter++, players.back()});
     }
     return players;
 }

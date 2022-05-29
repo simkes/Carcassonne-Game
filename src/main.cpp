@@ -35,7 +35,7 @@ int main() {
             newGame.run();
         });
         hosted_server.launch();
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds(2));
         sf::Socket::Status status = client.connect(ip, port, sf::seconds(5.f));
         client.run();
         hosted_server.terminate();

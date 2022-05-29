@@ -29,7 +29,7 @@ inline std::vector<std::pair<int,int>> cardCoordinates{{0,0}, {0,1}, {0,2}, {0,3
 } // namespace textures
 
 inline sf::Vector2f transform_coordinates (sf::Vector2i vector) {
-    return sf::Vector2f({static_cast<float>(vector.x) * 30 + 74, static_cast<float>(vector.y) * 30 + 74}); // may be some const var-s
+    return sf::Vector2f({static_cast<float>(vector.x - 2) * 30 + 74, static_cast<float>(vector.y - 2) * 30 + 74}); // may be some const var-s
 }
 
 inline sf::Vector2i to_tiles_coords (sf::Vector2f vector) {
