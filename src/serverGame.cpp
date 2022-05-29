@@ -6,7 +6,7 @@ void ServerGame::init_players(
     const std::vector<Player> &players) {
     numberOfPlayers = players.size();
     for (const auto &p : players) {
-        mPlayers.emplace_back(p.name, p.color);
+        mPlayers.emplace_back(p.get_index(), p.name, p.color);
     }
 }
 
@@ -21,11 +21,13 @@ ServerGame::ServerGame(unsigned short port) : mServer(port) {
 }
 
 void ServerGame::run() {
-    auto play = mServer.waitConnections();
+    std::vector<Player> play;
+    play = mServer.waitConnections(play);
     init_players(play);
     mServer.startGame(mPlayers);
     while (!gameOver) {
         if (currentState == State::CARDPLACEMENT) {
+             // mServer.newTurn(currentPlayerIndex, );
             set_currentCard();
             while (currentState == State::CARDPLACEMENT) {
                 sf::Vector2i coords =

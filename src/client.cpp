@@ -35,10 +35,16 @@ void Client::process_game() {
 
 void Client::render_lobby() {
     bool game_started = mRender.get_menu().lobby();
-    if(game_started) {
+    if(game_started && !started) {
+        started = true;
         sf::Packet send_packet;
-        send_packet << curType << game_started;  // sends (type) WAIT_START (int) game_started
-        while(mSocket.send(send_packet) != sf::Socket::Done) {}
+        send_packet << curType << game_started;
+        mSocket.setBlocking(true);// sends (type) WAIT_START (int) game_started
+        while(mSocket.send(send_packet) != sf::Socket::Done) {
+
+        }
+        std::cout << "sent\n";
+        mSocket.setBlocking(false);
     }
 }
 
@@ -47,7 +53,7 @@ void Client::run() {
         receive();
         if(curType == WAIT_START){
             render_lobby();
-        } else if (curType > WAIT_START && curType < GAME_OVER) {
+        } else if (curType == GAME_START || (curType > WAIT_START && curType < GAME_OVER)) {
             process_game();
         }
     }

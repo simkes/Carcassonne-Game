@@ -9,7 +9,9 @@ void Server::startGame(std::vector<Player> players) {
         sf::Packet packet;
         packet << GAME_START << index << player.name << player.color;
         // handle errors
+        indSocket[index]->setBlocking(true);
         indSocket[index]->send(packet);
+        indSocket[index]->setBlocking(false);
     }
 }
 
@@ -90,9 +92,21 @@ void Server::sendPause() {
     }
 }
 
-std::vector<Player> Server::waitConnections() {
+bool Server::check_start() {
+//    sf::Packet packet;
+//    mSockets[0]->setBlocking(true);
+//    sf::Socket::Status type = mSockets[0]->receive(packet);
+    if (mSelector.wait(sf::seconds(2.f))) {
+        sf::Packet packet;
+        s1.receive(packet);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
     int cur_index = 0;
-    std::vector<Player> players;
     sf::Packet from_host;
     std::map<int, std::pair<std::string, int>> indConnected;
     do {
@@ -116,6 +130,7 @@ std::vector<Player> Server::waitConnections() {
             mSockets[cur_index]->send(packet);
             packet = sf::Packet();
             if (mSockets[cur_index]->receive(packet) == sf::Socket::Done) {
+                std::cout << "received init\n";
                 PacketType type;
                 packet >> type;
                 if (type == INITIAL) {
@@ -125,7 +140,7 @@ std::vector<Player> Server::waitConnections() {
                     colors[color] = 1;
                     availableCol--;
                     lobby.insert({name, color});
-                    indSocket[cur_index] = mSockets[cur_index++];
+                    indSocket[cur_index] = mSockets[cur_index];
                 }
             }
             for (auto obj : mSockets) {
@@ -138,11 +153,12 @@ std::vector<Player> Server::waitConnections() {
                     obj->send(packet);
                 }
             }
-            mSockets[cur_index - 1]->setBlocking(false);
+            mSockets[cur_index++]->setBlocking(false);
         }
-    } while (mSockets[0]->receive(from_host) != sf::Socket::Done);
-    for (auto &obj : lobby) {
-        players.emplace_back(obj.first, static_cast<Color>(obj.second));
+    } while (!check_start());
+    int iter = 0;
+    for (auto obj : lobby) {
+        players.emplace_back(iter++, obj.first, static_cast<Color>(obj.second));
     }
     return players;
 }

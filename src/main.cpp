@@ -38,6 +38,7 @@ int main() {
         std::this_thread::sleep_for(std::chrono::seconds(5));
         sf::Socket::Status status = client.connect(ip, port, sf::seconds(5.f));
         client.run();
+        hosted_server.terminate();
     } else {
         // sf::IpAddress ip(client.get_mRender().get_menu().ask_IP()); // ask IP
         sf::Socket::Status status = client.connect(ip, port, sf::seconds(5.f));

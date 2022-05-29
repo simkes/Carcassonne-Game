@@ -12,8 +12,8 @@ struct Player {
     int score = 0;
     const bool human;
 
-    Player(const sf::String &name_ = "", Color color_ = RED)
-        : name(name_), color(color_), human(true) {
+    Player( int ind = -1,const sf::String &name_ = "", Color color_ = RED)
+        : name(name_), color(color_), human(true), index(ind) {
         units.resize(NUMBER_OF_UNITS, this);
         /*for(int i = 0; i < NUMBER_OF_UNITS; i++){
             units[i] = this;

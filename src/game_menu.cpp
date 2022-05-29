@@ -334,6 +334,7 @@ bool Menu::lobby() {
     bool game_started = false;
     bool button = false;
     sf::Event event{};
+    //window.pollEvent(event);
 
     sf::String names_list = "";
     for(const auto &s : players_list) {

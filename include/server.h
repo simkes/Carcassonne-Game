@@ -12,14 +12,21 @@ namespace carcassonne_game {
 
 namespace game_server {
 
+static sf::TcpSocket s1;
+static sf::TcpSocket s2;
+static sf::TcpSocket s3;
+static sf::TcpSocket s4;
+static sf::TcpSocket s5;
+
 struct Server {
 
     explicit Server(unsigned int port) {
         mListener.listen(port);
-        mListener.setBlocking(true);
+        mListener.setBlocking(false);
 
         mSockets[0] = &s1;
         s1.setBlocking(false);
+        mSelector.add(s1);
         mSockets[1] = &s2;
         mSockets[2] = &s3;
         mSockets[3] = &s4;
@@ -47,18 +54,16 @@ struct Server {
 
     void turnDone(size_t index, Card card);
 
-    std::vector<Player> waitConnections();
+    std::vector<Player> waitConnections(std::vector<Player> &players);
+
+    bool check_start();
 
     // bool send_data(sf::Vector2i pos, size_t card_index);
 
 private:
-    sf::TcpSocket s1;
-    sf::TcpSocket s2;
-    sf::TcpSocket s3;
-    sf::TcpSocket s4;
-    sf::TcpSocket s5;
 
 
+    sf::SocketSelector mSelector;
     std::vector<sf::TcpSocket> sockets;
     std::vector<sf::TcpSocket *> mSockets = std::vector<sf::TcpSocket *>(5, nullptr);
     sf::TcpListener mListener;
