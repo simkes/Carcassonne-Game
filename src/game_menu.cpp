@@ -197,11 +197,11 @@ struct Colors {
         colors[3].first.setFillColor(sf::Color( 36, 113, 163 )); //BLUE
         colors[4].first.setFillColor(sf::Color::Black);
 
-        for(auto col : colors) {
-            col.second = 1;
+        for(auto &col : colors) {
+            col.second = true;
         }
         for(const auto& num : available_colors) {
-            colors[num].second = 0;
+            colors[num].second = false;
         }
 
         float xPos = startSprPos.x + 20;

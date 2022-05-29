@@ -112,11 +112,11 @@ sf::Socket::Status Client::receive() {
 }
 
 void Client::init(sf::Packet &packet) {
-    PacketType n;  // receives n - number of colors available, n available colors indexes
+    int n;  // receives n - number of colors available, n available colors indexes
     packet >> n;
     std::vector<int> available_colors(n);
     for (int i = 0; i < n; i++) {
-        packet >> available_colors[i];  // index of color ( in game_common: 0 = RED, 1 = YELLOW, 2 = GREEN, 3 = BLUE, 4 = BLACK)
+        packet >> available_colors[i]; // index of color ( in game_common: 0 = RED, 1 = YELLOW, 2 = GREEN, 3 = BLUE, 4 = BLACK)
     }
     std::pair<std::string, int> answer =
         mRender.get_menu().ask_name_color(available_colors);
