@@ -10,7 +10,9 @@ void Server::startGame(std::vector<Player> players) {
         packet << GAME_START << index << player.name << player.color;
         // handle errors
         indSocket[index]->setBlocking(true);
-        indSocket[index]->send(packet);
+        if (indSocket[index]->send(packet) == sf::Socket::Disconnected) {
+            throw std::runtime_error("disconnected");
+        }
         indSocket[index]->setBlocking(false);
     }
 }
@@ -22,8 +24,12 @@ std::pair<sf::Vector2i, int> Server::getCardPlacement(size_t index) {
     // how to check if received correct packet, naive solution is set types to packets as first its bytes
     invite << PLACE_CARD;
     indSocket[index]->setBlocking(true);
-    indSocket[index]->send(invite);
-    indSocket[index]->receive(packet);
+    if (indSocket[index]->send(invite) == sf::Socket::Disconnected) {
+        throw std::runtime_error("disconnected");
+    }
+    if (indSocket[index]->receive(packet) == sf::Socket::Disconnected) {
+        throw std::runtime_error("disconnected");
+    }
     indSocket[index]->setBlocking(false);
     PacketType type;
     packet >> type;
@@ -44,8 +50,13 @@ sf::Vector2i Server::getUnitPlacement(size_t index) {
     // handle errors
     std::cout << "sent unit request \n";
     indSocket[index]->setBlocking(true);
-    indSocket[index]->send(invite);
-    indSocket[index]->receive(packet);
+
+    if (indSocket[index]->send(invite) == sf::Socket::Disconnected) {
+        throw std::runtime_error("disconnected");
+    }
+    if (indSocket[index]->receive(packet) == sf::Socket::Disconnected) {
+        throw std::runtime_error("disconnected");
+    }
     indSocket[index]->setBlocking(false);
     PacketType type;
     packet >> type;
@@ -63,7 +74,9 @@ sf::Vector2i Server::getUnitPlacement(size_t index) {
 void Server::sendError(const std::string &error_msg, size_t index) {
     sf::Packet packet;
     packet << ERROR << error_msg;
-    indSocket[index]->send(packet);
+    if (indSocket[index]->send(packet) == sf::Socket::Disconnected) {
+        throw std::runtime_error("disconnected");
+    }
 }
 
 void Server::cardTurnDone(Card card) {
@@ -73,7 +86,9 @@ void Server::cardTurnDone(Card card) {
         // handle errors
 
         obj.second->setBlocking(true);
-        obj.second->send(packet);
+        if (obj.second->send(packet) == sf::Socket::Disconnected) {
+            throw std::runtime_error("disconnected");
+        }
         obj.second->setBlocking(false);
     }
 }
@@ -85,7 +100,9 @@ void Server::unitTurnDone(sf::Vector2i unitPos, int unitCol) {
         // handle errors
 
         obj.second->setBlocking(true);
-        obj.second->send(packet);
+        if (obj.second->send(packet) == sf::Socket::Disconnected) {
+            throw std::runtime_error("disconnected");
+        }
         obj.second->setBlocking(false);
     }
 }
@@ -105,7 +122,9 @@ void Server::update(const std::vector<std::pair<std::string,int>> &players_score
             packet << p.x << p.y;
         }
         obj.second->setBlocking(true);
-        obj.second->send(packet);
+        if (obj.second->send(packet) == sf::Socket::Disconnected) {
+            throw std::runtime_error("disconnected");
+        }
         obj.second->setBlocking(false);
     }
 
@@ -118,7 +137,9 @@ void Server::newTurn(size_t index, Card card) {
         packet << NEW_TURN << card.textureId << indPlayer[index].name;
         // handle errors
         obj.second->setBlocking(true);
-        obj.second->send(packet);
+        if (obj.second->send(packet) == sf::Socket::Disconnected) {
+            throw std::runtime_error("disconnected");
+        }
         obj.second->setBlocking(false);
     }
 }
@@ -141,12 +162,9 @@ void Server::sendPause() {
 }
 
 bool Server::check_start() {
-    //    sf::Packet packet;
-    //    mSockets[0]->setBlocking(true);
-    //    sf::Socket::Status type = mSockets[0]->receive(packet);
     if (mSelector.wait(sf::seconds(2.f))) {
-        sf::Packet packet;
-        s1.receive(packet);
+    sf::Packet packet;
+    s0.receive(packet);
         return true;
     } else {
         return false;
@@ -154,6 +172,7 @@ bool Server::check_start() {
 }
 
 std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
+    // while (mListener.accept(s0) != sf::Socket::Done) {}
     int cur_index = 0;
     sf::Packet from_host;
     std::map<int, std::pair<std::string, int>> indConnected;
@@ -203,8 +222,9 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
             }
             mSockets[cur_index++]->setBlocking(false);
         }
-    } while (/*!check_start()*/ cur_index < 1);
+    } while (cur_index < 2);
     int iter = 0;
+    players.reserve(lobby.size());
     for (auto obj : lobby) {
         players.emplace_back(iter, obj.first, static_cast<Color>(obj.second));
         indPlayer.insert({iter++, players.back()});

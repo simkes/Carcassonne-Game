@@ -13,6 +13,7 @@ namespace carcassonne_game {
 
 namespace game_server {
 
+static sf::TcpSocket s0;
 static sf::TcpSocket s1;
 static sf::TcpSocket s2;
 static sf::TcpSocket s3;
@@ -25,9 +26,9 @@ struct Server {
         mListener.listen(port);
         mListener.setBlocking(false);
 
+        s0.setBlocking(false);
         mSockets[0] = &s1;
-        s1.setBlocking(false);
-        mSelector.add(s1);
+        mSelector.add(s0);
         mSockets[1] = &s2;
         mSockets[2] = &s3;
         mSockets[3] = &s4;

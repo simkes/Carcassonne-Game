@@ -34,8 +34,16 @@ int main() {
             carcassonne_game::game_server::ServerGame newGame(port);
             newGame.run();
         });
-        hosted_server.launch();
+        try {
+            hosted_server.launch();
+        } catch (std::exception &exc) {
+            std::cout << exc.what();
+            hosted_server.terminate();
+            return 1;
+        }
+        sf::TcpSocket host;
         std::this_thread::sleep_for(std::chrono::seconds(2));
+        // client.hostSocket.connect(ip, port, sf::seconds(5.f));
         sf::Socket::Status status = client.connect(ip, port, sf::seconds(5.f));
         client.run();
         hosted_server.terminate();

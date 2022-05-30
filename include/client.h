@@ -14,6 +14,7 @@ class Client{
 private:
     sf::TcpSocket mSocket;
     int host = -1;
+
     bool started = 0;
     game_view::GameRender mRender;
     std::map<State, std::unique_ptr<defaultInteraction>> mInteraction;
@@ -33,6 +34,7 @@ private:
     void update(sf::Packet &packet);
     sf::Socket::Status receive();
 public:
+    sf::TcpSocket hostSocket;
     Client() {
         //       mSocket.setBlocking(false); // non blocking socket
         init_interaction();

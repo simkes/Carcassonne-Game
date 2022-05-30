@@ -40,12 +40,10 @@ void Client::render_lobby() {
         started = true;
         sf::Packet send_packet;
         send_packet << curType << game_started;
-        mSocket.setBlocking(true);// sends (type) WAIT_START (int) game_started
-        while(mSocket.send(send_packet) != sf::Socket::Done) {
-
-        }
+        hostSocket.setBlocking(true);// sends (type) WAIT_START (int) game_started
+        hostSocket.send(send_packet);
         std::cout << "sent\n";
-        mSocket.setBlocking(false);
+        hostSocket.setBlocking(false);
     }
 }
 
@@ -173,6 +171,7 @@ void Client::new_unit(sf::Packet &packet) {
     int color;
     packet >>  placed_unit_coords.x >> placed_unit_coords.y >> color;
     mRender.get_boardView().add_unit(color,placed_unit_coords);
+    currentState = State::DEFAULT;
 }
 
 void Client::update(sf::Packet &packet) {
