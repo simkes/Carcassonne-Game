@@ -36,6 +36,7 @@ UnitView::UnitView(int color, sf::Vector2f position) {
     game_model::Color col = game_model::colorsVector[color];
     mSprite.setTexture(*getTextures().get_texture(textures::unit_color[col]));
     mSprite.setPosition(position);
+    mSprite.setOrigin(textures::UNIT_TEXTURE_SIZE/2, textures::UNIT_TEXTURE_SIZE/2);
 }
 
 void UnitView::set_col_and_pos(int color, sf::Vector2f position) {

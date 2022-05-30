@@ -18,6 +18,7 @@ inline std::map<game_model::Color, ID> unit_color {{game_model::Color::RED, ID::
                                            {game_model::Color::YELLOW, ID::UNIT_YELLOW}};
 
 const int CARD_TEXTURE_SIZE = 150;
+const int UNIT_TEXTURE_SIZE = 70;
 
 inline std::vector<std::pair<int,int>> cardCoordinates{{0,0}, {0,1}, {0,2}, {0,3},
                                              {1,0}, {1,2}, {1,3},{2,1},

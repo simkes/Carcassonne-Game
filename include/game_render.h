@@ -62,7 +62,7 @@ public:
 
     std::pair<sf::String, int> menu_init(const std::vector<int>& available_colors) {
         std::pair<sf::String, int> ans = mMenu.ask_name_color(available_colors);
-        mUnitView.set_col_and_pos(ans.second, {invitationPos.x , invitationPos.y + 75});
+        mUnitView.set_col_and_pos(ans.second, {invitationPos.x , invitationPos.y + 110});
         return ans;
     }
 
