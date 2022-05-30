@@ -17,6 +17,7 @@ private:
     sf::RenderWindow mWindow;
     BoardView mBoardView;
     CurrentCardView mCurCardView;
+    UnitView mUnitView;
     sf::String mCurPlayer;
 
     sf::Sprite mBackground1;
@@ -29,6 +30,7 @@ private:
 
     std::vector<game_model::Player> *players = nullptr; //for scoreboard
     sf::Text invitation;
+    sf::Vector2f invitationPos = {10,65};
     sf::Text errorMessage; //TODO
 
     void update_scoreboard();
@@ -56,6 +58,12 @@ public:
 
     void set_errorMessage(const std::string& msg) {
         errorMessage.setString(msg);
+    }
+
+    std::pair<sf::String, int> menu_init(const std::vector<int>& available_colors) {
+        std::pair<sf::String, int> ans = mMenu.ask_name_color(available_colors);
+        mUnitView.set_col_and_pos(ans.second, {invitationPos.x , invitationPos.y + 75});
+        return ans;
     }
 
     void render(carcassonne_game::State state);

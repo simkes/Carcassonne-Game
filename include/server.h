@@ -7,6 +7,7 @@
 #include <SFML/Network/TcpSocket.hpp>
 #include <SFML/Network/TcpListener.hpp>
 #include <SFML/Network/Packet.hpp>
+#include <iostream>
 
 namespace carcassonne_game {
 
@@ -42,7 +43,7 @@ struct Server {
                  Card card
                  /*std::vector<carcassonne_game::State> states*/);
 
-    sf::Vector2i getCardPlacement(size_t index);
+    std::pair<sf::Vector2i, int> getCardPlacement(size_t index);
 
     std::optional<sf::Vector2i> getUnitPlacement(size_t index);
 

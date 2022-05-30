@@ -35,7 +35,9 @@ private:
 };
 
 struct UnitView {
+    UnitView() = default;
     explicit UnitView(int color, sf::Vector2f position);
+    void set_col_and_pos(int color, sf::Vector2f position);
     void draw(sf::RenderTarget &target) const;
 private:
     sf::Sprite mSprite;

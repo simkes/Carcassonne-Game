@@ -15,7 +15,7 @@ void Server::startGame(std::vector<Player> players) {
     }
 }
 
-sf::Vector2i Server::getCardPlacement(size_t index) {
+std::pair<sf::Vector2i, int> Server::getCardPlacement(size_t index) {
     sf::Packet packet;
     sf::Packet invite;
     // handle errors
@@ -28,13 +28,13 @@ sf::Vector2i Server::getCardPlacement(size_t index) {
     PacketType type;
     packet >> type;
     if (type == PLACE_CARD) {
-        int x, y;
-        packet >> x >> y;
-        return {x, y};
+        int x, y, rotation;
+        packet >> x >> y >> rotation;
+        return {{x, y},rotation};
     } else {
         sendError("Wrong packet received", index);
     }
-    return {-1, -1};
+    return {{-1, -1},0};
 }
 
 void Server::sendError(const std::string &error_msg, size_t index) {
@@ -70,7 +70,7 @@ std::optional<sf::Vector2i> Server::getUnitPlacement(size_t index) {
 void Server::turnDone(size_t index, Card card) {
     for (auto &obj : indSocket) {
         sf::Packet packet;
-        packet << UPDATE << card.textureId << card.mPosition.x << card.mPosition.y << card.rotation << -1 << -1;
+        packet << UPDATE << card.textureId << card.mPosition.x << card.mPosition.y << card.get_rotation()<< -1 << -1;
         // handle errors
 
         obj.second->setBlocking(true);

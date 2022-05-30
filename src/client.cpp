@@ -127,7 +127,7 @@ void Client::init(sf::Packet &packet) {
         packet >> available_colors[i]; // index of color ( in game_common: 0 = RED, 1 = YELLOW, 2 = GREEN, 3 = BLUE, 4 = BLACK)
     }
     std::pair<std::string, int> answer =
-        mRender.get_menu().ask_name_color(available_colors);
+        mRender.menu_init(available_colors);
     sf::Packet send_packet;
     send_packet
         << curType << answer.first

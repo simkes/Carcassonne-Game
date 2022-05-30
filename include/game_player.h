@@ -7,7 +7,7 @@
 namespace game_model {
 
 struct Player {
-    const sf::String name;
+    const std::string name;
     const Color color;
     int score = 0;
     const bool human;

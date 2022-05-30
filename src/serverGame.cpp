@@ -32,10 +32,11 @@ void ServerGame::run() {
             set_currentCard();
             mServer.newTurn(currentPlayerIndex, *currentCardPtr);
             while (currentState == State::CARDPLACEMENT) {
-                sf::Vector2i coords =
+                std::pair<sf::Vector2i, int> coords =
                     mServer.getCardPlacement(currentPlayerIndex);
-                if (mBoard.canAddCard(coords, *currentCardPtr)) {
-                    mBoard.addCard(coords, *currentCardPtr);
+                currentCardPtr->set_rotation(coords.second);
+                if (mBoard.canAddCard(coords.first, *currentCardPtr)) {
+                    mBoard.addCard(coords.first, *currentCardPtr);
                     mServer.turnDone(currentPlayerIndex, *currentCardPtr);
                     change_state();
                 }

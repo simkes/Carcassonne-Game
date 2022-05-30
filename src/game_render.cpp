@@ -4,7 +4,7 @@ namespace game_view {
 
 GameRender::GameRender()
     : mWindow    (sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Carcassonne-Game"),
-      mMenu      (mWindow), mText("", getFont(), 50), invitation("", getFont(), 40),
+      mMenu      (mWindow), mText("", getFont(), 50), invitation("", getFont(), 35),
       mScoreText("", getFont(), 30) {
     mBackground1.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND));
     mBackground1.setPosition(0, 0);
@@ -23,7 +23,7 @@ GameRender::GameRender()
     mText.setFillColor(sf::Color::Black);
     mText.setPosition(10,5);
     invitation.setFillColor(sf::Color::Red);
-    invitation.setPosition(10,70);
+    invitation.setPosition(invitationPos);
 }
 
 void GameRender::update_scoreboard() {
@@ -42,7 +42,7 @@ void GameRender::render(carcassonne_game::State state) {
     if(state == carcassonne_game::State::CARDPLACEMENT) {
         invitation.setString("Place the card");
     } else if (state == carcassonne_game::State::UNITPLACEMENT) {
-        invitation.setString("You can place a unit\n\n Press ENTER to skip");
+        invitation.setString("You can place a unit\n Press ENTER to skip");
     }
     mWindow.clear();
     mWindow.draw(mBackground1);
@@ -62,6 +62,9 @@ void GameRender::render(carcassonne_game::State state) {
     }
     if (state != carcassonne_game::State::UNITPLACEMENT) {
         mCurCardView.draw(mWindow);
+    }
+    if(state == carcassonne_game::State::UNITPLACEMENT) {
+        mUnitView.draw(mWindow);
     }
     mWindow.display();
 }

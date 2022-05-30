@@ -8,7 +8,7 @@ namespace interaction {
 
 struct result {
     sf::Vector2i tile_coordinates = {-1,-1};
-    int card_rotation =  -1;
+    int card_rotation =  0;
 };
 
 struct defaultInteraction {
