@@ -3,7 +3,7 @@ inline std::mt19937 rng ((std::uint32_t) std::chrono::steady_clock::now().time_s
 namespace carcassonne_game {
 
 void CardDeck::init() {
-    for (int i = 1; i < 22; i++) {
+    for (int i = 1; i < 20; i++) {
         std::string filename = "cardsdata/" + std::to_string(i) + ".txt";
         if (i < 3) {
             for (int j = 0; j < 9; j++) {

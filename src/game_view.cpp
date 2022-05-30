@@ -73,6 +73,8 @@ void BoardView::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 }
 
 void CurrentCardView::set_texture(int texture_id) {
+    rotation = 0;
+    mSprite.setRotation(90 * rotation);
     mSprite.setTexture(*getTextures().get_texture(texture_id < 16 ? textures::ID::CARDS1 : textures::ID::CARDS2));
     int x = game_view::textures::cardCoordinates[texture_id].first;
     int y = game_view::textures::cardCoordinates[texture_id].second;
