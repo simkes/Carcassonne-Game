@@ -15,9 +15,7 @@ ServerGame::ServerGame(unsigned short port) : mServer(port) {
     init_visitors();
     currentPlayerPtr = &mPlayers[currentPlayerIndex];
     place_first_card();
-    // currentState = State::UNITPLACEMENT;
     currentState = State::CARDPLACEMENT;
-    // currentPlayerPtr = &mPlayers[currentPlayerIndex];
     mCardDeck.init();
 }
 
@@ -87,9 +85,16 @@ void ServerGame::change_state() {
 }
 
 void ServerGame::update() {
+    std::vector<sf::Vector2i> deleted_units;
     for (int i = 0; i < 3; i++) {  // FieldVisitor goes in the end
-        mVisitors[i]->visit();
+        std::vector<sf::Vector2i> result = mVisitors[i]->visit();
+        deleted_units.insert(std::end(deleted_units), std::begin(result), std::end(result)); // TODO: check
     }
+    std::vector<std::pair<std::string, int>> players_score;
+    for(const auto & pl : mPlayers){
+        players_score.emplace_back(pl.name, pl.score);
+    }
+    mServer.update(players_score, deleted_units);
 }
 
 void ServerGame::place_first_card() {
@@ -97,6 +102,7 @@ void ServerGame::place_first_card() {
     sf::Vector2i pos(102, 102);
     mBoard.addCard(pos, *currentCardPtr);
     mServer.cardTurnDone(*currentCardPtr);
+    update();
 }
 
 void ServerGame::set_currentCard() {

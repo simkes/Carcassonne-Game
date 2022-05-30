@@ -15,9 +15,10 @@ const PacketType PLACE_UNIT = 4;
 const PacketType NEW_TURN = 5;
 const PacketType UPDATE_CARD = 6;
 const PacketType UPDATE_UNIT = 7;
-const PacketType GAME_OVER = 8;
-const PacketType GAME_START = 9;
-const PacketType PAUSE = 10;
+const PacketType UPDATE = 8;
+const PacketType GAME_OVER = 9;
+const PacketType GAME_START = 10;
+const PacketType PAUSE = 11;
 
 } // namespace carcassonne_game
 

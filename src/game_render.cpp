@@ -26,18 +26,7 @@ GameRender::GameRender()
     invitation.setPosition(invitationPos);
 }
 
-void GameRender::update_scoreboard() {
-    if(!players) { return; }
-    sf::String text = "";
-    for(const auto &p : (*players)) {
-        text += p.name + "      " + std::to_string(p.score) + '\n';
-    }
-    mScoreText.setString(text);
-}
-
-
 void GameRender::render(carcassonne_game::State state) {
-    update_scoreboard();
     mText.setString(mCurPlayer + "'s Move");
     if(state == carcassonne_game::State::CARDPLACEMENT) {
         invitation.setString("Place the card");
@@ -69,14 +58,12 @@ void GameRender::render(carcassonne_game::State state) {
     mWindow.display();
 }
 
-//std::vector<std::pair<sf::String, game_model::Color>> GameRender::execute_menu() {
-//    return mMenu.run();
-//}
-//
-//void GameRender::set_boardView(game_model::Board *board) {
-//    mBoardView.setBoard(board);
-//    //mWindow.setView(mBoardView.getView());
-//}
-
+void GameRender::set_scoreText(const std::vector<std::pair<std::string, int>>& players_score) {
+    sf::String text = "";
+    for(const auto &p : players_score) {
+        text += p.first + "      " + std::to_string(p.second) + '\n';
+    }
+    mScoreText.setString(text);
+}
 
 }  // namespace game_view

@@ -30,6 +30,7 @@ private:
     void new_turn(sf::Packet &packet);
     void new_card(sf::Packet &packet);
     void new_unit(sf::Packet &packet);
+    void update(sf::Packet &packet);
     sf::Socket::Status receive();
 public:
     Client() {

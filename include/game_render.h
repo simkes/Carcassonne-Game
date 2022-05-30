@@ -28,7 +28,6 @@ private:
     sf::Text mScoreText;
     Menu mMenu;
 
-    std::vector<game_model::Player> *players = nullptr; //for scoreboard
     sf::Text invitation;
     sf::Vector2f invitationPos = {10,65};
     sf::Text errorMessage; //TODO
@@ -36,9 +35,6 @@ private:
     void update_scoreboard();
 public:
     GameRender();
-    void set_players(std::vector<game_model::Player> *players_) {
-        players = players_;
-    }
     sf::RenderWindow& window() {
         return mWindow;
     };
@@ -59,6 +55,8 @@ public:
     void set_errorMessage(const std::string& msg) {
         errorMessage.setString(msg);
     }
+
+    void set_scoreText(const std::vector<std::pair<std::string,int>>& players_score);
 
     std::pair<sf::String, int> menu_init(const std::vector<int>& available_colors) {
         std::pair<sf::String, int> ans = mMenu.ask_name_color(available_colors);

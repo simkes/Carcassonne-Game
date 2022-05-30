@@ -55,6 +55,7 @@ struct Server {
 
     void cardTurnDone (Card card);
     void unitTurnDone (sf::Vector2i unitPos, int unitCol);
+    void update(const std::vector<std::pair<std::string,int>> &players_score, const std::vector<sf::Vector2i> &deleted_units);
 
     std::vector<Player> waitConnections(std::vector<Player> &players);
 
@@ -105,22 +106,16 @@ private:
 
     State currentState;
     bool endOfState = false;
-    // std::map<State, std::unique_ptr<defaultInteraction>> mInteraction;
-
-    // GameRender *mGameRenderPtr;
-
     void init_players(
         const std::vector<Player> &players);
     void init_visitors();
-    // void init_interaction();
+
     void place_first_card();
 
-    // void process_events(sf::Event &event);
     void update();
-    // void render();
     void change_state();
     void set_currentCard();
-    void execute_unitPlacement();
+
 };
 
 }  // namespace game_server

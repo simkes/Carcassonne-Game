@@ -90,6 +90,28 @@ void Server::unitTurnDone(sf::Vector2i unitPos, int unitCol) {
     }
 }
 
+void Server::update(const std::vector<std::pair<std::string,int>> &players_score,
+                    const std::vector<sf::Vector2i> &deleted_units) {
+    int n = (int)players_score.size();
+    int m = (int)deleted_units.size();
+    for (auto &obj : indSocket) {
+        sf::Packet packet;
+        packet << UPDATE << n;
+        for(const auto &p : players_score) {
+            packet << p.first << p.second;
+        }
+        packet << m;
+        for(const auto &p : deleted_units) {
+            packet << p.x << p.y;
+        }
+        obj.second->setBlocking(true);
+        obj.second->send(packet);
+        obj.second->setBlocking(false);
+    }
+
+}
+
+
 void Server::newTurn(size_t index, Card card) {
     for (auto &obj : indSocket) {
         sf::Packet packet;

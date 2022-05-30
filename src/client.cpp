@@ -107,6 +107,10 @@ sf::Socket::Status Client::receive() {
             new_unit(packet);
             break;
         }
+        case UPDATE: {
+            update(packet);
+            break;
+        }
         case GAME_OVER: {
             //TODO: print smt and end
             break;
@@ -171,19 +175,24 @@ void Client::new_unit(sf::Packet &packet) {
     mRender.get_boardView().add_unit(color,placed_unit_coords);
 }
 
-//void Client::update(sf::Packet &packet) { TODO: make update for score and deleting units
-
-
-//    int n; // number of units to be deleted;
-//    packet >> n;
-//    sf::Vector2i deleted_unit_coords;
-//    for(int i = 0; i < n; i++){
-//        packet >> deleted_unit_coords.x >> deleted_unit_coords.y;
-//        mRender.get_boardView().delete_unit(deleted_unit_coords);
-//    }
-// packet >> some score
-
-//}
+void Client::update(sf::Packet &packet) {
+    int n; // number of players
+    packet >> n;
+    std::vector<std::pair<std::string,int>> players_score(n);
+    for(int i = 0; i < n; i ++) {
+        std::string name; int score;
+        packet >> name >> score;
+        players_score[i] = {name,score};
+    }
+    mRender.set_scoreText(players_score);
+    int m; // number of deleted units
+    packet >> m;
+    sf::Vector2i deleted_unit_coords;
+    for(int i = 0; i < m; i++) {
+        packet >> deleted_unit_coords.x >> deleted_unit_coords.y;
+        mRender.get_boardView().delete_unit(deleted_unit_coords);
+    }
+}
 
 
 }
