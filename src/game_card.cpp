@@ -31,7 +31,8 @@ void Card::setTiles() {
     }
 }
 void Card::set_rotation(int rotation_) {
-    for(int i = 0; i < rotation_; i++) {
+    int diff = (rotation_ + 4 - rotation) % 4;
+    for(int i = 0; i < diff; i++) {
         rotateRight();
     }
     rotation = rotation_;
