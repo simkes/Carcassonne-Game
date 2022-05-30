@@ -23,7 +23,7 @@ void Client::process_game() {
         ans = mInteraction[currentState]->handleEvent(event,
                                                       interactionEnd);
     }
-    mRender.render(1);
+    mRender.render(currentState);
     if (interactionEnd && currentState != State::DEFAULT) {
         sf::Packet packet;
         packet << curType << ans.tile_coordinates.x << ans.tile_coordinates.y

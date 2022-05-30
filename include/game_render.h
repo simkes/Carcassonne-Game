@@ -58,7 +58,7 @@ public:
         errorMessage.setString(msg);
     }
 
-    void render(bool card);
+    void render(carcassonne_game::State state);
 
     friend interaction::defaultInteraction;
     friend interaction::cardPlacementInteraction;

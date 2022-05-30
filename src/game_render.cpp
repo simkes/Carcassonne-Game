@@ -22,7 +22,7 @@ GameRender::GameRender()
 
     mText.setFillColor(sf::Color::Black);
     mText.setPosition(10,5);
-    invitation.setFillColor(sf::Color::Black);
+    invitation.setFillColor(sf::Color::Red);
     invitation.setPosition(10,70);
 }
 
@@ -35,11 +35,14 @@ void GameRender::update_scoreboard() {
     mScoreText.setString(text);
 }
 
-void GameRender::render(bool card) {
+
+void GameRender::render(carcassonne_game::State state) {
     update_scoreboard();
     mText.setString(mCurPlayer + "'s Move");
-    if(card) {
+    if(state == carcassonne_game::State::CARDPLACEMENT) {
         invitation.setString("Place the card");
+    } else if (state == carcassonne_game::State::UNITPLACEMENT) {
+        invitation.setString("You can place a unit\n\n Press ENTER to skip");
     }
     mWindow.clear();
     mWindow.draw(mBackground1);
@@ -54,8 +57,10 @@ void GameRender::render(bool card) {
     mBoardView.draw(mWindow,
                     sf::RenderStates::Default);  // TOD: RenderStates ??
     mWindow.setView(mWindow.getDefaultView());
-    if(card) {
+    if(state != carcassonne_game::State::DEFAULT) {
         mWindow.draw(invitation);
+    }
+    if (state != carcassonne_game::State::UNITPLACEMENT) {
         mCurCardView.draw(mWindow);
     }
     mWindow.display();
