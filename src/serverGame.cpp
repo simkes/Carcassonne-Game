@@ -42,7 +42,7 @@ void ServerGame::run() {
             }
         }
         if (currentState == State::UNITPLACEMENT) {
-
+            mServer.getUnitPlacement(currentPlayerIndex);
             change_state();
         }
         currentPlayerIndex = (currentPlayerIndex + 1) % mPlayers.size();
@@ -62,8 +62,8 @@ void ServerGame::change_state() {
             break;
         }
         case State::CARDPLACEMENT: {
-            // currentState = State::UNITPLACEMENT;
-            currentState = State::DEFAULT;
+            currentState = State::UNITPLACEMENT;
+            //currentState = State::DEFAULT;
             endOfState = false;
             break;
         }

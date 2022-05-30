@@ -48,6 +48,7 @@ std::optional<sf::Vector2i> Server::getUnitPlacement(size_t index) {
     sf::Packet invite;
     invite << PLACE_UNIT;
     // handle errors
+    std::cout << "sent unit request \n";
     indSocket[index]->setBlocking(true);
     indSocket[index]->send(invite);
     indSocket[index]->receive(packet);
