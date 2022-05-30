@@ -48,6 +48,7 @@ void ServerGame::run() {
         currentPlayerIndex = (currentPlayerIndex + 1) % mPlayers.size();
         currentPlayerPtr = &mPlayers[currentPlayerIndex];
         update();
+        change_state();
     }
     mServer.finishGame();
 }
