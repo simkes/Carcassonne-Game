@@ -10,10 +10,9 @@ void Client::init_interaction() {
 
 sf::Socket::Status Client::connect(const sf::IpAddress &IP,
                                    unsigned short port, sf::Time timeout) {
-   // std::cout << port << ' ' << IP;
-   sf::Socket::Status status =  mSocket.connect(IP, port, timeout);
-   mSocket.setBlocking(false);
-   return status;
+    sf::Socket::Status status =  mSocket.connect(IP, port, timeout);
+    mSocket.setBlocking(false);
+    return status;
 }
 
 void Client::process_game() {
@@ -97,14 +96,15 @@ sf::Socket::Status Client::receive() {
             new_turn(packet);
             break;
         }
-        case UPDATE: { // receives texture id of placed card, (int, int) its coordinates (cardX, cardY), (int) rotation
-                       // when game starts receives first card (as in game.cpp place_first_card)
-                       // (int,int) - of placed unit (unitX, unitY) = (-1,-1) if not placed
-                       // (int) color of unit (index as in game_common)
-                       // make visitors return vector<Vector2i> position of units returned to players and pass it to packet TODO
-                       // it may be size of vector and then n pairs (int,int)
-                       // current score?
-            update(packet);
+            //TODO:  make visitors return vector<Vector2i> position of units returned to players and pass it to packet
+            //                         it may be size of vector and then n pairs (int,int)
+            //                         current score
+        case UPDATE_CARD: {
+            new_card(packet);
+            break;
+        }
+        case UPDATE_UNIT: {
+            new_unit(packet);
             break;
         }
         case GAME_OVER: {
@@ -132,7 +132,7 @@ void Client::init(sf::Packet &packet) {
     send_packet
         << curType << answer.first
         << answer.second;  // sends (type) INITIAL (string) name (int) color
-     while(mSocket.send(send_packet) != sf::Socket::Done) {}
+    while(mSocket.send(send_packet) != sf::Socket::Done) {}
 }
 
 void Client::wait_start(sf::Packet &packet) {
@@ -154,30 +154,36 @@ void Client::new_turn(sf::Packet &packet) {
     mRender.set_curPlayer(cur_player_name);
 }
 
-void Client::update(sf::Packet &packet) {
-    currentState = State::DEFAULT;
+void Client::new_card(sf::Packet &packet) {
     int texture_id;
     sf::Vector2i placed_card_coords;
     int rotation;
-    std::cout << "get upd\n";
+    std::cout << "get upd card\n";
     packet >> texture_id >> placed_card_coords.x >> placed_card_coords.y >> rotation;
-    mRender.get_boardView().add_card(texture_id, transform_coordinates(placed_card_coords), rotation); //TODO: make transform coordinates
-                                                                                                       // return tiles (2i) to world (2f)
+    mRender.get_boardView().add_card(texture_id, transform_coordinates(placed_card_coords), rotation);
+    currentState = State::DEFAULT;
+}
+
+void Client::new_unit(sf::Packet &packet) {
     sf::Vector2i placed_unit_coords;
     int color;
     packet >>  placed_unit_coords.x >> placed_unit_coords.y >> color;
-    if(placed_unit_coords.x != -1) {
-        mRender.get_boardView().add_unit(color,placed_unit_coords);
-    }
-    int n; // number of units to be deleted;
-    packet >> n;
-    sf::Vector2i deleted_unit_coords;
-    for(int i = 0; i < n; i++){
-        packet >> deleted_unit_coords.x >> deleted_unit_coords.y;
-        mRender.get_boardView().delete_unit(deleted_unit_coords);
-    }
-    // packet >> some score
+    mRender.get_boardView().add_unit(color,placed_unit_coords);
 }
+
+//void Client::update(sf::Packet &packet) { TODO: make update for score and deleting units
+
+
+//    int n; // number of units to be deleted;
+//    packet >> n;
+//    sf::Vector2i deleted_unit_coords;
+//    for(int i = 0; i < n; i++){
+//        packet >> deleted_unit_coords.x >> deleted_unit_coords.y;
+//        mRender.get_boardView().delete_unit(deleted_unit_coords);
+//    }
+// packet >> some score
+
+//}
 
 
 }

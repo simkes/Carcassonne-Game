@@ -28,11 +28,12 @@ private:
     void init(sf::Packet &packet);
     void wait_start(sf::Packet &packet);
     void new_turn(sf::Packet &packet);
-    void update(sf::Packet &packet);
+    void new_card(sf::Packet &packet);
+    void new_unit(sf::Packet &packet);
     sf::Socket::Status receive();
 public:
     Client() {
- //       mSocket.setBlocking(false); // non blocking socket
+        //       mSocket.setBlocking(false); // non blocking socket
         init_interaction();
     }
     bool is_host() {

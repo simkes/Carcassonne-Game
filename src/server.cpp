@@ -37,13 +37,7 @@ std::pair<sf::Vector2i, int> Server::getCardPlacement(size_t index) {
     return {{-1, -1},0};
 }
 
-void Server::sendError(const std::string &error_msg, size_t index) {
-    sf::Packet packet;
-    packet << ERROR << error_msg;
-    indSocket[index]->send(packet);
-}
-
-std::optional<sf::Vector2i> Server::getUnitPlacement(size_t index) {
+sf::Vector2i Server::getUnitPlacement(size_t index) {
     sf::Packet packet;
     sf::Packet invite;
     invite << PLACE_UNIT;
@@ -56,21 +50,38 @@ std::optional<sf::Vector2i> Server::getUnitPlacement(size_t index) {
     PacketType type;
     packet >> type;
     if (type == PLACE_UNIT) {
-        bool isPlaced;
-        packet >> isPlaced;
-        if (isPlaced) {
-            sf::Vector2i pos;
-            packet >> pos.x >> pos.y;
-            return pos;
-        }
-        return std::nullopt;
+        sf::Vector2i pos;
+        packet >> pos.x >> pos.y;
+        return pos;
+    }
+    else {
+        sendError("Wrong packet received", index);
+        return {-1, -1};
     }
 }
 
-void Server::turnDone(size_t index, Card card) {
+void Server::sendError(const std::string &error_msg, size_t index) {
+    sf::Packet packet;
+    packet << ERROR << error_msg;
+    indSocket[index]->send(packet);
+}
+
+void Server::cardTurnDone(Card card) {
     for (auto &obj : indSocket) {
         sf::Packet packet;
-        packet << UPDATE << card.textureId << card.mPosition.x << card.mPosition.y << card.get_rotation()<< -1 << -1;
+        packet << UPDATE_CARD << card.textureId << card.mPosition.x << card.mPosition.y << card.get_rotation();
+        // handle errors
+
+        obj.second->setBlocking(true);
+        obj.second->send(packet);
+        obj.second->setBlocking(false);
+    }
+}
+
+void Server::unitTurnDone(sf::Vector2i unitPos, int unitCol) {
+    for (auto &obj : indSocket) {
+        sf::Packet packet;
+        packet << UPDATE_UNIT << unitPos.x << unitPos.y << unitCol;
         // handle errors
 
         obj.second->setBlocking(true);
@@ -108,9 +119,9 @@ void Server::sendPause() {
 }
 
 bool Server::check_start() {
-//    sf::Packet packet;
-//    mSockets[0]->setBlocking(true);
-//    sf::Socket::Status type = mSockets[0]->receive(packet);
+    //    sf::Packet packet;
+    //    mSockets[0]->setBlocking(true);
+    //    sf::Socket::Status type = mSockets[0]->receive(packet);
     if (mSelector.wait(sf::seconds(2.f))) {
         sf::Packet packet;
         s1.receive(packet);
@@ -126,12 +137,12 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
     std::map<int, std::pair<std::string, int>> indConnected;
     do {
         // disconnects
-//        for (auto obj : indSocket) {
-//            if (!obj.second->getRemotePort()) {
-//                lobby.erase(indConnected[obj.first]);
-//                obj.second = nullptr;
-//            }
-//
+        //        for (auto obj : indSocket) {
+        //            if (!obj.second->getRemotePort()) {
+        //                lobby.erase(indConnected[obj.first]);
+        //                obj.second = nullptr;
+        //            }
+        //
         if (mListener.accept(*mSockets[cur_index]) == sf::Socket::Done) {
             mSockets[cur_index]->setBlocking(true);
             std::cout << "connected\n";

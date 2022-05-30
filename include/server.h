@@ -45,7 +45,7 @@ struct Server {
 
     std::pair<sf::Vector2i, int> getCardPlacement(size_t index);
 
-    std::optional<sf::Vector2i> getUnitPlacement(size_t index);
+    sf::Vector2i getUnitPlacement(size_t index);
 
     void sendPause();
 
@@ -53,7 +53,8 @@ struct Server {
 
     void sendError(const std::string &error_msg, size_t index);
 
-    void turnDone(size_t index, Card card);
+    void cardTurnDone (Card card);
+    void unitTurnDone (sf::Vector2i unitPos, int unitCol);
 
     std::vector<Player> waitConnections(std::vector<Player> &players);
 

@@ -37,13 +37,22 @@ void ServerGame::run() {
                 currentCardPtr->set_rotation(coords.second);
                 if (mBoard.canAddCard(coords.first, *currentCardPtr)) {
                     mBoard.addCard(coords.first, *currentCardPtr);
-                    mServer.turnDone(currentPlayerIndex, *currentCardPtr);
+                    mServer.cardTurnDone(*currentCardPtr);
                     change_state();
                 }
             }
         }
         if (currentState == State::UNITPLACEMENT) {
-            mServer.getUnitPlacement(currentPlayerIndex);
+            if(mPlayers[currentPlayerIndex].get_unit()) {
+                sf::Vector2i coords =
+                    mServer.getUnitPlacement(currentPlayerIndex);
+                if(coords.x != -1) {
+                    Unit *unit = mPlayers[currentPlayerIndex].get_unit();
+                    mBoard.getTiles()[coords].unit = unit;
+                    unit->tile = &mBoard.getTiles()[coords];
+                    mServer.unitTurnDone(coords, static_cast<int>(unit->owner->color)); //TODO: check
+                }
+            }
             change_state();
         }
         currentPlayerIndex = (currentPlayerIndex + 1) % mPlayers.size();
@@ -87,7 +96,7 @@ void ServerGame::place_first_card() {
     set_currentCard();
     sf::Vector2i pos(102, 102);
     mBoard.addCard(pos, *currentCardPtr);
-    mServer.turnDone(0, *currentCardPtr);
+    mServer.cardTurnDone(*currentCardPtr);
 }
 
 void ServerGame::set_currentCard() {
