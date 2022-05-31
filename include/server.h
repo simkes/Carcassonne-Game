@@ -26,9 +26,9 @@ struct Server {
         mListener.listen(port);
         mListener.setBlocking(false);
 
-        s0.setBlocking(false);
+        s0.setBlocking(true);
         mSockets[0] = &s1;
-        mSelector.add(s0);
+        //mSelector.add(s0);
         mSockets[1] = &s2;
         mSockets[2] = &s3;
         mSockets[3] = &s4;

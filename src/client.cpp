@@ -18,7 +18,7 @@ sf::Socket::Status Client::connect(const sf::IpAddress &IP,
 void Client::process_game() {
     interaction::result ans;
     sf::Event event{};
-    if (mRender.window().pollEvent(event)) {
+    while (mRender.window().pollEvent(event)) {
         ans = mInteraction[currentState]->handleEvent(event,
                                                       interactionEnd);
     }
@@ -41,8 +41,8 @@ void Client::render_lobby() {
         sf::Packet send_packet;
         send_packet << curType << game_started;
         hostSocket.setBlocking(true);// sends (type) WAIT_START (int) game_started
-        hostSocket.send(send_packet);
-        std::cout << "sent\n";
+        if (hostSocket.send(send_packet) == sf::Socket::Done)
+            std::cout << "sent\n";
         hostSocket.setBlocking(false);
     }
 }

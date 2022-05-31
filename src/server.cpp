@@ -163,8 +163,9 @@ void Server::sendPause() {
 
 bool Server::check_start() {
     if (mSelector.wait(sf::seconds(2.f))) {
-    sf::Packet packet;
-    s0.receive(packet);
+        std::cout << "received\n";
+        sf::Packet packet;
+        s0.receive(packet);
         return true;
     } else {
         return false;
@@ -172,7 +173,8 @@ bool Server::check_start() {
 }
 
 std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
-    // while (mListener.accept(s0) != sf::Socket::Done) {}
+    while (mListener.accept(s0) != sf::Socket::Done) {}
+    mSelector.add(s0);
     int cur_index = 0;
     sf::Packet from_host;
     std::map<int, std::pair<std::string, int>> indConnected;
@@ -222,7 +224,7 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
             }
             mSockets[cur_index++]->setBlocking(false);
         }
-    } while (cur_index < 2);
+    } while (!check_start());
     int iter = 0;
     players.reserve(lobby.size());
     for (auto obj : lobby) {

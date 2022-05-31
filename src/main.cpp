@@ -43,7 +43,7 @@ int main() {
         }
         sf::TcpSocket host;
         std::this_thread::sleep_for(std::chrono::seconds(2));
-        // client.hostSocket.connect(ip, port, sf::seconds(5.f));
+        client.hostSocket.connect(ip, port, sf::seconds(5.f));
         sf::Socket::Status status = client.connect(ip, port, sf::seconds(5.f));
         client.run();
         hosted_server.terminate();
