@@ -170,7 +170,9 @@ void Client::new_unit(sf::Packet &packet) {
     sf::Vector2i placed_unit_coords;
     int color;
     packet >>  placed_unit_coords.x >> placed_unit_coords.y >> color;
-    mRender.get_boardView().add_unit(color,placed_unit_coords);
+    if (placed_unit_coords.x != -1) {
+        mRender.get_boardView().add_unit(color, placed_unit_coords);
+    }
     currentState = State::DEFAULT;
 }
 

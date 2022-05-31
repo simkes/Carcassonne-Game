@@ -45,7 +45,12 @@ void ServerGame::run() {
             if(mPlayers[currentPlayerIndex].get_unit()) {
                 sf::Vector2i coords =
                     mServer.getUnitPlacement(currentPlayerIndex);
-                if(coords.x != -1 && mBoard.getTiles()[coords].card) {
+                if(coords.x == -1) {
+                    change_state();
+                    mServer.unitTurnDone(coords, -1);
+                    break;
+                }
+                if (mBoard.getTiles()[coords].card) {
                     Unit *unit = mPlayers[currentPlayerIndex].get_unit();
                     mBoard.getTiles()[coords].unit = unit;
                     unit->tile = &mBoard.getTiles()[coords];
