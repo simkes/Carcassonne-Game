@@ -58,11 +58,4 @@ int main() {
         std::cout << "Failed to connect\n";
     }
 
-
-   // carcassonne_game::Game newGame(gameRender.run(), &gameRender);
-//    try {
-//        newGame.run();
-//    } catch (const std::exception &exc) {
-//        std::cout << exc.what();
-//    }
 }

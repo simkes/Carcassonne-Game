@@ -41,8 +41,8 @@ void Client::render_lobby() {
         sf::Packet send_packet;
         send_packet << curType << game_started;
         hostSocket.setBlocking(true);// sends (type) WAIT_START (int) game_started
-        if (hostSocket.send(send_packet) == sf::Socket::Done)
-            std::cout << "sent\n";
+         (hostSocket.send(send_packet) == sf::Socket::Done);
+            //std::cout << "sent\n";
         hostSocket.setBlocking(false);
     }
 }
@@ -148,7 +148,7 @@ void Client::wait_start(sf::Packet &packet) {
 }
 
 void Client::new_turn(sf::Packet &packet) {
-    std::cout << "get turn\n";
+    //std::cout << "get turn\n";
     std::string cur_player_name;
     int cur_card_texture;
     packet  >> cur_card_texture >> cur_player_name;
@@ -160,8 +160,9 @@ void Client::new_card(sf::Packet &packet) {
     int texture_id;
     sf::Vector2i placed_card_coords;
     int rotation;
-    std::cout << "get upd card\n";
+    //std::cout << "get upd card\n";
     packet >> texture_id >> placed_card_coords.x >> placed_card_coords.y >> rotation;
+    //std::cout << placed_card_coords.x << ' ' << placed_card_coords.y << '\n';
     mRender.get_boardView().add_card(texture_id, transform_coordinates(placed_card_coords), rotation);
     currentState = State::DEFAULT;
 }

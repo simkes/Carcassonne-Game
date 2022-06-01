@@ -38,14 +38,15 @@ void GameRender::render(carcassonne_game::State state) {
     mWindow.setView(mBoardView.getView());
     mWindow.draw(mBackground2);
     mWindow.setView(mWindow.getDefaultView());
-    mWindow.draw(mScoreSprite);
-    mWindow.draw(mScoreText);
-    mWindow.draw(mTitle);
-    mWindow.draw(mText);
     mWindow.setView(mBoardView.getView());
     mBoardView.draw(mWindow,
                     sf::RenderStates::Default);  // TOD: RenderStates ??
     mWindow.setView(mWindow.getDefaultView());
+    mWindow.draw(mScoreSprite);
+    mWindow.draw(mScoreText);
+    mWindow.draw(mTitle);
+    mWindow.draw(mText);
+
     if(state != carcassonne_game::State::DEFAULT) {
         mWindow.draw(invitation);
     }

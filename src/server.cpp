@@ -21,7 +21,6 @@ std::pair<sf::Vector2i, int> Server::getCardPlacement(size_t index) {
     sf::Packet packet;
     sf::Packet invite;
     // handle errors
-    // how to check if received correct packet, naive solution is set types to packets as first its bytes
     invite << PLACE_CARD;
     indSocket[index]->setBlocking(true);
     if (indSocket[index]->send(invite) == sf::Socket::Disconnected) {
@@ -48,7 +47,6 @@ sf::Vector2i Server::getUnitPlacement(size_t index) {
     sf::Packet invite;
     invite << PLACE_UNIT;
     // handle errors
-    std::cout << "sent unit request \n";
     indSocket[index]->setBlocking(true);
 
     if (indSocket[index]->send(invite) == sf::Socket::Disconnected) {
@@ -79,7 +77,7 @@ void Server::sendError(const std::string &error_msg, size_t index) {
     }
 }
 
-void Server::cardTurnDone(Card card) {
+void Server::cardTurnDone(const Card &card) {
     for (auto &obj : indSocket) {
         sf::Packet packet;
         packet << UPDATE_CARD << card.textureId << card.mPosition.x << card.mPosition.y << card.get_rotation();
@@ -156,14 +154,12 @@ void Server::finishGame() {
 void Server::sendPause() {
     for (auto &obj : indSocket) {
         sf::Packet packet;
-        // state pause?
         obj.second->send(packet);
     }
 }
 
 bool Server::check_start() {
     if (mSelector.wait(sf::seconds(2.f))) {
-        std::cout << "received\n";
         sf::Packet packet;
         s0.receive(packet);
         return true;
@@ -179,16 +175,8 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
     sf::Packet from_host;
     std::map<int, std::pair<std::string, int>> indConnected;
     do {
-        // disconnects
-        //        for (auto obj : indSocket) {
-        //            if (!obj.second->getRemotePort()) {
-        //                lobby.erase(indConnected[obj.first]);
-        //                obj.second = nullptr;
-        //            }
-        //
         if (mListener.accept(*mSockets[cur_index]) == sf::Socket::Done) {
             mSockets[cur_index]->setBlocking(true);
-            std::cout << "connected\n";
             sf::Packet packet;
             packet << INITIAL << availableCol;
             for (int i = 0; i < colorsVector.size(); i++) {
@@ -199,7 +187,6 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
             mSockets[cur_index]->send(packet);
             packet = sf::Packet();
             if (mSockets[cur_index]->receive(packet) == sf::Socket::Done) {
-                std::cout << "received init\n";
                 PacketType type;
                 packet >> type;
                 if (type == INITIAL) {
@@ -216,7 +203,7 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
                 if (obj->getRemotePort()) {
                     sf::Packet packet;
                     packet <<  WAIT_START << static_cast<int>(lobby.size());
-                    for (auto pl : lobby) {
+                    for (const auto& pl : lobby) {
                         packet << pl.first;
                     }
                     obj->send(packet);
@@ -227,7 +214,7 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
     } while (!check_start());
     int iter = 0;
     players.reserve(lobby.size());
-    for (auto obj : lobby) {
+    for (const auto& obj : lobby) {
         players.emplace_back(iter, obj.first, static_cast<Color>(obj.second));
         indPlayer.insert({iter++, players.back()});
     }

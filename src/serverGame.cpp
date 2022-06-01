@@ -14,10 +14,8 @@ void ServerGame::init_players(
 ServerGame::ServerGame(unsigned short port) : mServer(port) {
     placedCards.reserve(100);
     init_visitors();
-    currentPlayerPtr = &mPlayers[currentPlayerIndex];
-    place_first_card();
-    currentState = State::CARDPLACEMENT;
     mCardDeck.init();
+    currentState = State::CARDPLACEMENT;
 }
 
 void ServerGame::run() {
@@ -29,38 +27,36 @@ void ServerGame::run() {
     while (!gameOver) {
         set_currentCard();
         mServer.newTurn(currentPlayerIndex, *currentCardPtr);
-        if (currentState == State::CARDPLACEMENT) {
-            while (currentState == State::CARDPLACEMENT) {
-                std::pair<sf::Vector2i, int> coords =
-                    mServer.getCardPlacement(currentPlayerIndex);
-                currentCardPtr->set_rotation(coords.second);
-                if (mBoard.canAddCard(coords.first, *currentCardPtr)) {
-                    mBoard.addCard(coords.first, *currentCardPtr);
-                    mServer.cardTurnDone(*currentCardPtr);
-                    change_state();
-                }
+        while (currentState == State::CARDPLACEMENT) {
+            std::pair<sf::Vector2i, int> coords =
+                mServer.getCardPlacement(currentPlayerIndex);
+            currentCardPtr->set_rotation(coords.second);
+            if (mBoard.canAddCard(coords.first, *currentCardPtr)) {
+                mBoard.addCard(coords.first, *currentCardPtr);
+                mServer.cardTurnDone(*currentCardPtr);
+                change_state();
             }
         }
         while (currentState == State::UNITPLACEMENT) {
             if(mPlayers[currentPlayerIndex].get_unit()) {
-                sf::Vector2i coords =
+                sf::Vector2i view_coords =
                     mServer.getUnitPlacement(currentPlayerIndex);
-                if(coords.x == -1) {
+                auto coords = game_view::to_board_tiles(view_coords);
+                if(view_coords.x == -1) {
+                    mServer.unitTurnDone(view_coords, -1);
                     change_state();
-                    mServer.unitTurnDone(coords, -1);
-                    break;
-                }
-                if (mBoard.getTiles()[coords].card) {
+                } else if (mBoard.getTiles()[coords].card && !mBoard.getTiles()[coords].unit) {
                     Unit *unit = mPlayers[currentPlayerIndex].get_unit();
                     mBoard.getTiles()[coords].unit = unit;
                     unit->tile = &mBoard.getTiles()[coords];
-                    mServer.unitTurnDone(coords, static_cast<int>(unit->owner->color)); //TODO: check
+                    mServer.unitTurnDone(view_coords, static_cast<int>(unit->owner->color)); //T ODO: check
                     change_state();
                 }
+            } else {
+                change_state();
             }
+
         }
-//        currentPlayerIndex = (currentPlayerIndex + 1) % mPlayers.size();
-//        currentPlayerPtr = &mPlayers[currentPlayerIndex];
         update();
         change_state();
     }
@@ -71,20 +67,15 @@ void ServerGame::change_state() {
     switch (currentState) {
         case State::DEFAULT: {
             currentPlayerIndex = (currentPlayerIndex + 1) % numberOfPlayers;
-            currentPlayerPtr = &mPlayers[currentPlayerIndex];
             currentState = State::CARDPLACEMENT;
-            endOfState = false;
             break;
         }
         case State::CARDPLACEMENT: {
             currentState = State::UNITPLACEMENT;
-            //currentState = State::DEFAULT;
-            endOfState = false;
             break;
         }
         case State::UNITPLACEMENT: {
             currentState = State::DEFAULT;
-            endOfState = false;
             break;
         }
     }

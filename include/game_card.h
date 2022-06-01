@@ -36,7 +36,7 @@ public:
     [[nodiscard]] const std::vector<std::vector<Tile>> &getTiles() const;
     void setTiles();
     void set_rotation(int rotation_);
-    int get_rotation() {
+    int get_rotation() const {
         return rotation;
     }
 };
