@@ -4,21 +4,21 @@ namespace visitors{
 
 std::vector<sf::Vector2i> visitors::MonasteryVisitor::visit() {
     std::vector<sf::Vector2i> deleted_units;
-    for (auto &tile : boardPtr->getTypeMap()[Type::MONASTERY]){
-        if (tile.unit){
-            sf::Vector2i tilePos = tile.position;
+    for (auto &tile_pos : boardPtr->getTypeMap()[Type::MONASTERY]){
+        Tile &tl = boardPtr->getTiles()[tile_pos];
+        if (tl.unit){
             bool surrounded = true;
             for(const auto &dir : directions) {
-                if(boardPtr->getTiles().count({tilePos.x + dir.x, tilePos.y + dir.y}) == 0) {
+                if(boardPtr->getTiles().count({tile_pos.x + dir.x, tile_pos.y + dir.y}) == 0) {
                     surrounded = false;
                     break;
                 }
             }
             if (surrounded) {
-             deleted_units.push_back(tile.position);
-             tile.unit->owner->score+=9;
-             tile.unit->tile = nullptr;
-             tile.unit = nullptr;
+             deleted_units.push_back(tile_pos);
+             tl.unit->owner->score+=9;
+             tl.unit->tile = nullptr;
+             tl.unit = nullptr;
             }
         }
     }

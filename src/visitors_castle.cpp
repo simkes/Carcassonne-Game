@@ -5,9 +5,10 @@ namespace visitors{
 std::vector<sf::Vector2i>visitors::CastleVisitor::visit() {
     std::vector<sf::Vector2i> deleted_units;
     clear_marked();
-    for (auto &tile : boardPtr->getTypeMap()[Type::CASTLE]){
-        if(!marked[tile.position]){
-            int numberOfCards = dfs(tile);
+    for (auto &tile_pos : boardPtr->getTypeMap()[Type::CASTLE]){
+        if(!marked[tile_pos]){
+            Tile &tl = boardPtr->getTiles()[tile_pos];
+            int numberOfCards = dfs(tl);
             if(numberOfCards) {
                 set_score(numberOfCards);
                 for(auto &x: units) {

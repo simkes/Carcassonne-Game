@@ -9,10 +9,10 @@ public:
     explicit MonasteryVisitor(Board *boardPtr_) : AbstractVisitor(boardPtr_) {}
     std::vector<sf::Vector2i> visit() final;
 private:
-    const std::vector<sf::Vector2i> directions { {CARD_DIMENSION,0}, {0, CARD_DIMENSION},
-                                               {-CARD_DIMENSION,0}, {0, -CARD_DIMENSION},
-                                               {CARD_DIMENSION,CARD_DIMENSION}, {-CARD_DIMENSION, CARD_DIMENSION},
-                                               {CARD_DIMENSION,-CARD_DIMENSION}, {-CARD_DIMENSION, -CARD_DIMENSION} };
+    const std::vector<sf::Vector2i> directions { {CARD_DIMENSION-1,0}, {0, CARD_DIMENSION-1},
+                                               {-CARD_DIMENSION+1,0}, {0, -CARD_DIMENSION+1},
+                                               {CARD_DIMENSION-1,CARD_DIMENSION-1}, {-CARD_DIMENSION+1, CARD_DIMENSION-1},
+                                               {CARD_DIMENSION-1,-CARD_DIMENSION+1}, {-CARD_DIMENSION+1, -CARD_DIMENSION+1} };
 };
 
 } // namespace visitors

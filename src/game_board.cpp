@@ -48,9 +48,10 @@ const std::vector<std::vector<Tile>> &Board::addCard(sf::Vector2i pos,
     pos.y = (pos.y / (CARD_DIMENSION-1)) * (CARD_DIMENSION - 1);
     for (int dx = 0; dx < CARD_DIMENSION; dx++) {
         for (int dy = 0; dy < CARD_DIMENSION; dy++) {
-            card.getTile(dx, dy).position = {pos.x + dx, pos.y + dy};
-            mTiles[{pos.x + dx, pos.y + dy}] = card.getTile(dx, dy);
-            mTypeMap[card.getTile(dx, dy).type].push_back(mTiles[{pos.x + dx, pos.y + dy}]);
+            sf::Vector2i boardPos = {pos.x + dx, pos.y + dy};
+            card.getTile(dx, dy).position = boardPos;
+            mTiles[boardPos] = card.getTile(dx, dy);
+            mTypeMap[card.getTile(dx, dy).type].push_back({pos.x + dx, pos.y + dy});
         }
     }
 

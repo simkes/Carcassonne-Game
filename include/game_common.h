@@ -17,7 +17,7 @@ const int CARD_DIMENSION = 5;
 
 enum class Type {NOTHING, CASTLE, FIELD, ROAD, MONASTERY, JUNCTION, CASTLEWITHSHIELD};
 inline std::vector <Type> typesVector {Type::NOTHING, Type::CASTLE, Type::FIELD, Type::ROAD, Type::MONASTERY, Type::JUNCTION, Type::CASTLEWITHSHIELD};
-                                //      0           1           2           3               4               5                   6
+                                //      0               1               2           3               4               5                   6
 
 enum Color { RED, YELLOW, GREEN, BLUE, BLACK };
 inline std::vector <Color> colorsVector{RED, YELLOW, GREEN, BLUE, BLACK};
