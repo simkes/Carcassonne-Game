@@ -49,7 +49,7 @@ void ServerGame::run() {
                     Unit *unit = mPlayers[currentPlayerIndex].get_unit();
                     mBoard.getTiles()[coords].unit = unit;
                     unit->tile = &mBoard.getTiles()[coords];
-                    mServer.unitTurnDone(view_coords, static_cast<int>(unit->owner->color)); //T ODO: check
+                    mServer.unitTurnDone(coords, static_cast<int>(unit->owner->color)); //T ODO: check
                     change_state();
                 }
             } else {
@@ -85,8 +85,11 @@ void ServerGame::update() {
     std::vector<sf::Vector2i> deleted_units;
     for (int i = 0; i < 3; i++) {  // FieldVisitor goes in the end
         std::vector<sf::Vector2i> result = mVisitors[i]->visit();
-        deleted_units.insert(std::end(deleted_units), std::begin(result), std::end(result)); // TODO: check
+        for(auto pos : result){
+            deleted_units.push_back(pos);
+        }
     }
+
     std::vector<std::pair<std::string, int>> players_score;
     for(const auto & pl : mPlayers){
         players_score.emplace_back(pl.name, pl.score);

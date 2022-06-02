@@ -50,7 +50,7 @@ const std::vector<std::vector<Tile>> &Board::addCard(sf::Vector2i pos,
         for (int dy = 0; dy < CARD_DIMENSION; dy++) {
             card.getTile(dx, dy).position = {pos.x + dx, pos.y + dy};
             mTiles[{pos.x + dx, pos.y + dy}] = card.getTile(dx, dy);
-            mTypeMap[card.getTile(dx, dy).type].push_back(card.getTile(dx, dy));
+            mTypeMap[card.getTile(dx, dy).type].push_back(mTiles[{pos.x + dx, pos.y + dy}]);
         }
     }
 
