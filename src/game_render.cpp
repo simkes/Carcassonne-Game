@@ -40,7 +40,7 @@ void GameRender::render(carcassonne_game::State state) {
     mWindow.setView(mWindow.getDefaultView());
     mWindow.setView(mBoardView.getView());
     mBoardView.draw(mWindow,
-                    sf::RenderStates::Default);  // TOD: RenderStates ??
+                    sf::RenderStates::Default);
     mWindow.setView(mWindow.getDefaultView());
     mWindow.draw(mScoreSprite);
     mWindow.draw(mScoreText);

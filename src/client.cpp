@@ -195,6 +195,7 @@ void Client::update(sf::Packet &packet) {
         packet >> deleted_unit_coords.x >> deleted_unit_coords.y;
         mRender.get_boardView().delete_unit(deleted_unit_coords);
     }
+    currentState = State::DEFAULT;
 }
 
 
