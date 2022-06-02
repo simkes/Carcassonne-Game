@@ -50,12 +50,14 @@ int main() {
     } else {
         sf::IpAddress ip(client.get_mRender().get_menu().ask_IP()); // ask IP
         sf::Socket::Status status = client.connect(ip, port, sf::seconds(5.f));
-        client.run();
+        if (status == sf::Socket::Done) {
+            client.run();
+        } // else retry
     }
 
 
-    if(client.connect(ip,port, sf::seconds(5.f)) != sf::TcpSocket::Done) {
+    //if(client.connect(ip,port, sf::seconds(5.f)) != sf::TcpSocket::Done) {
         std::cout << "Failed to connect\n";
-    }
+    //}
 
 }
