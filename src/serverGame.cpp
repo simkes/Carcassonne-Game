@@ -43,13 +43,12 @@ void ServerGame::run() {
                     mServer.getUnitPlacement(currentPlayerIndex);
                 auto coords = game_view::to_board_tiles(view_coords);
                 if(view_coords.x == -1) {
-                    mServer.unitTurnDone(view_coords, -1);
                     change_state();
                 } else if (mBoard.getTiles()[coords].card && !mBoard.getTiles()[coords].unit) {
                     Unit *unit = mPlayers[currentPlayerIndex].get_unit();
                     mBoard.getTiles()[coords].unit = unit;
                     unit->tile = &mBoard.getTiles()[coords];
-                    mServer.unitTurnDone(coords, static_cast<int>(unit->owner->color)); //T ODO: check
+                    mServer.unitTurnDone(coords, view_coords, static_cast<int>(unit->owner->color)); //T ODO: check
                     change_state();
                 }
             } else {

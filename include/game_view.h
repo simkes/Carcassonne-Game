@@ -54,7 +54,7 @@ struct BoardView : public sf::Drawable {
     }
 
     void add_card(int texture_id, sf::Vector2f position, int rotation);
-    void add_unit(int color, sf::Vector2i position);
+    void add_unit(int color, sf::Vector2i position, sf::Vector2i view_position);
     void delete_unit(sf::Vector2i position);
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;

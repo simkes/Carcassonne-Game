@@ -91,10 +91,10 @@ void Server::cardTurnDone(const Card &card) {
     }
 }
 
-void Server::unitTurnDone(sf::Vector2i unitPos, int unitCol) {
+void Server::unitTurnDone(sf::Vector2i unitPos,  sf::Vector2i viewPos, int unitCol) {
     for (auto &obj : indSocket) {
         sf::Packet packet;
-        packet << UPDATE_UNIT << unitPos.x << unitPos.y << unitCol;
+        packet << UPDATE_UNIT << unitPos.x << unitPos.y << viewPos.x << viewPos.y <<  unitCol;
         // handle errors
 
         obj.second->setBlocking(true);

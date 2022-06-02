@@ -55,7 +55,7 @@ struct Server {
     void sendError(const std::string &error_msg, size_t index);
 
     void cardTurnDone (const Card &card);
-    void unitTurnDone (sf::Vector2i unitPos, int unitCol);
+    void unitTurnDone (sf::Vector2i unitPos, sf::Vector2i viewPos, int unitCol);
     void update(const std::vector<std::pair<std::string,int>> &players_score, const std::vector<sf::Vector2i> &deleted_units);
 
     std::vector<Player> waitConnections(std::vector<Player> &players);

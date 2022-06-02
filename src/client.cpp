@@ -169,10 +169,11 @@ void Client::new_card(sf::Packet &packet) {
 
 void Client::new_unit(sf::Packet &packet) {
     sf::Vector2i placed_unit_coords;
+    sf::Vector2i view_coords;
     int color;
-    packet >>  placed_unit_coords.x >> placed_unit_coords.y >> color;
+    packet >>  placed_unit_coords.x >> placed_unit_coords.y >> view_coords.x >> view_coords.y >> color;
     if (placed_unit_coords.x != -1) {
-        mRender.get_boardView().add_unit(color, placed_unit_coords);
+        mRender.get_boardView().add_unit(color, placed_unit_coords, view_coords);
     }
     currentState = State::DEFAULT;
 }

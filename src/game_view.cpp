@@ -54,8 +54,8 @@ void BoardView::add_card(int texture_id, sf::Vector2f position, int rotation) {
     placedCards.push_back(new_card);
 }
 
-void BoardView::add_unit(int color, sf::Vector2i position) {
-    UnitView new_unit(color, transform_coordinates(position)); //TODO
+void BoardView::add_unit(int color, sf::Vector2i position, sf::Vector2i view_position) {
+    UnitView new_unit(color, transform_coordinates(view_position)); //TODO
     units.insert({position,new_unit});
 }
 
