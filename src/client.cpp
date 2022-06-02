@@ -18,7 +18,7 @@ sf::Socket::Status Client::connect(const sf::IpAddress &IP,
 void Client::process_game() {
     interaction::result ans;
     sf::Event event{};
-    while (mRender.window().pollEvent(event)) {
+    if (mRender.window().pollEvent(event)) {
         ans = mInteraction[currentState]->handleEvent(event,
                                                       interactionEnd);
     }

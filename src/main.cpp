@@ -27,7 +27,7 @@ int main() {
     client.is_host(); // ask client to be a host/to connect
     unsigned short port =
         client.get_mRender().get_menu().ask_port(); // ask port
-    sf::IpAddress ip = sf::IpAddress::LocalHost;
+    sf::IpAddress ip = sf::IpAddress::getLocalAddress();
     std::cout << ip << '\n';// default IP  = sf::IpAddress::LocalHost
     if(client.is_host()) {// con-r from port
         sf::Thread hosted_server([&]() {
