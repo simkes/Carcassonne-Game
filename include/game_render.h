@@ -8,6 +8,7 @@ namespace interaction {
 struct defaultInteraction; // declaration
 struct cardPlacementInteraction;
 struct unitPlacementInteraction;
+struct chatInteraction;
 }
 
 namespace game_view{
@@ -32,7 +33,11 @@ private:
     sf::Vector2f invitationPos = {10,65};
     sf::Text errorMessage; //TODO
 
-    void update_scoreboard();
+    sf::String message;
+    std::deque <std::pair<sf::String, sf::String>> chatHistory;
+    sf::Text chatHistoryText;
+    sf::Text currentMessage;
+
 public:
     GameRender();
     sf::RenderWindow& window() {
@@ -64,11 +69,12 @@ public:
         return ans;
     }
 
-    void render(carcassonne_game::State state);
+    void render(carcassonne_game::State state, bool chat);
 
     friend interaction::defaultInteraction;
     friend interaction::cardPlacementInteraction;
     friend interaction::unitPlacementInteraction;
+    friend interaction::chatInteraction;
 };
 
 } // game_view

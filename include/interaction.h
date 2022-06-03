@@ -14,8 +14,8 @@ struct result {
 struct defaultInteraction {
     explicit defaultInteraction(game_view::GameRender *render) : mRender(render) {};
 
-    virtual result handleEvent(sf::Event &event, bool &endOfState);
-    void defaultInterfaceInteraction(sf::Event &event);
+    virtual result handleEvent(sf::Event &event, bool &endOfState, bool &chat);
+    void defaultInterfaceInteraction(sf::Event &event, bool &chat);
 
     virtual ~defaultInteraction() = default;
 protected:
@@ -25,13 +25,21 @@ protected:
 struct cardPlacementInteraction : public defaultInteraction {
     explicit cardPlacementInteraction(game_view::GameRender *render)
         : defaultInteraction(render){};
-    result handleEvent(sf::Event &event, bool &endOfState) override;
+    result handleEvent(sf::Event &event, bool &endOfState, bool &chat) override;
 };
 
 struct unitPlacementInteraction : public defaultInteraction {
     explicit unitPlacementInteraction(game_view::GameRender *render)
         : defaultInteraction(render){};
-    result handleEvent(sf::Event &event, bool &endOfState) override;
+    result handleEvent(sf::Event &event, bool &endOfState, bool &chat) override;
+};
+
+struct chatInteraction {
+    explicit chatInteraction(game_view::GameRender *render): mRender(render){}
+    std::string handleEvent(sf::Event &event, bool &endOfState, bool &chat);
+private:
+    std::string message;
+    game_view::GameRender *mRender;
 };
 
 }  // namespace interaction

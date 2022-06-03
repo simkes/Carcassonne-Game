@@ -10,6 +10,7 @@
 #include <fstream>
 #include <string>
 #include <memory>
+#include <queue>
 
 namespace game_model {
 

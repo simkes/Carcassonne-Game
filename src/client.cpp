@@ -18,20 +18,44 @@ sf::Socket::Status Client::connect(const sf::IpAddress &IP,
 void Client::process_game() {
     interaction::result ans;
     sf::Event event{};
+    std::string message;
     if (mRender.window().pollEvent(event)) {
-        ans = mInteraction[currentState]->handleEvent(event,
-                                                      interactionEnd);
+        if (chat){
+            message = mChatInteraction.handleEvent(event,
+                                                   interactionChatEnd, chat);
+        }
+
+        else{
+            ans = mInteraction[currentState]->handleEvent(event,
+                                                          interactionEnd, chat);
+        }
+
     }
-    mRender.render(currentState);
-    if (interactionEnd && currentState != State::DEFAULT) {
-        sf::Packet packet;
-        packet << curType << ans.tile_coordinates.x << ans.tile_coordinates.y
-               << ans.card_rotation;
-        mSocket.setBlocking(true);
-        while(mSocket.send(packet) != sf::Socket::Done){}
-        mSocket.setBlocking(false);
+    mRender.render(currentState, chat);
+
+    if (chat) {
+        if (interactionChatEnd && !message.empty()){
+            sf::Packet packet;
+            packet << MESSAGE << message;
+            mSocket.setBlocking(true);
+            while(mSocket.send(packet) != sf::Socket::Done){}
+            mSocket.setBlocking(false);
+            interactionChatEnd = false;
+        }
+
+    } else {
+        if (interactionEnd && currentState != State::DEFAULT) {
+            sf::Packet packet;
+            packet << curType << ans.tile_coordinates.x << ans.tile_coordinates.y
+                   << ans.card_rotation;
+            mSocket.setBlocking(true);
+            while(mSocket.send(packet) != sf::Socket::Done){}
+            mSocket.setBlocking(false);
+        }
+
+        interactionEnd = false;
     }
-    interactionEnd = false;
+
 }
 
 void Client::render_lobby() {
@@ -107,6 +131,10 @@ sf::Socket::Status Client::receive() {
         }
         case UPDATE: {
             update(packet);
+            break;
+        }
+        case MESSAGE:{
+           // chat = true;
             break;
         }
         case GAME_OVER: {

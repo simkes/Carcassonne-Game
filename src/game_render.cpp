@@ -5,7 +5,7 @@ namespace game_view {
 GameRender::GameRender()
     : mWindow    (sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Carcassonne-Game"),
       mMenu      (mWindow), mText("", getFont(), 50), invitation("", getFont(), 35),
-      mScoreText("", getFont(), 30) {
+      mScoreText("", getFont(), 30), chatHistoryText("", getFont(), 30), currentMessage("", getFont(), 30) {
     mBackground1.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND));
     mBackground1.setPosition(0, 0);
     getTextures().get_texture(game_view::textures::ID::BACKGROUND_TILE)->setRepeated(true);
@@ -24,14 +24,29 @@ GameRender::GameRender()
     mText.setPosition(10,5);
     invitation.setFillColor(sf::Color::Red);
     invitation.setPosition(invitationPos);
+
+    chatHistoryText.setPosition(212,150);
+    chatHistoryText.setFillColor(sf::Color::Black);
+
+    currentMessage.setPosition(212, 250);
+    currentMessage.setFillColor(sf::Color::Black);
+
 }
 
-void GameRender::render(carcassonne_game::State state) {
+void GameRender::render(carcassonne_game::State state, bool chat) {
     mText.setString(mCurPlayer + "'s Move");
     if(state == carcassonne_game::State::CARDPLACEMENT) {
         invitation.setString("Place the card");
     } else if (state == carcassonne_game::State::UNITPLACEMENT) {
         invitation.setString("You can place a unit\n Press ENTER to skip");
+    }
+    if (chat){
+        currentMessage.setString(message);
+        sf::String chatHistoryString;
+        for (const auto &pair : chatHistory) {
+            chatHistoryString += pair.first + ": " + pair.second + '\n';
+        }
+        chatHistoryText.setString(chatHistoryString);
     }
     mWindow.clear();
     mWindow.draw(mBackground1);
@@ -55,6 +70,10 @@ void GameRender::render(carcassonne_game::State state) {
     }
     if(state == carcassonne_game::State::UNITPLACEMENT) {
         mUnitView.draw(mWindow);
+    }
+    if (chat) {
+        mWindow.draw(chatHistoryText);
+        mWindow.draw(currentMessage);
     }
     mWindow.display();
 }

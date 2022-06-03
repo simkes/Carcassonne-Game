@@ -18,9 +18,12 @@ private:
     bool started = 0;
     game_view::GameRender mRender;
     std::map<State, std::unique_ptr<defaultInteraction>> mInteraction;
+    chatInteraction mChatInteraction;
 
     State currentState = State::DEFAULT;
     bool interactionEnd = false;
+    bool chat = false;
+    bool interactionChatEnd = false;
     PacketType curType = PAUSE;
 
     void init_interaction();
@@ -35,7 +38,7 @@ private:
     sf::Socket::Status receive();
 public:
     sf::TcpSocket hostSocket;
-    Client() {
+    Client() : mChatInteraction(&mRender) {
         //       mSocket.setBlocking(false); // non blocking socket
         init_interaction();
     }
