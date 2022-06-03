@@ -12,6 +12,39 @@ sf::Socket::Status Client::connect(const sf::IpAddress &IP,
                                    unsigned short port, sf::Time timeout) {
     sf::Socket::Status status =  mSocket.connect(IP, port, timeout);
     mSocket.setBlocking(false);
+    mChatReceiveSocket.connect(IP, port, timeout);
+    sf::Packet packet;
+    PacketType sendType = CHAT_RECEIVER;
+    sf::IpAddress ip = mChatReceiveSocket.getRemoteAddress();
+    std::string ipString = ip.toString();
+    packet << sendType << ipString;
+    mChatReceiveSocket.send(packet);
+    packet.clear();
+    mChatReceiveSocket.receive(packet);
+
+    PacketType receiveType;
+    packet >> receiveType;
+    if (sendType != receiveType) {
+        std::cout << "failed to connect receive socket\n";
+    }
+
+
+    mChatSendSocket.connect(IP, port, timeout);
+
+    packet.clear();
+    sendType = CHAT_SENDER;
+    ip = mChatSendSocket.getRemoteAddress();
+    ipString = ip.toString();
+    packet << sendType << ipString;
+    mChatSendSocket.send(packet);
+    packet.clear();
+    mChatSendSocket.receive(packet);
+
+    packet >> receiveType;
+    if (sendType != receiveType) {
+        std::cout << "failed to connect send socket\n";
+    }
+
     return status;
 }
 
@@ -72,6 +105,11 @@ void Client::render_lobby() {
 }
 
 void Client::run() {
+    sf::Thread thread([&]() {
+        receiveMessage();
+    });
+    thread.launch();
+
     while(mRender.window().isOpen()){
         receive();
         if(curType == WAIT_START){
@@ -225,6 +263,20 @@ void Client::update(sf::Packet &packet) {
     }
     currentState = State::DEFAULT;
 }
+void Client::receiveMessage() {
 
+    while (true){
+        sf::Packet packet;
+        PacketType type;
+        std::string name;
+        std::string message;
+
+        mChatReceiveSocket.receive(packet);
+        packet >> type >> name >> message;
+
+        mRender.add_message(name, message);
+    }
+
+}
 
 }

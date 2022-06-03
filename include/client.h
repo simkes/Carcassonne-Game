@@ -13,9 +13,11 @@ namespace carcassonne_game::game_client {
 class Client{
 private:
     sf::TcpSocket mSocket;
+    sf::TcpSocket mChatSendSocket;
+    sf::TcpSocket mChatReceiveSocket;
     int host = -1;
 
-    bool started = 0;
+    bool started = false;
     game_view::GameRender mRender;
     std::map<State, std::unique_ptr<defaultInteraction>> mInteraction;
     chatInteraction mChatInteraction;
@@ -35,6 +37,7 @@ private:
     void new_card(sf::Packet &packet);
     void new_unit(sf::Packet &packet);
     void update(sf::Packet &packet);
+    void receiveMessage();
     sf::Socket::Status receive();
 public:
     sf::TcpSocket hostSocket;
