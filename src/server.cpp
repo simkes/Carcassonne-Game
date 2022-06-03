@@ -199,34 +199,37 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
     std::map<int, std::pair<std::string, int>> indConnected;
     do {
         int cur_index = *availableSocket.begin();
-        if (mListener.accept(*mSockets[cur_index]) == sf::Socket::Done) {
-            mSockets[cur_index]->setBlocking(true);
-            sf::Packet packet;
-            packet << INITIAL << availableCol;
-            for (int i = 0; i < colorsVector.size(); i++) {
-                if (!colors[i]) {
-                    packet << i;
+        if (cur_index < 5) {
+            if (mListener.accept(*mSockets[cur_index]) == sf::Socket::Done) {
+                std::cout << mSockets[cur_index]->getRemoteAddress() << '\n';
+                mSockets[cur_index]->setBlocking(true);
+                sf::Packet packet;
+                packet << INITIAL << availableCol;
+                for (int i = 0; i < colorsVector.size(); i++) {
+                    if (!colors[i]) {
+                        packet << i;
+                    }
                 }
-            }
-            mSockets[cur_index]->send(packet);
-            packet.clear();
-            if (mSockets[cur_index]->receive(packet) == sf::Socket::Done) {
-                PacketType type;
-                packet >> type;
-                if (type == INITIAL) {
-                    std::string name;
-                    int color;
-                    packet >> name >> color;
-                    colors[color] = 1;
-                    availableCol--;
-                    lobby.insert({name, color});
-                    indSocket[cur_index] = mSockets[cur_index].get();
-                    indPlayer[cur_index] = {name, color};
+                mSockets[cur_index]->send(packet);
+                packet.clear();
+                if (mSockets[cur_index]->receive(packet) == sf::Socket::Done) {
+                    PacketType type;
+                    packet >> type;
+                    if (type == INITIAL) {
+                        std::string name;
+                        int color;
+                        packet >> name >> color;
+                        colors[color] = 1;
+                        availableCol--;
+                        lobby.insert({name, color});
+                        indSocket[cur_index] = mSockets[cur_index].get();
+                        indPlayer[cur_index] = {name, color};
+                    }
                 }
+                availableSocket.erase(cur_index);
+                mSockets[cur_index]->setBlocking(false);
+                cur_index = *availableSocket.begin();
             }
-            availableSocket.erase(cur_index);
-            mSockets[cur_index]->setBlocking(false);
-            cur_index = *availableSocket.begin();
         }
     } while (!check_start());
     int iter = 0;
