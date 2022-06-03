@@ -192,6 +192,48 @@ bool Server::check_start() {
     }
 }
 
+void Server::waitChatConnection(const std::pair<std::string, int> &player, int cur_index) {
+    while (mListener.accept(*mChatReceiver[cur_index]) == sf::Socket::Done) {
+        sf::Packet packet;
+        mChatReceiver[cur_index]->receive(packet);
+        PacketType type;
+        packet >> type;
+        if (type == CHAT_RECEIVER) {
+            std::string ip;
+            packet >> ip;
+            if (ip == playerAddress[player]) {
+                sf::Packet to_be_sent;
+                to_be_sent << CHAT_RECEIVER;
+                break;
+            } else {
+                sf::Packet to_be_sent;
+                to_be_sent << WRONG_PLAYER;
+            }
+        }
+        mChatReceiver[cur_index]->disconnect();
+    }
+
+    while (mListener.accept(*mChatSender[cur_index]) == sf::Socket::Done) {
+        sf::Packet packet;
+        mChatSender[cur_index]->receive(packet);
+        PacketType type;
+        packet >> type;
+        if (type == CHAT_SENDER) {
+            std::string ip;
+            packet >> ip;
+            if (ip == playerAddress[player]) {
+                sf::Packet to_be_sent;
+                to_be_sent << CHAT_SENDER;
+                break;
+            } else {
+                sf::Packet to_be_sent;
+                to_be_sent << WRONG_PLAYER;
+            }
+        }
+        mChatSender[cur_index]->disconnect();
+    }
+}
+
 std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
     while (mListener.accept(host) != sf::Socket::Done) {}
     mSelector.add(host);
@@ -226,6 +268,7 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
                         indPlayer[cur_index] = {name, color};
                     }
                 }
+                waitChatConnection(indPlayer[cur_index], cur_index);
                 availableSocket.erase(cur_index);
                 mSockets[cur_index]->setBlocking(false);
                 cur_index = *availableSocket.begin();

@@ -20,6 +20,8 @@ struct Server {
         host.setBlocking(true);
         for (int i = 0 ; i < 5; i++) {
             mSockets.emplace_back(new sf::TcpSocket());
+            mChatSender.emplace_back(new sf::TcpSocket());
+            mChatReceiver.emplace_back(new sf::TcpSocket());
             availableSocket.insert(i);
         }
 
@@ -49,6 +51,8 @@ struct Server {
 
     std::vector<Player> waitConnections(std::vector<Player> &players);
 
+    void waitChatConnection(const std::pair<std::string, int> &player, int cur_index);
+
     bool check_start();
 
 
@@ -57,6 +61,10 @@ private:
     sf::TcpSocket host;
     sf::SocketSelector mSelector;
     std::vector<std::unique_ptr<sf::TcpSocket>> mSockets;
+    std::vector<std::unique_ptr<sf::TcpSocket>> mChatSender;
+    std::vector<std::unique_ptr<sf::TcpSocket>> mChatReceiver;
+
+    std::map<std::pair<std::string, int>, std::string> playerAddress;
     sf::TcpListener mListener;
     std::map<int, std::pair<std::string, int>> indPlayer;
     std::set<int>availableSocket;
@@ -95,6 +103,7 @@ private:
     void init_visitors();
 
     void place_first_card();
+
 
     void update();
     void change_state();

@@ -20,6 +20,9 @@ const PacketType MESSAGE = 9;
 const PacketType GAME_OVER = 10;
 const PacketType GAME_START = 11;
 const PacketType PAUSE = 12;
+const PacketType CHAT_RECEIVER = 13;
+const PacketType CHAT_SENDER = 14;
+const PacketType WRONG_PLAYER = 15;
 
 } // namespace carcassonne_game
 
