@@ -132,7 +132,7 @@ void Server::update(const std::vector<std::pair<std::string,int>> &players_score
 void Server::newTurn(size_t index, Card card) {
     for (auto &obj : indSocket) {
         sf::Packet packet;
-        packet << NEW_TURN << card.textureId << indPlayer[index].name;
+        packet << NEW_TURN << card.textureId << indPlayer[index].first;
         // handle errors
         obj.second->setBlocking(true);
         if (obj.second->send(packet) == sf::Socket::Disconnected) {
@@ -159,9 +159,33 @@ void Server::sendPause() {
 }
 
 bool Server::check_start() {
+    std::set<int> deleted;
+    for (auto obj : indSocket) {
+        if (!obj.second->getRemotePort()) {
+            lobby.erase(indPlayer[obj.first]);
+            availableSocket.insert(obj.first);
+            availableCol++;
+            colors[indPlayer[obj.first].second] = 0;
+            deleted.insert(obj.first);
+        }
+    }
+    for (auto i : deleted) {
+        indPlayer.erase(i);
+        indSocket.erase(i);
+    }
+    for (const auto &obj : mSockets) {
+        if (obj->getRemotePort()) {
+            sf::Packet packet;
+            packet <<  WAIT_START << static_cast<int>(lobby.size());
+            for (const auto& pl : lobby) {
+                packet << pl.first;
+            }
+            obj->send(packet);
+        }
+    }
     if (mSelector.wait(sf::seconds(2.f))) {
         sf::Packet packet;
-        s0.receive(packet);
+        host.receive(packet);
         return true;
     } else {
         return false;
@@ -169,54 +193,50 @@ bool Server::check_start() {
 }
 
 std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
-    while (mListener.accept(s0) != sf::Socket::Done) {}
-    mSelector.add(s0);
-    int cur_index = 0;
+    while (mListener.accept(host) != sf::Socket::Done) {}
+    mSelector.add(host);
     sf::Packet from_host;
     std::map<int, std::pair<std::string, int>> indConnected;
     do {
-        if (mListener.accept(*mSockets[cur_index]) == sf::Socket::Done) {
-            mSockets[cur_index]->setBlocking(true);
-            sf::Packet packet;
-            packet << INITIAL << availableCol;
-            for (int i = 0; i < colorsVector.size(); i++) {
-                if (!colors[i]) {
-                    packet << i;
-                }
-            }
-            mSockets[cur_index]->send(packet);
-            packet = sf::Packet();
-            if (mSockets[cur_index]->receive(packet) == sf::Socket::Done) {
-                PacketType type;
-                packet >> type;
-                if (type == INITIAL) {
-                    std::string name;
-                    int color;
-                    packet >> name >> color;
-                    colors[color] = 1;
-                    availableCol--;
-                    lobby.insert({name, color});
-                    indSocket[cur_index] = mSockets[cur_index];
-                }
-            }
-            for (auto obj : mSockets) {
-                if (obj->getRemotePort()) {
-                    sf::Packet packet;
-                    packet <<  WAIT_START << static_cast<int>(lobby.size());
-                    for (const auto& pl : lobby) {
-                        packet << pl.first;
+        int cur_index = *availableSocket.begin();
+        if (cur_index < 5) {
+            if (mListener.accept(*mSockets[cur_index]) == sf::Socket::Done) {
+                std::cout << mSockets[cur_index]->getRemoteAddress() << '\n';
+                mSockets[cur_index]->setBlocking(true);
+                sf::Packet packet;
+                packet << INITIAL << availableCol;
+                for (int i = 0; i < colorsVector.size(); i++) {
+                    if (!colors[i]) {
+                        packet << i;
                     }
-                    obj->send(packet);
                 }
+                mSockets[cur_index]->send(packet);
+                packet.clear();
+                if (mSockets[cur_index]->receive(packet) == sf::Socket::Done) {
+                    PacketType type;
+                    packet >> type;
+                    if (type == INITIAL) {
+                        std::string name;
+                        int color;
+                        packet >> name >> color;
+                        colors[color] = 1;
+                        availableCol--;
+                        lobby.insert({name, color});
+                        indSocket[cur_index] = mSockets[cur_index].get();
+                        indPlayer[cur_index] = {name, color};
+                    }
+                }
+                availableSocket.erase(cur_index);
+                mSockets[cur_index]->setBlocking(false);
+                cur_index = *availableSocket.begin();
             }
-            mSockets[cur_index++]->setBlocking(false);
         }
     } while (!check_start());
     int iter = 0;
     players.reserve(lobby.size());
     for (const auto& obj : lobby) {
         players.emplace_back(iter, obj.first, static_cast<Color>(obj.second));
-        indPlayer.insert({iter++, players.back()});
+        //indPlayer.insert({iter++, players.back()});
     }
     return players;
 }

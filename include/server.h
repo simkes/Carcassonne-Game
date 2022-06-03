@@ -9,16 +9,7 @@
 #include <SFML/Network/Packet.hpp>
 #include <iostream>
 
-namespace carcassonne_game {
-
-namespace game_server {
-
-static sf::TcpSocket s0;
-static sf::TcpSocket s1;
-static sf::TcpSocket s2;
-static sf::TcpSocket s3;
-static sf::TcpSocket s4;
-static sf::TcpSocket s5;
+namespace carcassonne_game::game_server {
 
 struct Server {
 
@@ -26,13 +17,11 @@ struct Server {
         mListener.listen(port);
         mListener.setBlocking(false);
 
-        s0.setBlocking(true);
-        mSockets[0] = &s1;
-        //mSelector.add(s0);
-        mSockets[1] = &s2;
-        mSockets[2] = &s3;
-        mSockets[3] = &s4;
-        mSockets[4] = &s5;
+        host.setBlocking(true);
+        for (int i = 0 ; i < 5; i++) {
+            mSockets.emplace_back(new sf::TcpSocket());
+            availableSocket.insert(i);
+        }
 
     }
 
@@ -65,13 +54,12 @@ struct Server {
 
 private:
 
-
+    sf::TcpSocket host;
     sf::SocketSelector mSelector;
-    std::vector<sf::TcpSocket> sockets;
-    std::vector<sf::TcpSocket *> mSockets = std::vector<sf::TcpSocket *>(5, nullptr);
+    std::vector<std::unique_ptr<sf::TcpSocket>> mSockets;
     sf::TcpListener mListener;
-    std::map<Player, int> playerInd;
-    std::map<int, Player> indPlayer;
+    std::map<int, std::pair<std::string, int>> indPlayer;
+    std::set<int>availableSocket;
     std::map<size_t, sf::TcpSocket*> indSocket;
     std::vector<int> colors = std::vector<int>(5, 0);
     std::set<std::pair<std::string, int>>lobby;
@@ -82,11 +70,8 @@ struct ServerGame {
     // friend struct Server;
 
     explicit ServerGame(unsigned short port);
-    void run();
 
-    State get_curState() {
-        return currentState;
-    }
+    void run();
 
     Card *currentCardPtr = nullptr;
 
@@ -101,12 +86,10 @@ private:
     std::vector<Player> mPlayers;
     std::size_t currentPlayerIndex = 0;
     std::size_t numberOfPlayers;
-    Player *currentPlayerPtr = nullptr;
 
     std::vector<std::unique_ptr<visitors::AbstractVisitor>> mVisitors;
 
     State currentState;
-    bool endOfState = false;
     void init_players(
         const std::vector<Player> &players);
     void init_visitors();
@@ -119,9 +102,7 @@ private:
 
 };
 
-}  // namespace game_server
-
-} // namespace carcassonne_game
+} // namespace carcassonne_game::game_server
 
 
 #endif  // CARCASSONNE_GAME_SERVER_H
