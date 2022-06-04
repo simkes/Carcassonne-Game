@@ -6,9 +6,6 @@ namespace interaction {
 result defaultInteraction::handleEvent(sf::Event &event, bool &endOfState, bool &chat) {
     result defaultRes;
     defaultInterfaceInteraction(event, chat);
-    if (event.type == sf::Event::MouseButtonPressed) {
-        endOfState = true;
-    }
     return defaultRes;
 }
 

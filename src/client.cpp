@@ -98,6 +98,8 @@ void Client::render_lobby() {
          (hostSocket.send(send_packet) == sf::Socket::Done);
             //std::cout << "sent\n";
         hostSocket.setBlocking(false);
+        sf::Event event{};
+        while(mRender.window().pollEvent(event)) {}
     }
 }
 
@@ -130,7 +132,7 @@ void Client::run() {
         receive();
         if(curType == WAIT_START){
             render_lobby();
-        } else if (curType == GAME_START || (curType > WAIT_START && curType < GAME_OVER)) {
+        } else if (curType > WAIT_START && curType < GAME_OVER) {
             process_game();
         }
     }
