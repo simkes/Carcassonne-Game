@@ -193,7 +193,8 @@ bool Server::check_start() {
 }
 
 void Server::waitChatConnection(int cur_index) {
-    while (mListener.accept(*mChatReceiver[cur_index]) == sf::Socket::Done) {
+    while (1) {
+        mListener.accept(*mChatReceiver[cur_index]);
         sf::Packet packet;
         mChatReceiver[cur_index]->receive(packet);
         PacketType type;
@@ -215,7 +216,8 @@ void Server::waitChatConnection(int cur_index) {
         mChatReceiver[cur_index]->disconnect();
     }
 
-    while (mListener.accept(*mChatSender[cur_index]) == sf::Socket::Done) {
+    while (1) {
+        mListener.accept(*mChatSender[cur_index]);
         sf::Packet packet;
         mChatSender[cur_index]->receive(packet);
         PacketType type;
