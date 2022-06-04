@@ -42,6 +42,7 @@ private:
     sf::Text currentMessage;
     sf::Text messageInvitation;
     sf::RectangleShape mChatRect;
+    sf::RectangleShape mMesRect;
 
 public:
     GameRender();

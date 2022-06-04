@@ -32,12 +32,17 @@ GameRender::GameRender()
 
     messageInvitation.setPosition(212, 470);
     messageInvitation.setFillColor(sf::Color::Black);
-    currentMessage.setPosition(212, 520);
+    currentMessage.setPosition(212, 530);
     currentMessage.setFillColor(sf::Color::Black);
 
     mChatRect.setSize({450, 450});
     mChatRect.setPosition(chat_score_pos);
     mChatRect.setFillColor(sf::Color(255, 218, 185));
+
+    mMesRect.setSize({450, 70});
+    mMesRect.setPosition({chat_score_pos.x, chat_score_pos.y + 380});
+    mMesRect.setFillColor(sf::Color(255, 255, 204));
+
     mChatButton.setPosition(810, 5);
     mChatButton.setFillColor(sf::Color::Red);
 
@@ -88,6 +93,7 @@ void GameRender::render(carcassonne_game::State state, bool chat) {
     }
     if (chat) {
         mWindow.draw(mChatRect);
+        mWindow.draw(mMesRect);
         mWindow.draw(chatHistoryText);
         mWindow.draw(messageInvitation);
         mWindow.draw(currentMessage);
