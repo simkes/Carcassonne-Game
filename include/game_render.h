@@ -21,6 +21,9 @@ private:
     UnitView mUnitView;
     sf::String mCurPlayer;
 
+    sf::Text mScoreButton;
+    sf::Text mChatButton;
+    sf::Vector2f chat_score_pos = {200, 140};
     sf::Sprite mBackground1;
     sf::Sprite mBackground2;
     sf::Sprite mTitle;
@@ -37,6 +40,7 @@ private:
     std::deque <std::pair<sf::String, sf::String>> chatHistory;
     sf::Text chatHistoryText;
     sf::Text currentMessage;
+    sf::Text messageInvitation;
     sf::RectangleShape mChatRect;
 
 public:

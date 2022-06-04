@@ -33,9 +33,6 @@ void defaultInteraction::defaultInterfaceInteraction(sf::Event &event, bool &cha
             mRender->mBoardView.getView().move(10, 0);
         }
 
-        if (event.key.code == sf::Keyboard::C){
-            chat = true;
-        }
     }
 
     if (event.type == sf::Event::MouseWheelScrolled) {
@@ -45,11 +42,20 @@ void defaultInteraction::defaultInterfaceInteraction(sf::Event &event, bool &cha
             event.type = sf::Event::JoystickMoved;
         }
     }
+    if (sf::IntRect(810, 5, 55*4, 55).contains(sf::Mouse::getPosition(mRender->window())) &&
+        sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        chat = true;
+        return;
+    }
 }
 
 result cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState, bool &chat) {
     result cardRes;
     defaultInterfaceInteraction(event, chat);
+
+    if (chat) {
+        return cardRes;
+    }
 
     if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::A) {
@@ -76,6 +82,9 @@ result cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState,
 result unitPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState, bool &chat) {
     result unitRes;
     defaultInterfaceInteraction(event, chat);
+    if (chat) {
+        return unitRes;
+    }
 
     if (event.type == sf::Event::KeyPressed &&
         event.key.code == sf::Keyboard::Enter) {

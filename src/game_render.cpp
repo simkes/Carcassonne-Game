@@ -5,7 +5,9 @@ namespace game_view {
 GameRender::GameRender()
     : mWindow    (sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Carcassonne-Game"),
       mMenu      (mWindow), mText("", getFont(), 50), invitation("", getFont(), 35),
-      mScoreText("", getFont(), 30), chatHistoryText("", getFont(), 30), currentMessage("", getFont(), 30) {
+      mScoreText("", getFont(), 30), chatHistoryText("", getFont(), 30),
+      currentMessage("", getFont(), 30), mScoreButton("Scoreboard", getFont(), 55),
+      mChatButton("Chat", getFont(), 55), messageInvitation("Enter a message:", getFont(), 30) {
     mBackground1.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND));
     mBackground1.setPosition(0, 0);
     getTextures().get_texture(game_view::textures::ID::BACKGROUND_TILE)->setRepeated(true);
@@ -14,7 +16,7 @@ GameRender::GameRender()
     mTitle.setTexture(*getTextures().get_texture(game_view::textures::ID::TITLE));
     mTitle.setPosition((float)WINDOW_WIDTH/3,5);
 
-    sf::Vector2f scorePos = {780,5};
+    sf::Vector2f scorePos = {780,60};
     mScoreSprite.setTexture(*getTextures().get_texture(game_view::textures::ID::SCORE));
     mScoreSprite.setPosition(scorePos);
     mScoreText.setFillColor(sf::Color::Black);
@@ -28,16 +30,21 @@ GameRender::GameRender()
     chatHistoryText.setPosition(212,150);
     chatHistoryText.setFillColor(sf::Color::Black);
 
-    currentMessage.setPosition(212, 250);
+    messageInvitation.setPosition(212, 470);
+    messageInvitation.setFillColor(sf::Color::Black);
+    currentMessage.setPosition(212, 520);
     currentMessage.setFillColor(sf::Color::Black);
 
-    mChatRect.setSize({400, 400});
-    mChatRect.setPosition(200, 140);
+    mChatRect.setSize({450, 450});
+    mChatRect.setPosition(chat_score_pos);
     mChatRect.setFillColor(sf::Color(255, 218, 185));
+    mChatButton.setPosition(810, 5);
+    mChatButton.setFillColor(sf::Color::Red);
 
 }
 
 void GameRender::render(carcassonne_game::State state, bool chat) {
+    mChatButton.setFillColor(sf::Color::White);
     mText.setString(mCurPlayer + "'s Move");
     if(state == carcassonne_game::State::CARDPLACEMENT) {
         invitation.setString("Place the card");
@@ -52,6 +59,9 @@ void GameRender::render(carcassonne_game::State state, bool chat) {
         }
         chatHistoryText.setString(chatHistoryString);
     }
+    if (sf::IntRect(810, 5, 55*4, 55).contains(sf::Mouse::getPosition(mWindow))) {
+            mChatButton.setFillColor(sf::Color::Red);
+    }
     mWindow.clear();
     mWindow.draw(mBackground1);
     mWindow.setView(mBoardView.getView());
@@ -65,6 +75,7 @@ void GameRender::render(carcassonne_game::State state, bool chat) {
     mWindow.draw(mScoreText);
     mWindow.draw(mTitle);
     mWindow.draw(mText);
+    mWindow.draw(mChatButton);
 
     if(state != carcassonne_game::State::DEFAULT) {
         mWindow.draw(invitation);
@@ -78,6 +89,7 @@ void GameRender::render(carcassonne_game::State state, bool chat) {
     if (chat) {
         mWindow.draw(mChatRect);
         mWindow.draw(chatHistoryText);
+        mWindow.draw(messageInvitation);
         mWindow.draw(currentMessage);
     }
     mWindow.display();
