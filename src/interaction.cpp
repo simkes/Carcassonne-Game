@@ -32,6 +32,15 @@ void defaultInteraction::defaultInterfaceInteraction(sf::Event &event, bool &cha
 
     }
 
+    if (sf::IntRect(810, 5, 55*4, 55).contains(sf::Mouse::getPosition(mRender->window())) &&
+        sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        chat = true;
+    }
+    else if (sf::IntRect((int)mRender->scorePos.x, (int)mRender->scorePos.y, 55*5, 55).contains(sf::Mouse::getPosition(mRender->window())) &&
+        sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        mRender->scoreIsActive = 1 - mRender->scoreIsActive;
+    }
+
     if (event.type == sf::Event::MouseWheelScrolled) {
         if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel) {
             mRender->mBoardView.getView().zoom(
@@ -39,15 +48,7 @@ void defaultInteraction::defaultInterfaceInteraction(sf::Event &event, bool &cha
             event.type = sf::Event::JoystickMoved;
         }
     }
-    if (sf::IntRect(810, 5, 55*4, 55).contains(sf::Mouse::getPosition(mRender->window())) &&
-        sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-        chat = true;
-        return;
-    }
-    if (sf::IntRect((int)mRender->scorePos.x, (int)mRender->scorePos.y, 55*5, 55).contains(sf::Mouse::getPosition(mRender->window())) &&
-        sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-        mRender->scoreIsActive = 1 - mRender->scoreIsActive;
-    }
+
 }
 
 result cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState, bool &chat) {
