@@ -11,6 +11,7 @@ struct unitPlacementInteraction;
 struct chatInteraction;
 }
 
+
 namespace game_view{
 
 class GameRender {
@@ -23,7 +24,11 @@ private:
 
     sf::Text mScoreButton;
     sf::Text mChatButton;
-    sf::Vector2f chat_score_pos = {200, 140};
+    bool scoreIsActive = false;
+
+    sf::Vector2f chat_pos = {200, 140};
+    sf::Vector2f scorePos = {750,90};
+
     sf::Sprite mBackground1;
     sf::Sprite mBackground2;
     sf::Sprite mTitle;
@@ -67,7 +72,7 @@ public:
         errorMessage.setString(msg);
     }
 
-    void set_scoreText(const std::vector<std::pair<std::string,int>>& players_score);
+    void set_scoreText(const std::vector<std::pair<int,std::string>>& players_score);
 
     void add_message(const std::string &name, const std::string &new_message){
         if(chatHistory.size() == 10){

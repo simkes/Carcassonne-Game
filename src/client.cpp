@@ -256,14 +256,15 @@ void Client::new_unit(sf::Packet &packet) {
     currentState = State::DEFAULT;
 }
 
+
 void Client::update(sf::Packet &packet) {
     int n; // number of players
     packet >> n;
-    std::vector<std::pair<std::string,int>> players_score(n);
+    std::vector<std::pair<int, std::string>> players_score(n);
     for(int i = 0; i < n; i ++) {
         std::string name; int score;
         packet >> name >> score;
-        players_score[i] = {name,score};
+        players_score[i] = {score, name};
     }
     mRender.set_scoreText(players_score);
     int m; // number of deleted units

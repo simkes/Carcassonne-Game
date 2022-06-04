@@ -47,6 +47,10 @@ void defaultInteraction::defaultInterfaceInteraction(sf::Event &event, bool &cha
         chat = true;
         return;
     }
+    if (sf::IntRect((int)mRender->scorePos.x, (int)mRender->scorePos.y, 55*5, 55).contains(sf::Mouse::getPosition(mRender->window())) &&
+        sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        mRender->scoreIsActive = 1 - mRender->scoreIsActive;
+    }
 }
 
 result cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState, bool &chat) {
@@ -68,12 +72,15 @@ result cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState,
 
     if (event.type == sf::Event::MouseButtonPressed &&
         event.mouseButton.button == sf::Mouse::Left ) {
-        sf::Vector2f worldCoords = mRender->mWindow.mapPixelToCoords(
-            {event.mouseButton.x, event.mouseButton.y},
-            mRender->mBoardView.getView());
-        cardRes.tile_coordinates = game_view::to_tiles_coords(game_view::align_card_coords(worldCoords));
-        cardRes.card_rotation = mRender->mCurCardView.get_rotation();
-        endOfState = true;
+        if(!sf::IntRect((int)mRender->scorePos.x, (int)mRender->scorePos.y, 55*5, 55).contains({event.mouseButton.x, event.mouseButton.y})) {
+            sf::Vector2f worldCoords = mRender->mWindow.mapPixelToCoords(
+                {event.mouseButton.x, event.mouseButton.y},
+                mRender->mBoardView.getView());
+            cardRes.tile_coordinates = game_view::to_tiles_coords(
+                game_view::align_card_coords(worldCoords));
+            cardRes.card_rotation = mRender->mCurCardView.get_rotation();
+            endOfState = true;
+        }
     }
 
     return cardRes;
@@ -94,13 +101,15 @@ result unitPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState,
 
     if (event.type == sf::Event::MouseButtonPressed &&
         event.mouseButton.button == sf::Mouse::Left ) {
-        sf::Vector2i worldCoords =
-            game_view::to_tiles_coords(mRender->mWindow.mapPixelToCoords(
-                {event.mouseButton.x, event.mouseButton.y},
-                mRender->mBoardView.getView()));
+        if(!sf::IntRect((int)mRender->scorePos.x, (int)mRender->scorePos.y, 55*5, 55).contains({event.mouseButton.x, event.mouseButton.y})) {
+            sf::Vector2i worldCoords =
+                game_view::to_tiles_coords(mRender->mWindow.mapPixelToCoords(
+                    {event.mouseButton.x, event.mouseButton.y},
+                    mRender->mBoardView.getView()));
 
-        unitRes.tile_coordinates = worldCoords;
-        endOfState = true;
+            unitRes.tile_coordinates = worldCoords;
+            endOfState = true;
+        }
     }
     return unitRes;
 }

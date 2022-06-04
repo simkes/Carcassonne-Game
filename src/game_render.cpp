@@ -16,9 +16,9 @@ GameRender::GameRender()
     mTitle.setTexture(*getTextures().get_texture(game_view::textures::ID::TITLE));
     mTitle.setPosition((float)WINDOW_WIDTH/3,5);
 
-    sf::Vector2f scorePos = {780,60};
     mScoreSprite.setTexture(*getTextures().get_texture(game_view::textures::ID::SCORE));
     mScoreSprite.setPosition(scorePos);
+    mScoreButton.setPosition(scorePos);
     mScoreText.setFillColor(sf::Color::Black);
     mScoreText.setPosition(scorePos.x+30,scorePos.y+70);
 
@@ -36,11 +36,11 @@ GameRender::GameRender()
     currentMessage.setFillColor(sf::Color::Black);
 
     mChatRect.setSize({450, 450});
-    mChatRect.setPosition(chat_score_pos);
+    mChatRect.setPosition(chat_pos);
     mChatRect.setFillColor(sf::Color(255, 218, 185));
 
     mMesRect.setSize({450, 70});
-    mMesRect.setPosition({chat_score_pos.x, chat_score_pos.y + 380});
+    mMesRect.setPosition({chat_pos.x, chat_pos.y + 380});
     mMesRect.setFillColor(sf::Color(255, 255, 204));
 
     mChatButton.setPosition(810, 5);
@@ -50,6 +50,7 @@ GameRender::GameRender()
 
 void GameRender::render(carcassonne_game::State state, bool chat) {
     mChatButton.setFillColor(sf::Color::White);
+    mScoreButton.setFillColor(sf::Color::White);
     mText.setString(mCurPlayer + "'s Move");
     if(state == carcassonne_game::State::CARDPLACEMENT) {
         invitation.setString("Place the card");
@@ -65,7 +66,10 @@ void GameRender::render(carcassonne_game::State state, bool chat) {
         chatHistoryText.setString(chatHistoryString);
     }
     if (sf::IntRect(810, 5, 55*4, 55).contains(sf::Mouse::getPosition(mWindow))) {
-            mChatButton.setFillColor(sf::Color::Red);
+        mChatButton.setFillColor(sf::Color::Red);
+    }
+    if(sf::IntRect((int)scorePos.x, (int)scorePos.y, 55*5, 55).contains(sf::Mouse::getPosition(mWindow))) {
+        mScoreButton.setFillColor(sf::Color::Red);
     }
     mWindow.clear();
     mWindow.draw(mBackground1);
@@ -76,8 +80,13 @@ void GameRender::render(carcassonne_game::State state, bool chat) {
     mBoardView.draw(mWindow,
                     sf::RenderStates::Default);
     mWindow.setView(mWindow.getDefaultView());
-    mWindow.draw(mScoreSprite);
-    mWindow.draw(mScoreText);
+
+    if(scoreIsActive) {
+        mWindow.draw(mScoreSprite);
+        mWindow.draw(mScoreText);
+    } else {
+        mWindow.draw(mScoreButton);
+    }
     mWindow.draw(mTitle);
     mWindow.draw(mText);
     mWindow.draw(mChatButton);
@@ -101,10 +110,12 @@ void GameRender::render(carcassonne_game::State state, bool chat) {
     mWindow.display();
 }
 
-void GameRender::set_scoreText(const std::vector<std::pair<std::string, int>>& players_score) {
+void GameRender::set_scoreText(const std::vector<std::pair<int,std::string>>& players_score) {
     sf::String text = "";
-    for(const auto &p : players_score) {
-        text += p.first + "      " + std::to_string(p.second) + '\n';
+    std::vector<std::pair<int,std::string>> copy = players_score;
+    std::sort(copy.begin(), copy.end(), std::greater<std::pair<int, std::string>>());
+    for(const auto &p : copy) {
+        text += p.second + "      " + std::to_string(p.first) + '\n';
     }
     mScoreText.setString(text);
 }
