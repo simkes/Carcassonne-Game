@@ -51,7 +51,7 @@ struct Server {
 
     std::vector<Player> waitConnections(std::vector<Player> &players);
 
-    void waitChatConnection(const std::pair<std::string, int> &player, int cur_index);
+    void waitChatConnection(int cur_index);
 
     bool check_start();
 
@@ -63,7 +63,8 @@ private:
     std::vector<std::unique_ptr<sf::TcpSocket>> mSockets;
     std::vector<std::unique_ptr<sf::TcpSocket>> mChatSender;
     std::vector<std::unique_ptr<sf::TcpSocket>> mChatReceiver;
-    std::vector<std::unique_ptr<sf::Thread>> mChatThread = {5, nullptr};
+    std::vector<std::unique_ptr<sf::Thread>> mChatThread;
+    std::map<int, std::string> indAddress;
 
     std::map<std::pair<std::string, int>, std::string> playerAddress;
     sf::TcpListener mListener;

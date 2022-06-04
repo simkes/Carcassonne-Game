@@ -192,7 +192,7 @@ bool Server::check_start() {
     }
 }
 
-void Server::waitChatConnection(const std::pair<std::string, int> &player, int cur_index) {
+void Server::waitChatConnection(int cur_index) {
     while (mListener.accept(*mChatReceiver[cur_index]) == sf::Socket::Done) {
         sf::Packet packet;
         mChatReceiver[cur_index]->receive(packet);
@@ -200,8 +200,8 @@ void Server::waitChatConnection(const std::pair<std::string, int> &player, int c
         packet >> type;
         if (type == CHAT_RECEIVER) {
             std::string ip;
-            packet >> ip;
-            if (ip == playerAddress[player]) {
+            ip = mChatReceiver[cur_index]->getRemoteAddress().toString();
+            if (ip == indAddress[cur_index]) {
                 sf::Packet to_be_sent;
                 to_be_sent << CHAT_RECEIVER;
                 mChatReceiver[cur_index]->send(to_be_sent);
@@ -222,8 +222,8 @@ void Server::waitChatConnection(const std::pair<std::string, int> &player, int c
         packet >> type;
         if (type == CHAT_SENDER) {
             std::string ip;
-            packet >> ip;
-            if (ip == playerAddress[player]) {
+            ip = mChatReceiver[cur_index]->getRemoteAddress().toString();
+            if (ip == indAddress[cur_index]) {
                 sf::Packet to_be_sent;
                 to_be_sent << CHAT_SENDER;
                 mChatSender[cur_index]->send(packet);
@@ -247,7 +247,8 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
         int cur_index = *availableSocket.begin();
         if (cur_index < 5) {
             if (mListener.accept(*mSockets[cur_index]) == sf::Socket::Done) {
-                std::cout << mSockets[cur_index]->getRemoteAddress() << '\n';
+                indAddress[cur_index] = mSockets[cur_index]->getRemoteAddress().toString();
+                waitChatConnection(cur_index);
                 mSockets[cur_index]->setBlocking(true);
                 sf::Packet packet;
                 packet << INITIAL << availableCol;
@@ -268,11 +269,12 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
                         colors[color] = 1;
                         availableCol--;
                         lobby.insert({name, color});
+                        playerAddress[{name, color}] = mSockets[cur_index]->getRemoteAddress().toString();
                         indSocket[cur_index] = mSockets[cur_index].get();
                         indPlayer[cur_index] = {name, color};
                     }
                 }
-                waitChatConnection(indPlayer[cur_index], cur_index);
+
                 availableSocket.erase(cur_index);
                 mSockets[cur_index]->setBlocking(false);
                 cur_index = *availableSocket.begin();

@@ -15,9 +15,9 @@ sf::Socket::Status Client::connect(const sf::IpAddress &IP,
     mChatSendSocket.connect(IP, port, timeout);
     sf::Packet packet;
     PacketType sendType = CHAT_RECEIVER;
-    sf::IpAddress ip = mChatSendSocket.getRemoteAddress();
-    std::string ipString = ip.toString();
-    packet << sendType << ipString;
+    // sf::IpAddress ip = mChatSendSocket.getLocalAddress();
+     // std::string ipString = ip.toString();
+    packet << sendType;  //<< ipString;
     mChatSendSocket.send(packet);
     packet.clear();
     mChatSendSocket.receive(packet);
@@ -32,9 +32,9 @@ sf::Socket::Status Client::connect(const sf::IpAddress &IP,
     mChatReceiveSocket.connect(IP, port, timeout);
     packet.clear();
     sendType = CHAT_SENDER;
-    ip = mChatReceiveSocket.getRemoteAddress();
-    ipString = ip.toString();
-    packet << sendType << ipString;
+    //ip = mChatReceiveSocket.getRemoteAddress();
+    //ipString = ip.toString();
+    packet << sendType; // << ipString;
     mChatReceiveSocket.send(packet);
     packet.clear();
     mChatReceiveSocket.receive(packet);
