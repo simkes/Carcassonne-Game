@@ -79,6 +79,7 @@ private:
     std::vector<int> colors = std::vector<int>(5, 0);
     std::set<std::pair<std::string, int>>lobby;
     int availableCol = 5;
+    std::mutex chatMutex;
 };
 
 struct ServerGame {

@@ -217,6 +217,7 @@ void Server::waitChatConnection(int cur_index) {
                 sf::Packet to_be_sent;
                 to_be_sent << CHAT_RECEIVER;
                 mChatReceiver[cur_index]->send(to_be_sent);
+                std::unique_lock lock(chatMutex);
                 mChatSelector.add(*mChatReceiver[cur_index]);
                 break;
             } else {
@@ -256,6 +257,7 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
     while (mListener.accept(host) != sf::Socket::Done) {}
     mChat = std::make_unique<sf::Thread>([this]{
         while (true) {
+            std::unique_lock lock(chatMutex);
             if (mChatSelector.wait(sf::seconds(0.5))) {
                 for (const auto &socket : mChatReceiver) {
                     if (mChatSelector.isReady(*socket)) {
