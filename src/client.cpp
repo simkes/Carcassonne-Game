@@ -101,7 +101,7 @@ void Client::render_lobby() {
     }
 }
 
-void Client::receiveMessage() {
+[[noreturn]] void Client::receiveMessage() {
 
     while (true){
         sf::Packet packet;
@@ -112,7 +112,9 @@ void Client::receiveMessage() {
         mChatReceiveSocket.receive(packet);
         mutex.lock();
         packet >> type >> name >> message;
-        mRender.add_message(name, message);
+        if(type == MESSAGE) {
+            mRender.add_message(name, message);
+        }
         mutex.unlock();
     }
 
@@ -183,10 +185,6 @@ sf::Socket::Status Client::receive() {
         }
         case UPDATE: {
             update(packet);
-            break;
-        }
-        case MESSAGE:{
-           // chat = true;
             break;
         }
         case GAME_OVER: {

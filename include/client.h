@@ -38,7 +38,7 @@ private:
     void new_card(sf::Packet &packet);
     void new_unit(sf::Packet &packet);
     void update(sf::Packet &packet);
-    void receiveMessage();
+    [[noreturn]] void receiveMessage();
     sf::Socket::Status receive();
 public:
     sf::TcpSocket hostSocket;
