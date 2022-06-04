@@ -12,15 +12,15 @@ sf::Socket::Status Client::connect(const sf::IpAddress &IP,
                                    unsigned short port, sf::Time timeout) {
     sf::Socket::Status status =  mSocket.connect(IP, port, timeout);
     mSocket.setBlocking(false);
-    mChatReceiveSocket.connect(IP, port, timeout);
+    mChatSendSocket.connect(IP, port, timeout);
     sf::Packet packet;
     PacketType sendType = CHAT_RECEIVER;
-    sf::IpAddress ip = mChatReceiveSocket.getRemoteAddress();
+    sf::IpAddress ip = mChatSendSocket.getRemoteAddress();
     std::string ipString = ip.toString();
     packet << sendType << ipString;
-    mChatReceiveSocket.send(packet);
+    mChatSendSocket.send(packet);
     packet.clear();
-    mChatReceiveSocket.receive(packet);
+    mChatSendSocket.receive(packet);
 
     PacketType receiveType;
     packet >> receiveType;
@@ -29,16 +29,15 @@ sf::Socket::Status Client::connect(const sf::IpAddress &IP,
     }
 
 
-    mChatSendSocket.connect(IP, port, timeout);
-
+    mChatReceiveSocket.connect(IP, port, timeout);
     packet.clear();
     sendType = CHAT_SENDER;
-    ip = mChatSendSocket.getRemoteAddress();
+    ip = mChatReceiveSocket.getRemoteAddress();
     ipString = ip.toString();
     packet << sendType << ipString;
-    mChatSendSocket.send(packet);
+    mChatReceiveSocket.send(packet);
     packet.clear();
-    mChatSendSocket.receive(packet);
+    mChatReceiveSocket.receive(packet);
 
     packet >> receiveType;
     if (sendType != receiveType) {
@@ -70,9 +69,7 @@ void Client::process_game() {
         if (interactionChatEnd && !message.empty()){
             sf::Packet packet;
             packet << MESSAGE << message;
-            mSocket.setBlocking(true);
-            while(mSocket.send(packet) != sf::Socket::Done){}
-            mSocket.setBlocking(false);
+            while(mChatSendSocket.send(packet) != sf::Socket::Done){}
             interactionChatEnd = false;
         }
 
@@ -102,6 +99,23 @@ void Client::render_lobby() {
             //std::cout << "sent\n";
         hostSocket.setBlocking(false);
     }
+}
+
+void Client::receiveMessage() {
+
+    while (true){
+        sf::Packet packet;
+        PacketType type;
+        std::string name;
+        std::string message;
+
+        mChatReceiveSocket.receive(packet);
+        mutex.lock();
+        packet >> type >> name >> message;
+        mRender.add_message(name, message);
+        mutex.unlock();
+    }
+
 }
 
 void Client::run() {
@@ -262,21 +276,6 @@ void Client::update(sf::Packet &packet) {
         mRender.get_boardView().delete_unit(deleted_unit_coords);
     }
     currentState = State::DEFAULT;
-}
-void Client::receiveMessage() {
-
-    while (true){
-        sf::Packet packet;
-        PacketType type;
-        std::string name;
-        std::string message;
-
-        mChatReceiveSocket.receive(packet);
-        packet >> type >> name >> message;
-
-        mRender.add_message(name, message);
-    }
-
 }
 
 }

@@ -15,6 +15,7 @@ private:
     sf::TcpSocket mSocket;
     sf::TcpSocket mChatSendSocket;
     sf::TcpSocket mChatReceiveSocket;
+    sf::Mutex mutex;
     int host = -1;
 
     bool started = false;
