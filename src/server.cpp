@@ -255,23 +255,7 @@ void Server::waitChatConnection(int cur_index) {
 
 std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
     while (mListener.accept(host) != sf::Socket::Done) {}
-    mChat = std::make_unique<sf::Thread>([this]{
-        while (true) {
-            std::unique_lock lock(chatMutex);
-            if (mChatSelector.wait(sf::seconds(0.5))) {
-                for (const auto &socket : mChatReceiver) {
-                    if (mChatSelector.isReady(*socket)) {
-                        sf::Packet packet;
-                        std::string message;
-                        socket->receive(packet);
-                        packet >> message;
-                        sendChatMessage(message);
-                    }
-                }
-            }
-        }
-    });
-    mChat->launch();
+
     mSelector.add(host);
     sf::Packet from_host;
     std::map<int, std::pair<std::string, int>> indConnected;
@@ -319,6 +303,23 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
         players.emplace_back(iter, obj.first, static_cast<Color>(obj.second));
         //indPlayer.insert({iter++, players.back()});
     }
+    mChat = std::make_unique<sf::Thread>([this]{
+        while (true) {
+            //std::unique_lock lock(chatMutex);
+            if (mChatSelector.wait(sf::seconds(0.5))) {
+                for (const auto &socket : mChatReceiver) {
+                    if (mChatSelector.isReady(*socket)) {
+                        sf::Packet packet;
+                        std::string message;
+                        socket->receive(packet);
+                        packet >> message;
+                        sendChatMessage(message);
+                    }
+                }
+            }
+        }
+    });
+    mChat->launch();
     return players;
 }
 
