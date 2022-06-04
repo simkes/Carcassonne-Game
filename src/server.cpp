@@ -159,9 +159,9 @@ void Server::sendPause() {
     }
 }
 
-void Server::sendChatMessage(std::string message) {
+void Server::sendChatMessage(const std::string &name, const std::string &message) {
     sf::Packet packet;
-    packet >> message;
+    packet << MESSAGE << name << message;
     for (const auto &obj : mChatSender) {
         if (obj->getRemotePort()) {
             obj->send(packet);
@@ -307,13 +307,18 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
         while (true) {
             //std::unique_lock lock(chatMutex);
             if (mChatSelector.wait(sf::seconds(0.5))) {
-                for (const auto &socket : mChatReceiver) {
+                for (int i = 0; i < mChatReceiver.size(); i++) {
+                    sf::TcpSocket *socket = mChatReceiver[i].get();
                     if (mChatSelector.isReady(*socket)) {
                         sf::Packet packet;
+                        PacketType type;
                         std::string message;
+                        std::string name = indPlayer[i].first;
                         socket->receive(packet);
-                        packet >> message;
-                        sendChatMessage(message);
+                        packet >> type >> message;
+                        if (type == MESSAGE){
+                            sendChatMessage(name, message);
+                        }
                     }
                 }
             }

@@ -8,6 +8,7 @@
 #include <SFML/Network/TcpListener.hpp>
 #include <SFML/Network/Packet.hpp>
 #include <iostream>
+#include <mutex>
 
 namespace carcassonne_game::game_server {
 
@@ -53,7 +54,7 @@ struct Server {
 
     void waitChatConnection(int cur_index);
 
-    void sendChatMessage(std::string message);
+    void sendChatMessage(const std::string &name, const std::string &message);
 
     bool check_start();
 

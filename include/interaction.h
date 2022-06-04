@@ -38,7 +38,7 @@ struct chatInteraction {
     explicit chatInteraction(game_view::GameRender *render): mRender(render){}
     std::string handleEvent(sf::Event &event, bool &endOfState, bool &chat);
 private:
-    std::string message;
+    sf::String message;
     game_view::GameRender *mRender;
 };
 

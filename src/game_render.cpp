@@ -31,6 +31,10 @@ GameRender::GameRender()
     currentMessage.setPosition(212, 250);
     currentMessage.setFillColor(sf::Color::Black);
 
+    mChatRect.setSize({400, 400});
+    mChatRect.setPosition(200, 140);
+    mChatRect.setFillColor(sf::Color(255, 218, 185));
+
 }
 
 void GameRender::render(carcassonne_game::State state, bool chat) {
@@ -72,6 +76,7 @@ void GameRender::render(carcassonne_game::State state, bool chat) {
         mUnitView.draw(mWindow);
     }
     if (chat) {
+        mWindow.draw(mChatRect);
         mWindow.draw(chatHistoryText);
         mWindow.draw(currentMessage);
     }

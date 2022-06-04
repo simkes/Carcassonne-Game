@@ -37,6 +37,7 @@ private:
     std::deque <std::pair<sf::String, sf::String>> chatHistory;
     sf::Text chatHistoryText;
     sf::Text currentMessage;
+    sf::RectangleShape mChatRect;
 
 public:
     GameRender();

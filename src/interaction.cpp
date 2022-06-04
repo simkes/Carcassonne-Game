@@ -107,24 +107,27 @@ std::string chatInteraction::handleEvent(sf::Event &event,
         }
 
         if (event.key.code == sf::Keyboard::BackSpace) {
-            if (!message.empty()){
-                message.erase(message.size() - 1);
+            if (message.getSize() != 0){
+                message.erase(message.getSize() - 1);
                 mRender->message = message;
             }
         }
 
         if (event.key.code == sf::Keyboard::Enter) {
-            std::string resultMessage = message;
+            std::string resultMessage = message.operator std::string();
             message = "";
-            endOfState = false;
+            endOfState = true;
+            mRender->message = message;
             return resultMessage;
         }
 
     }
 
     if (event.type == sf::Event::TextEntered) {
-        message += event.text.unicode;
-        mRender->message = message;
+        if (event.text.unicode > 31 && event.text.unicode < 123) {
+            message += event.text.unicode;
+            mRender->message = message;
+        }
     }
 
     return "";
