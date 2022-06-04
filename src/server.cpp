@@ -204,10 +204,12 @@ void Server::waitChatConnection(const std::pair<std::string, int> &player, int c
             if (ip == playerAddress[player]) {
                 sf::Packet to_be_sent;
                 to_be_sent << CHAT_RECEIVER;
+                mChatReceiver[cur_index]->send(to_be_sent);
                 break;
             } else {
                 sf::Packet to_be_sent;
                 to_be_sent << WRONG_PLAYER;
+                mChatReceiver[cur_index]->send(to_be_sent);
             }
         }
         mChatReceiver[cur_index]->disconnect();
@@ -224,10 +226,12 @@ void Server::waitChatConnection(const std::pair<std::string, int> &player, int c
             if (ip == playerAddress[player]) {
                 sf::Packet to_be_sent;
                 to_be_sent << CHAT_SENDER;
+                mChatSender[cur_index]->send(packet);
                 break;
             } else {
                 sf::Packet to_be_sent;
                 to_be_sent << WRONG_PLAYER;
+                mChatSender[cur_index]->send(packet);
             }
         }
         mChatSender[cur_index]->disconnect();

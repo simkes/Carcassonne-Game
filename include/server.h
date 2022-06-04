@@ -63,6 +63,7 @@ private:
     std::vector<std::unique_ptr<sf::TcpSocket>> mSockets;
     std::vector<std::unique_ptr<sf::TcpSocket>> mChatSender;
     std::vector<std::unique_ptr<sf::TcpSocket>> mChatReceiver;
+    std::vector<std::unique_ptr<sf::Thread>> mChatThread = {5, nullptr};
 
     std::map<std::pair<std::string, int>, std::string> playerAddress;
     sf::TcpListener mListener;
