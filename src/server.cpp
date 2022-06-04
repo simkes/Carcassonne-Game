@@ -1,5 +1,6 @@
 #include "server.h"
 #include <iostream>
+#include <memory>
 
 namespace carcassonne_game::game_server {
 
@@ -158,6 +159,16 @@ void Server::sendPause() {
     }
 }
 
+void Server::sendChatMessage(std::string message) {
+    sf::Packet packet;
+    packet >> message;
+    for (const auto &obj : mChatSender) {
+        if (obj->getRemotePort()) {
+            obj->send(packet);
+        }
+    }
+}
+
 bool Server::check_start() {
     std::set<int> deleted;
     for (auto obj : indSocket) {
@@ -206,6 +217,7 @@ void Server::waitChatConnection(int cur_index) {
                 sf::Packet to_be_sent;
                 to_be_sent << CHAT_RECEIVER;
                 mChatReceiver[cur_index]->send(to_be_sent);
+                mChatSelector.add(*mChatReceiver[cur_index]);
                 break;
             } else {
                 sf::Packet to_be_sent;
@@ -242,6 +254,22 @@ void Server::waitChatConnection(int cur_index) {
 
 std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
     while (mListener.accept(host) != sf::Socket::Done) {}
+    mChat = std::make_unique<sf::Thread>([this]{
+        while (true) {
+            if (mChatSelector.wait(sf::seconds(0.5))) {
+                for (const auto &socket : mChatReceiver) {
+                    if (mChatSelector.isReady(*socket)) {
+                        sf::Packet packet;
+                        std::string message;
+                        socket->receive(packet);
+                        packet >> message;
+                        sendChatMessage(message);
+                    }
+                }
+            }
+        }
+    });
+    mChat->launch();
     mSelector.add(host);
     sf::Packet from_host;
     std::map<int, std::pair<std::string, int>> indConnected;
