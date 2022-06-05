@@ -7,7 +7,7 @@ namespace visitors{
 class FieldVisitor final : public AbstractVisitor {
 public:
     explicit FieldVisitor(Board *boardPtr_) : AbstractVisitor(boardPtr_) {}
-    void visit() final;
+    std::vector<sf::Vector2i> visit() final;
 private:
     const std::vector<sf::Vector2i> directions { {1,0}, {0, 1}, {-1,0}, {0,-1} };
     std::map <sf::Vector2i , int, Comp> marked;

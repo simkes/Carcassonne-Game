@@ -24,54 +24,63 @@ inline TextureHolder &getTextures(){
 
 inline sf::Font &getFont(){
     static sf::Font font;
-    return font; //не знаю обязательно ли здесь было так делать, на всякий
+    return font;
 }
+
+struct CardView {
+    explicit CardView(int texture_id, sf::Vector2f position, int rotation);
+    void draw(sf::RenderTarget &target) const;
+private:
+    sf::Sprite mSprite;
+};
+
+struct UnitView {
+    UnitView() = default;
+    explicit UnitView(int color, sf::Vector2f position);
+    void set_col_and_pos(int color, sf::Vector2f position);
+    void draw(sf::RenderTarget &target) const;
+private:
+    sf::Sprite mSprite;
+};
 
 struct BoardView : public sf::Drawable {
     //c-tor
-
-    void setBoard(game_model::Board *board) {
-        mBoard = board;
-        mView.setSize(1024, 700);
+    BoardView() {
+        mView.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         mView.setCenter(3074, 3074);
     }
-
     sf::View &getView() {
         return mView;
     }
 
+    void add_card(int texture_id, sf::Vector2f position, int rotation);
+    void add_unit(int color, sf::Vector2i position, sf::Vector2i view_position);
+    void delete_unit(sf::Vector2i position);
+
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 private:
-    game_model::Board *mBoard = nullptr;
+    std::vector<CardView> placedCards;
+    std::map<sf::Vector2i, UnitView,game_model::Comp> units; // made map as some units will be deleted
+                                                             // key = tile pos on board
     sf::View mView;
 };
 
-struct CardView : public sf::Drawable, public sf::Transformable {
-    explicit CardView(game_model::Card &card, const sf::Texture &card_texture);
-
-    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
-
+struct CurrentCardView {
+    CurrentCardView() {
+        mSprite.setPosition({115, 225});
+        mSprite.setOrigin(textures::CARD_TEXTURE_SIZE/2, textures::CARD_TEXTURE_SIZE/2);
+    }
+    void set_texture(int texture_id);
+    void rotate_R();
+    void rotate_L();
+    int get_rotation(){
+        return rotation;
+    }
+    void draw(sf::RenderTarget &target) const;
 private:
     sf::Sprite mSprite;
-};
-
-struct currentCardView : public sf::Drawable, public sf::Transformable {
-    explicit currentCardView(game_model::Card &card, const sf::Texture &card_texture);
-
-    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
-
-private:
-    sf::Sprite mSprite;
-};
-
-struct UnitView : public sf::Drawable, public sf::Transformable {
-    explicit UnitView(const game_model::Unit &unit, const sf::Texture &unit_texture);
-
-    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
-
-private:
-    sf::Sprite mSprite;
+    int rotation = 0;
 };
 
 }  // namespace game_view

@@ -15,11 +15,11 @@ struct CardDeck{
     CardDeck(){
         init();
     }
-    void init();
     bool empty();
     Card get_card();
 
 private:
+    void init();
     std::deque <Card> mDeck;
 };
 

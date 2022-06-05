@@ -2,7 +2,6 @@
 
 namespace game_view {
 
-
 Menu::Menu(sf::RenderWindow &window_) :  window(window_) {
 
     background.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND));
@@ -17,35 +16,37 @@ Menu::Menu(sf::RenderWindow &window_) :  window(window_) {
 
 }
 
-std::vector<std::pair<sf::String, game_model::Color>> Menu::start_game() {
-    execute_start();
-    get_players(get_number());
-
-    return players;
-}
-
-void Menu::execute_start() {
+bool Menu::execute_start() { // returns true if client chose to be a host, otherwise false - connect to a host
     bool end = false;
-    bool new_game;
+    int button = 0; // 0 - nothing , 1 - be a host, 2 - connect
     sf::Event event{};
     sf::Texture bigTitleTexture;
     bigTitleTexture.loadFromFile("menu/carcasonne_title_big.png");
     sf::Sprite bigTitle;
     bigTitle.setTexture(bigTitleTexture);
     bigTitle.setPosition(150,30); // 735 x 200
-    sf::Text invitation("New Game", getFont(), 70);
-    invitation.setPosition(350,350); // 320 x 70
+
+    sf::Text be_host("Be a host", getFont(), 80); //TODO !!!
+    be_host.setPosition(300,280); // 630 x 80
+    sf::Text connect_to_host("Connect to a host", getFont(), 70);
+    connect_to_host.setPosition(230,430); // 850 x 70
 
     while (window.isOpen() && !end ) {
-        invitation.setFillColor(sf::Color::White);
-        new_game = false;
+        be_host.setFillColor(sf::Color::White);
+        connect_to_host.setFillColor(sf::Color::White);
+        button = 0;
         window.clear();
 
-        if (sf::IntRect(350, 350, 320, 70).contains(sf::Mouse::getPosition(window))) {
-            invitation.setFillColor(sf::Color( 133, 193, 233));
-            new_game = true;
+        if (sf::IntRect(300, 280, 630, 80).contains(sf::Mouse::getPosition(window))) {
+            be_host.setFillColor(sf::Color( 133, 193, 233));
+            button = 1;
         }
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && new_game) {
+        else if (sf::IntRect(230, 430, 850, 70).contains(sf::Mouse::getPosition(window))) {
+            connect_to_host.setFillColor(sf::Color( 133, 193, 233));
+            button = 2;
+        }
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && button) {
             end = true;
         }
         while (window.pollEvent(event)){
@@ -56,69 +57,122 @@ void Menu::execute_start() {
 
         window.draw(background);
         window.draw(bigTitle);
-        window.draw(invitation);
+        window.draw(be_host);
+        window.draw(connect_to_host);
         window.display();
 
     }
+    host = 2-button;
+    return host;
 }
 
-int Menu::get_number() {
-    int numberOfPlayers = 0;
-    int tmpNumber = 0;
-    bool numberReceived = false;
-    bool wrongNum = false;
+int Menu::ask_port() {
+    bool end = false;
+    int port = 0;
     sf::Event event{};
     sf::String stringEntered;
+    bool wrongP = false;
 
-
-    sf::Text invitation("Enter number of players from 2 to 5", getFont(), 35);
+    sf::Text invitation("Enter port", getFont(), 40);
     invitation.setFillColor(sf::Color::Black);
-    sf::Vector2f invPos = {startSprPos.x + 20, startSprPos.y + 50};
+    sf::Vector2f invPos = {startSprPos.x + 20, startSprPos.y + 20};
     invitation.setPosition(invPos);
 
-    sf::Text wrongNumber("The number of players should be\n from 2 to 5 :(", getFont(), 35);
-    wrongNumber.setFillColor(sf::Color(  123, 36, 28  ));
-    wrongNumber.setPosition(invPos.x, invPos.y + 100);
 
-    sf::Text textEntered("",getFont(), 40);
-    textEntered.setFillColor(sf::Color::Black);
-    textEntered.setPosition(invPos.x + 70, invPos.y + 100);
+    sf::Text textEntered("", getFont(), 45);
+    textEntered.setFillColor(sf::Color(123, 36, 28));
+    textEntered.setPosition(invPos.x + 70, invPos.y + 80);
 
+    sf::Text wrongPort("You have not entered a port yet", getFont(), 35);
+    wrongPort.setFillColor(sf::Color(  123, 36, 28  ));
+    wrongPort.setPosition(invPos.x, invPos.y + 80);
 
-    while (window.isOpen() && !numberReceived ) {
-
-        while (window.pollEvent(event)){
+    while (window.isOpen() && !end) {
+        window.clear();
+        while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
-            }
-            else if (event.type == sf::Event::TextEntered) {
-                stringEntered = event.text.unicode;
-                textEntered.setString(stringEntered);
-                std::string tmpString = stringEntered;
-                try {
-                    tmpNumber = std::stoi(tmpString);
-                    wrongNum = false;
-                } catch (std::invalid_argument &) {
-                    tmpNumber = 0;
-                    stringEntered = "";
-                    textEntered.setString(stringEntered);
-                }
-            }
-            else if (event.type == sf::Event::KeyPressed) {
-                if(event.key.code == sf::Keyboard::BackSpace) {
-                    stringEntered.erase(stringEntered.getSize()-1);
-                    textEntered.setString(stringEntered);
-                }
-                else if (event.key.code == sf::Keyboard::Enter){
-                    if( tmpNumber < 2 || tmpNumber > 5){
-                        wrongNum = true;
-                        stringEntered = "";
+            } else if (event.type == sf::Event::TextEntered) {
+                    if (event.text.unicode > 47 && event.text.unicode < 58) {
+                        wrongP = false;
+                        stringEntered += event.text.unicode;
                         textEntered.setString(stringEntered);
                     }
-                    else {
-                        numberOfPlayers = tmpNumber;
-                        numberReceived = true;
+                } else if (event.type == sf::Event::KeyPressed) {
+                    if (event.key.code == sf::Keyboard::BackSpace) {
+                        if (!stringEntered.isEmpty()) {
+                            stringEntered.erase(stringEntered.getSize() - 1);
+                            textEntered.setString(stringEntered);
+                        }
+                    } else if (event.key.code == sf::Keyboard::Enter) {
+                        if (stringEntered == "") {
+                            wrongP = true;
+                            continue ;
+                        }
+                        port = std::stoi(stringEntered.operator std::string());
+                        end = true;
                     }
+                }
+            }
+
+        window.draw(background);
+        window.draw(startSprite);
+        window.draw(title);
+        window.draw(invitation);
+        window.draw(textEntered);
+        if(wrongP) {
+            window.draw(wrongPort);
+        }
+        window.display();
+    }
+    return port;
+}
+
+sf::String Menu::ask_IP() {
+    sf::String ip;
+    bool end = false;
+    sf::Event event{};
+    sf::String stringEntered;
+    bool wrongIP = false;
+
+    sf::Text invitation("Enter IP address", getFont(), 40);
+    invitation.setFillColor(sf::Color::Black);
+    sf::Vector2f invPos = {startSprPos.x + 20, startSprPos.y + 20};
+    invitation.setPosition(invPos);
+
+
+    sf::Text textEntered("", getFont(), 40);
+    textEntered.setFillColor(sf::Color(123, 36, 28));
+    textEntered.setPosition(invPos.x + 70, invPos.y + 80);
+
+    sf::Text wrongIPadr("You have not entered an IP yet", getFont(), 35);
+    wrongIPadr.setFillColor(sf::Color(  123, 36, 28  ));
+    wrongIPadr.setPosition(invPos.x, invPos.y + 80);
+
+    while (window.isOpen() && !end) {
+        window.clear();
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            } else if (event.type == sf::Event::TextEntered) {
+                if ( (event.text.unicode > 47 && event.text.unicode < 58) || event.text.unicode == '.') {
+                    wrongIP = false;
+                    stringEntered += event.text.unicode;
+                    textEntered.setString(stringEntered);
+                }
+            } else if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::BackSpace) {
+                    if (!stringEntered.isEmpty()) {
+                        stringEntered.erase(stringEntered.getSize() - 1);
+                        textEntered.setString(stringEntered);
+                    }
+                } else if (event.key.code == sf::Keyboard::Enter) {
+                    if (stringEntered == "") {
+                        wrongIP = true;
+                        continue ;
+                    }
+                    ip = stringEntered;
+                    end = true;
                 }
             }
         }
@@ -127,27 +181,32 @@ int Menu::get_number() {
         window.draw(startSprite);
         window.draw(title);
         window.draw(invitation);
-        if(!wrongNum) {
-            window.draw(textEntered);
-        } else {
-            window.draw(wrongNumber);
+        window.draw(textEntered);
+        if(wrongIP) {
+            window.draw(wrongIPadr);
         }
         window.display();
-
     }
-    return numberOfPlayers;
+    return ip;
 }
 
 struct Colors {
     int number = -1;
     std::vector<std::pair<sf::RectangleShape, bool>> colors;
-    explicit Colors(sf::Vector2f startSprPos) {
+    explicit Colors (sf::Vector2f startSprPos, const std::vector<int>& available_colors) {
         colors.resize(5);
         colors[0].first.setFillColor(sf::Color( 203, 45, 26 )); //RED
         colors[1].first.setFillColor(sf::Color( 241, 196, 15 )); //YELLOW
         colors[2].first.setFillColor(sf::Color( 39, 145, 23 )); //GREEN
         colors[3].first.setFillColor(sf::Color( 36, 113, 163 )); //BLUE
         colors[4].first.setFillColor(sf::Color::Black);
+
+        for(auto &col : colors) {
+            col.second = true;
+        }
+        for(const auto& num : available_colors) {
+            colors[num].second = false;
+        }
 
         float xPos = startSprPos.x + 20;
         float yPos = startSprPos.y + 270;
@@ -193,95 +252,134 @@ struct Colors {
 
 };
 
-void Menu::get_players( int number ) {
-    int counter = 1;
-    sf::Event event{};
-    sf::String stringEntered;
-    bool wrongN = false;
-    bool noCol = false;
+std::pair<sf::String, int> Menu::ask_name_color( const std::vector<int>& available_colors ) {
+        bool end = false;
+        sf::Event event{};
+        sf::String stringEntered;
+        bool wrongN = false;
+        bool noCol = false;
 
-    Colors cols(startSprPos);
+        Colors cols(startSprPos,available_colors);
 
-    sf::Text invitation1("", getFont(), 35);
-    invitation1.setFillColor(sf::Color::Black);
-    sf::Vector2f invPos = {startSprPos.x + 20, startSprPos.y + 20};
-    invitation1.setPosition(invPos);
+        sf::Text invitation1("Enter your name:", getFont(), 35);
+        invitation1.setFillColor(sf::Color::Black);
+        sf::Vector2f invPos = {startSprPos.x + 20, startSprPos.y + 20};
+        invitation1.setPosition(invPos);
 
-    sf::Text invitation2("Choose your colour", getFont(), 35);
-    invitation2.setFillColor(sf::Color::Black);
-    invitation2.setPosition(invPos.x , invPos.y + 150);
+        sf::Text invitation2("Choose your colour", getFont(), 35);
+        invitation2.setFillColor(sf::Color::Black);
+        invitation2.setPosition(invPos.x , invPos.y + 150);
 
-    sf::Text textEntered("", getFont(), 45);
-    textEntered.setFillColor(sf::Color(123, 36, 28));
-    textEntered.setPosition(invPos.x + 70, invPos.y + 80);
+        sf::Text textEntered("", getFont(), 45);
+        textEntered.setFillColor(sf::Color(123, 36, 28));
+        textEntered.setPosition(invPos.x + 70, invPos.y + 80);
 
-    sf::Text wrongName("You have not entered a name yet", getFont(), 35);
-    wrongName.setFillColor(sf::Color(  123, 36, 28  ));
-    wrongName.setPosition(invPos.x, invPos.y + 80);
+        sf::Text wrongName("You have not entered a name yet", getFont(), 35);
+        wrongName.setFillColor(sf::Color(  123, 36, 28  ));
+        wrongName.setPosition(invPos.x, invPos.y + 80);
 
-    sf::Text noColor("You have not chosen a colour yet", getFont(), 35);
-    noColor.setFillColor(sf::Color(  123, 36, 28  ));
-    noColor.setPosition(invPos.x, invPos.y + 190);
+        sf::Text noColor("You have not chosen a colour yet", getFont(), 35);
+        noColor.setFillColor(sf::Color(  123, 36, 28  ));
+        noColor.setPosition(invPos.x, invPos.y + 190);
 
-    while (window.isOpen() && counter <= number) {
-        window.clear();
-        cols.pick(window);
-        if ( cols.number != -1) {
-            noCol = false;
+        while (!end) {
+            window.clear();
+            cols.pick(window);
+            if ( cols.number != -1) {
+                noCol = false;
+            }
+
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed) {
+                    window.close();
+                } else if (event.type == sf::Event::TextEntered) {
+                    if (event.text.unicode > 47 && event.text.unicode < 123) {
+                        wrongN = false;
+                        stringEntered += event.text.unicode;
+                        textEntered.setString(stringEntered);
+                    }
+                } else if (event.type == sf::Event::KeyPressed) {
+                    if (event.key.code == sf::Keyboard::BackSpace) {
+                        if (!stringEntered.isEmpty()){
+                            stringEntered.erase(stringEntered.getSize() - 1);
+                            textEntered.setString(stringEntered);
+                        }
+                    } else if (event.key.code == sf::Keyboard::Enter) {
+                        if (stringEntered == "") {
+                            wrongN = true;
+                            continue ;
+                        }
+                        if (cols.number == -1) {
+                            noCol = true;
+                            continue ;
+                        }
+                        end = true;
+                    }
+                }
+            }
+
+        window.draw(background);
+        window.draw(startSprite);
+        window.draw(title);
+        window.draw(invitation1);
+        window.draw(invitation2);
+        window.draw(textEntered);
+        if(wrongN) {
+            window.draw(wrongName);
         }
-        invitation1.setString("Player " + std::to_string(counter) +
-                             "\nEnter your name:");
+        if(noCol) {
+            window.draw(noColor);
+        }
+        cols.draw(window);
 
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window.close();
-            } else if (event.type == sf::Event::TextEntered) {
-                if (event.text.unicode > 47 && event.text.unicode < 123) {
-                    wrongN = false;
-                    stringEntered += event.text.unicode;
-                    textEntered.setString(stringEntered);
-                }
-            } else if (event.type == sf::Event::KeyPressed) {
-                if (event.key.code == sf::Keyboard::BackSpace) {
-                    stringEntered.erase(stringEntered.getSize() - 1);
-                    textEntered.setString(stringEntered);
-                } else if (event.key.code == sf::Keyboard::Enter) {
-                    if (stringEntered == "") {
-                        wrongN = true;
-                        continue ;
-                    }
-                    if (cols.number == -1) {
-                        noCol = true;
-                        continue ;
-                    }
-                    players.emplace_back(stringEntered,
-                                         game_model::colorsVector[cols.number]);
-                    cols.colors[cols.number].second = true;
-                    cols.number = -1;
-                    counter++;
-                    stringEntered = "";
-                    textEntered.setString("");
-                }
+        window.display();
+    }
+    return {stringEntered,cols.number};
+}
+bool Menu::lobby() {
+    bool game_started = false;
+    bool button = false;
+    sf::Event event{};
+    //window.pollEvent(event);
+
+    sf::String names_list = "";
+    for(const auto &s : players_list) {
+        names_list += s + '\n';
+    }
+
+    sf::Text list(names_list, getFont(), 40);
+    list.setFillColor(sf::Color::Black);
+    sf::Vector2f listPos = {startSprPos.x + 20, startSprPos.y + 20};
+    list.setPosition(listPos);
+
+    sf::Text invitation("Start Game", getFont(), 70);
+    invitation.setPosition(startSprPos.x + 40, startSprPos.y + 300); // 350 x 70
+
+        if(host) {
+            invitation.setFillColor(sf::Color::White);
+            button = false;
+            window.clear();
+
+            if (sf::IntRect(startSprPos.x + 40, startSprPos.y + 300, 320, 70)
+                    .contains(sf::Mouse::getPosition(window))) {
+                invitation.setFillColor(sf::Color::Black);
+                button = true;
+            }
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && button) {
+                game_started = true;
             }
         }
 
-    window.draw(background);
-    window.draw(startSprite);
-    window.draw(title);
-    window.draw(invitation1);
-    window.draw(invitation2);
-    window.draw(textEntered);
-    if(wrongN) {
-        window.draw(wrongName);
-    }
-    if(noCol) {
-        window.draw(noColor);
-    }
-    cols.draw(window);
+        window.draw(background);
+        window.draw(startSprite);
+        window.draw(title);
+        window.draw(list);
+        if(host) {
+            window.draw(invitation);
+        }
+        window.display();
 
-    window.display();
-}
-
+    return game_started;
 }
 
 }// game_view

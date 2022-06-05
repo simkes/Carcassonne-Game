@@ -2,10 +2,12 @@
 
 namespace visitors{
 
-void visitors::FieldVisitor::visit() {
-    for (auto &tile : boardPtr->getTypeMap()[Type::FIELD]){
-        if(!marked[tile.position]){
-            int numberOfCastles = dfs_in_field(tile);
+std::vector<sf::Vector2i> visitors::FieldVisitor::visit() {
+    std::vector<sf::Vector2i> deleted_units;
+    for (auto &tile_pos : boardPtr->getTypeMap()[Type::FIELD]){
+        if(!marked[tile_pos]){
+            Tile &tl = boardPtr->getTiles()[tile_pos];
+            int numberOfCastles = dfs_in_field(tl);
             set_score(numberOfCastles);
             for(auto &x: units) {
                 for(auto &unit : x.second) {
@@ -17,6 +19,7 @@ void visitors::FieldVisitor::visit() {
             clear_markedCastles();
         }
     }
+    return deleted_units;
 }
 
 int FieldVisitor::dfs_in_field(Tile &tile){

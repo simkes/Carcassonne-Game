@@ -1,64 +1,45 @@
 #ifndef INTERACTION_H_
 #define INTERACTION_H_
 
-#include "game_board.h"
-#include "game_card.h"
 #include "game_view.h"
+#include "game_render.h"
 
 namespace interaction {
 
+struct result {
+    sf::Vector2i tile_coordinates = {-1,-1};
+    int card_rotation =  0;
+};
+
 struct defaultInteraction {
-    explicit defaultInteraction(game_model::Board &gameBoard_,
-                                game_view::BoardView &mainView_,
-                                sf::RenderWindow &mWindow_)
-        : gameBoard(&gameBoard_), mainView(&mainView_), mWindow(&mWindow_){};
-    virtual void handleEvent(sf::Event &event, bool &endOfState);
+    explicit defaultInteraction(game_view::GameRender *render) : mRender(render) {};
 
-    void defaultInterfaceInteraction(sf::Event &event);
-    // virtual destructor??
+    virtual result handleEvent(sf::Event &event, bool &endOfState, bool &chat);
+    void defaultInterfaceInteraction(sf::Event &event, bool &chat);
+
     virtual ~defaultInteraction() = default;
-
 protected:
-    game_view::BoardView *mainView;  // <- needed pointer cuz view is changing
-    game_model::Board *gameBoard;
-    sf::RenderWindow *mWindow;
-};  // may be better to name baseInteraction or smt
+    game_view::GameRender *mRender;
+};
 
 struct cardPlacementInteraction : public defaultInteraction {
-    explicit cardPlacementInteraction(game_model::Board &gameBoard_,
-                                      game_view::BoardView &mainView_,
-                                      game_model::Card **currentCard_,
-                                      sf::RenderWindow &mWindow_)
-        : defaultInteraction(gameBoard_, mainView_, mWindow_),
-          currentCard(currentCard_) {
-    }
-    void handleEvent(sf::Event &event, bool &endOfState) override;
-
-private:
-    // but its so strange, because in BoardView we have board, maybe make getter
-    game_model::Card **currentCard;
+    explicit cardPlacementInteraction(game_view::GameRender *render)
+        : defaultInteraction(render){};
+    result handleEvent(sf::Event &event, bool &endOfState, bool &chat) override;
 };
 
 struct unitPlacementInteraction : public defaultInteraction {
-    explicit unitPlacementInteraction(game_model::Board &gameBoard_,
-                                      game_view::BoardView &mainView_,
-                                      game_model::Card **currentCard_,
-                                      game_model::Player *currentPlayer_,
-                                      sf::RenderWindow &mWindow_)
-        : defaultInteraction(gameBoard_, mainView_, mWindow_),
-          currentCard(currentCard_),
-          currentPlayer(currentPlayer_) {
-    }
-    void handleEvent(sf::Event &event, bool &endOfState) override;
+    explicit unitPlacementInteraction(game_view::GameRender *render)
+        : defaultInteraction(render){};
+    result handleEvent(sf::Event &event, bool &endOfState, bool &chat) override;
+};
 
-    void setCurrentPlayer(game_model::Player *newPlayer);
-
-    // cardPlacementInteraction(game_model::Board &board, game_model::Card
-    // &card): Board(board), currentCardPtr(card){}
-
+struct chatInteraction {
+    explicit chatInteraction(game_view::GameRender *render): mRender(render){}
+    std::string handleEvent(sf::Event &event, bool &endOfState, bool &chat);
 private:
-    game_model::Card **currentCard;
-    game_model::Player *currentPlayer;
+    sf::String message;
+    game_view::GameRender *mRender;
 };
 
 }  // namespace interaction

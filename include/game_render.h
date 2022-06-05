@@ -3,6 +3,15 @@
 
 #include "game_common.h"
 #include "game_menu.h"
+#include <iostream>
+
+namespace interaction {
+struct defaultInteraction; // declaration
+struct cardPlacementInteraction;
+struct unitPlacementInteraction;
+struct chatInteraction;
+}
+
 
 namespace game_view{
 
@@ -10,6 +19,17 @@ class GameRender {
 private:
     sf::RenderWindow mWindow;
     BoardView mBoardView;
+    CurrentCardView mCurCardView;
+    UnitView mUnitView;
+    sf::String mCurPlayer;
+
+    sf::Text mScoreButton;
+    sf::Text mChatButton;
+    bool scoreIsActive = false;
+
+    sf::Vector2f chat_pos = {200, 140};
+    sf::Vector2f scorePos = {750,90};
+
     sf::Sprite mBackground1;
     sf::Sprite mBackground2;
     sf::Sprite mTitle;
@@ -18,25 +38,67 @@ private:
     sf::Text mScoreText;
     Menu mMenu;
 
-    std::vector<game_model::Player> *players = nullptr; //for scoreboard
     sf::Text invitation;
+    sf::Vector2f invitationPos = {10,65};
+    sf::Text errorMessage; //TODO
+    bool errorIsActive = false;
 
-    void update_scoreboard();
+    sf::String message;
+    std::deque <std::pair<sf::String, sf::String>> chatHistory;
+    sf::Text chatHistoryText;
+    sf::Text currentMessage;
+    sf::Text messageInvitation;
+    sf::RectangleShape mChatRect;
+    sf::RectangleShape mMesRect;
+
+    sf::Text winnerName;
+
 public:
     GameRender();
-    void set_players(std::vector<game_model::Player> *players_) {
-        players = players_;
-    }
     sf::RenderWindow& window() {
         return mWindow;
     };
-    void render(const sf::String &name);
-    void render_with_card(game_model::Card* curCardPtr,const sf::String &name);
-    std::vector<std::pair<sf::String, game_model::Color>> start_game();
-    void set_boardView(game_model::Board *board);
+    Menu& get_menu() {
+        return mMenu;
+    }
+    CurrentCardView& get_curCardView(){
+        return mCurCardView;
+    }
     BoardView &get_boardView() {
         return mBoardView;
     }
+
+    void set_curPlayer(const std::string& name) {
+        mCurPlayer = name;
+    }
+
+    void set_errorMessage(const std::string& msg) {
+        errorIsActive = true;
+        errorMessage.setString(msg);
+    }
+
+    void set_scoreText(const std::vector<std::pair<int,std::string>>& players_score);
+
+    void add_message(const std::string &name, const std::string &new_message){
+        if(chatHistory.size() == 10){
+            chatHistory.pop_front();
+        }
+        chatHistory.emplace_back(name, new_message);
+    }
+
+    std::pair<sf::String, int> menu_init(const std::vector<int>& available_colors) {
+        std::pair<sf::String, int> ans = mMenu.ask_name_color(available_colors);
+        mUnitView.set_col_and_pos(ans.second, {invitationPos.x , invitationPos.y + 110});
+        return ans;
+    }
+
+    void render(carcassonne_game::State state, bool chat);
+    void render_end_of_game();
+
+    friend interaction::defaultInteraction;
+    friend interaction::cardPlacementInteraction;
+    friend interaction::unitPlacementInteraction;
+    friend interaction::chatInteraction;
 };
 
 } // game_view

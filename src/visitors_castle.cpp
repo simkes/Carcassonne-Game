@@ -2,15 +2,18 @@
 
 namespace visitors{
 
-void visitors::CastleVisitor::visit() {
+std::vector<sf::Vector2i>visitors::CastleVisitor::visit() {
+    std::vector<sf::Vector2i> deleted_units;
     clear_marked();
-    for (auto &tile : boardPtr->getTypeMap()[Type::CASTLE]){
-        if(!marked[tile.position]){
-            int numberOfCards = dfs(tile);
+    for (auto &tile_pos : boardPtr->getTypeMap()[Type::CASTLE]){
+        if(!marked[tile_pos]){
+            Tile &tl = boardPtr->getTiles()[tile_pos];
+            int numberOfCards = dfs(tl);
             if(numberOfCards) {
                 set_score(numberOfCards);
                 for(auto &x: units) {
                     for(auto &unit : x.second) {
+                        deleted_units.push_back(unit->tile->position);
                         unit->tile->unit = nullptr;
                         unit->tile = nullptr;
                     }
@@ -20,6 +23,7 @@ void visitors::CastleVisitor::visit() {
             cardsID.clear();
         }
     }
+    return deleted_units;
 }
 int CastleVisitor::dfs(Tile &tile) {
     if(tile.type != game_model::Type::CASTLE && tile.type != game_model::Type::CASTLEWITHSHIELD || marked[tile.position]) {

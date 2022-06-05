@@ -23,18 +23,14 @@ struct Board {
         return mTiles;
     }
 
-    sf::Vector2i getEmptyPosition(sf::Vector2i position);
-
-    std::map<Type, std::vector<Tile>> &getTypeMap(){
+    std::map<Type, std::vector<sf::Vector2i>> &getTypeMap(){
         return mTypeMap;
     }
 
 private:
     // TODO: wrap in unique ?
     std::map<sf::Vector2i, Tile, Comp> mTiles;
-    std::map<Type, std::vector<Tile>> mTypeMap;
-    std::set<sf::Vector2i, Comp> emptyPositions;
-    size_t castleCount = 0;
+    std::map<Type, std::vector<sf::Vector2i>> mTypeMap;
 };
 
 }  // namespace game_model

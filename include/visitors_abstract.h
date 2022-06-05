@@ -15,7 +15,7 @@ protected:
 
 public:
     explicit AbstractVisitor(Board *boardPtr_) : boardPtr(boardPtr_) {}
-    virtual void visit() = 0;
+    virtual std::vector<sf::Vector2i> visit() = 0;
     // some connectivity ?
     virtual ~AbstractVisitor() = default;
 };
