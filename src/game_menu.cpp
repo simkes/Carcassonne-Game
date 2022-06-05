@@ -296,8 +296,10 @@ std::pair<sf::String, int> Menu::ask_name_color( const std::vector<int>& availab
                     }
                 } else if (event.type == sf::Event::KeyPressed) {
                     if (event.key.code == sf::Keyboard::BackSpace) {
-                        stringEntered.erase(stringEntered.getSize() - 1);
-                        textEntered.setString(stringEntered);
+                        if (!stringEntered.isEmpty()){
+                            stringEntered.erase(stringEntered.getSize() - 1);
+                            textEntered.setString(stringEntered);
+                        }
                     } else if (event.key.code == sf::Keyboard::Enter) {
                         if (stringEntered == "") {
                             wrongN = true;
