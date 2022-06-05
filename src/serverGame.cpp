@@ -35,6 +35,8 @@ void ServerGame::run() {
                 mBoard.addCard(coords.first, *currentCardPtr);
                 mServer.cardTurnDone(*currentCardPtr);
                 change_state();
+            } else {
+                mServer.sendError("You can't place card\n there", currentPlayerIndex);
             }
         }
         while (currentState == State::UNITPLACEMENT) {
@@ -44,37 +46,14 @@ void ServerGame::run() {
                 auto coords = game_view::to_board_tiles(view_coords);
                 if(view_coords.x == -1) {
                     change_state();
-                } else if (mBoard.getTiles()[coords].card && !mBoard.getTiles()[coords].unit) {
+                } else if (mBoard.getTiles().count(coords) && mBoard.getTiles()[coords].card == currentCardPtr) {
                     Unit *unit = mPlayers[currentPlayerIndex].get_unit();
                     mBoard.getTiles()[coords].unit = unit;
-
-                    /* for debug
-                    Type tp =  mBoard.getTiles()[coords].type;
-                    switch (tp) {
-                        case game_model::Type::ROAD :
-                            std::cout << "road\n";
-                            break ;
-                        case game_model::Type::CASTLE :
-                            std::cout << "castle\n";
-                            break ;
-                        case game_model::Type::MONASTERY :
-                            std::cout << "monastery\n";
-                            break ;
-                        case game_model::Type::FIELD :
-                            std::cout << "field\n";
-                            break ;
-                        case game_model::Type::JUNCTION :
-                            std::cout << "jc\n";
-                            break ;
-                        case game_model::Type::NOTHING :
-                            std::cout << "nt\n";
-                            break ;
-                    }
-                     */
-
                     unit->tile = &mBoard.getTiles()[coords];
                     mServer.unitTurnDone(coords, view_coords, static_cast<int>(unit->owner->color)); //T ODO: check
                     change_state();
+                } else {
+                    mServer.sendError("You can't place unit\n there", currentPlayerIndex);
                 }
             } else {
                 change_state();

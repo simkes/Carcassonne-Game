@@ -71,6 +71,9 @@ result cardPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState,
     if (event.type == sf::Event::MouseButtonPressed &&
         event.mouseButton.button == sf::Mouse::Left ) {
         if(!sf::IntRect((int)mRender->scorePos.x, (int)mRender->scorePos.y, 55*5, 55).contains({event.mouseButton.x, event.mouseButton.y})) {
+            if(mRender->errorIsActive){
+                mRender->errorIsActive = false;
+            }
             sf::Vector2f worldCoords = mRender->mWindow.mapPixelToCoords(
                 {event.mouseButton.x, event.mouseButton.y},
                 mRender->mBoardView.getView());
@@ -100,6 +103,9 @@ result unitPlacementInteraction::handleEvent(sf::Event &event, bool &endOfState,
     if (event.type == sf::Event::MouseButtonPressed &&
         event.mouseButton.button == sf::Mouse::Left ) {
         if(!sf::IntRect((int)mRender->scorePos.x, (int)mRender->scorePos.y, 55*5, 55).contains({event.mouseButton.x, event.mouseButton.y})) {
+            if(mRender->errorIsActive){
+                mRender->errorIsActive = false;
+            }
             sf::Vector2i worldCoords =
                 game_view::to_tiles_coords(mRender->mWindow.mapPixelToCoords(
                     {event.mouseButton.x, event.mouseButton.y},

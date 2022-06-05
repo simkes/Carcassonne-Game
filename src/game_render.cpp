@@ -7,7 +7,9 @@ GameRender::GameRender()
       mMenu      (mWindow), mText("", getFont(), 50), invitation("", getFont(), 35),
       mScoreText("", getFont(), 30), chatHistoryText("", getFont(), 30),
       currentMessage("", getFont(), 30), mScoreButton("Scoreboard", getFont(), 55),
-      mChatButton("Chat", getFont(), 55), messageInvitation("Enter a message:", getFont(), 30) {
+      mChatButton("Chat", getFont(), 55), messageInvitation("Enter a message:", getFont(), 30),
+    errorMessage("", getFont(), 40){
+
     mBackground1.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND));
     mBackground1.setPosition(0, 0);
     getTextures().get_texture(game_view::textures::ID::BACKGROUND_TILE)->setRepeated(true);
@@ -26,6 +28,8 @@ GameRender::GameRender()
     mText.setPosition(10,5);
     invitation.setFillColor(sf::Color::Red);
     invitation.setPosition(invitationPos);
+    errorMessage.setFillColor(sf::Color::Red);
+    errorMessage.setPosition({invitationPos.x-5,invitationPos.y});
 
     chatHistoryText.setPosition(212,150);
     chatHistoryText.setFillColor(sf::Color::Black);
@@ -92,7 +96,11 @@ void GameRender::render(carcassonne_game::State state, bool chat) {
     mWindow.draw(mChatButton);
 
     if(state != carcassonne_game::State::DEFAULT) {
-        mWindow.draw(invitation);
+        if(errorIsActive){
+            mWindow.draw(errorMessage);
+        } else {
+            mWindow.draw(invitation);
+        }
     }
     if (state != carcassonne_game::State::UNITPLACEMENT) {
         mCurCardView.draw(mWindow);

@@ -40,6 +40,7 @@ private:
     sf::Text invitation;
     sf::Vector2f invitationPos = {10,65};
     sf::Text errorMessage; //TODO
+    bool errorIsActive = false;
 
     sf::String message;
     std::deque <std::pair<sf::String, sf::String>> chatHistory;
@@ -69,6 +70,7 @@ public:
     }
 
     void set_errorMessage(const std::string& msg) {
+        errorIsActive = true;
         errorMessage.setString(msg);
     }
 
