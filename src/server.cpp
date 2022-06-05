@@ -143,13 +143,21 @@ void Server::newTurn(size_t index, Card card) {
     }
 }
 
-void Server::finishGame() {
+void Server::finishGame(const std::vector<std::pair<std::string,int>> &players_score) {
+    int n = (int)players_score.size();
     for (auto &obj : indSocket) {
         sf::Packet packet;
-        // results
-        obj.second->send(packet);
+        packet << GAME_OVER << n;
+        for(const auto &p : players_score) {
+            packet << p.first << p.second;
+        }
+        obj.second->setBlocking(true);
+        if (obj.second->send(packet) == sf::Socket::Disconnected) {
+            throw std::runtime_error("disconnected");
+        }
         obj.second->disconnect();
     }
+
 }
 
 void Server::sendPause() {

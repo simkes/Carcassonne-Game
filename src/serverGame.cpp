@@ -14,7 +14,6 @@ void ServerGame::init_players(
 ServerGame::ServerGame(unsigned short port) : mServer(port) {
     placedCards.reserve(100);
     init_visitors();
-    mCardDeck.init();
     currentState = State::CARDPLACEMENT;
 }
 
@@ -24,8 +23,11 @@ void ServerGame::run() {
     init_players(play);
     mServer.startGame(mPlayers);
     place_first_card();
-    while (!gameOver) {
+    while (true) {
         set_currentCard();
+        if(gameOver) {
+            break;
+        }
         mServer.newTurn(currentPlayerIndex, *currentCardPtr);
         while (currentState == State::CARDPLACEMENT) {
             std::pair<sf::Vector2i, int> coords =
@@ -63,7 +65,7 @@ void ServerGame::run() {
         update();
         change_state();
     }
-    mServer.finishGame();
+    update();
 }
 
 void ServerGame::change_state() {
@@ -85,8 +87,9 @@ void ServerGame::change_state() {
 }
 
 void ServerGame::update() {
+    int n = gameOver ? 4 : 3;
     std::vector<sf::Vector2i> deleted_units;
-    for (int i = 0; i < 3; i++) {  // FieldVisitor goes in the end
+    for (int i = 0; i < n; i++) {  // FieldVisitor goes in the end
         std::vector<sf::Vector2i> result = mVisitors[i]->visit();
         for(auto pos : result){
             deleted_units.push_back(pos);
@@ -97,7 +100,12 @@ void ServerGame::update() {
     for(const auto & pl : mPlayers){
         players_score.emplace_back(pl.name, pl.score);
     }
-    mServer.update(players_score, deleted_units);
+
+    if(gameOver) {
+        mServer.finishGame(players_score);
+    } else {
+        mServer.update(players_score, deleted_units);
+    }
 }
 
 void ServerGame::place_first_card() {
@@ -110,7 +118,7 @@ void ServerGame::place_first_card() {
 
 void ServerGame::set_currentCard() {
     if (mCardDeck.empty()) {
-        gameOver = true;  // T ODO: make end of game with score counted
+        gameOver = true;
         return;
     }
     Card newCard = mCardDeck.get_card();

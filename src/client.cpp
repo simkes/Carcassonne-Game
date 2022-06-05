@@ -128,7 +128,7 @@ void Client::run() {
     });
     thread.launch();
 
-    while(mRender.window().isOpen()){
+    while(mRender.window().isOpen() && !gameOver){
         receive();
         if(curType == WAIT_START){
             render_lobby();
@@ -136,6 +136,8 @@ void Client::run() {
             process_game();
         }
     }
+    thread.terminate();
+    mRender.render_end_of_game();
 }
 
 sf::Socket::Status Client::receive() {
@@ -190,7 +192,7 @@ sf::Socket::Status Client::receive() {
             break;
         }
         case GAME_OVER: {
-            //TODO: print smt and end
+            finish_game(packet);
             break;
         }
         case PAUSE: {
@@ -277,6 +279,20 @@ void Client::update(sf::Packet &packet) {
         mRender.get_boardView().delete_unit(deleted_unit_coords);
     }
     currentState = State::DEFAULT;
+}
+
+void Client::finish_game(sf::Packet &packet) {
+    int n; // number of players
+    packet >> n;
+    std::vector<std::pair<int, std::string>> players_score(n);
+    for(int i = 0; i < n; i ++) {
+        std::string name; int score;
+        packet >> name >> score;
+        players_score[i] = {score, name};
+    }
+    mRender.set_scoreText(players_score);
+    gameOver = true;
+    std::cout << "get finish\n";
 }
 
 }

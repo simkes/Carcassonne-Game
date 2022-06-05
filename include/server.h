@@ -42,7 +42,7 @@ struct Server {
 
     void sendPause();
 
-    void finishGame();
+    void finishGame(const std::vector<std::pair<std::string,int>> &players_score);
 
     void sendError(const std::string &error_msg, size_t index);
 

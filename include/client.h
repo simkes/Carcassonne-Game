@@ -29,6 +29,7 @@ private:
     bool interactionChatEnd = false;
     PacketType curType = PAUSE;
 
+    bool gameOver = false;
     void init_interaction();
     void process_game();
     void render_lobby();
@@ -38,6 +39,7 @@ private:
     void new_card(sf::Packet &packet);
     void new_unit(sf::Packet &packet);
     void update(sf::Packet &packet);
+    void finish_game(sf::Packet &packet);
     [[noreturn]] void receiveMessage();
     sf::Socket::Status receive();
 public:

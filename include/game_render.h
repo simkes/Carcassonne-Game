@@ -3,6 +3,7 @@
 
 #include "game_common.h"
 #include "game_menu.h"
+#include <iostream>
 
 namespace interaction {
 struct defaultInteraction; // declaration
@@ -50,6 +51,8 @@ private:
     sf::RectangleShape mChatRect;
     sf::RectangleShape mMesRect;
 
+    sf::Text winnerName;
+
 public:
     GameRender();
     sf::RenderWindow& window() {
@@ -90,6 +93,7 @@ public:
     }
 
     void render(carcassonne_game::State state, bool chat);
+    void render_end_of_game();
 
     friend interaction::defaultInteraction;
     friend interaction::cardPlacementInteraction;

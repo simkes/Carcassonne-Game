@@ -8,7 +8,7 @@ GameRender::GameRender()
       mScoreText("", getFont(), 30), chatHistoryText("", getFont(), 30),
       currentMessage("", getFont(), 30), mScoreButton("Scoreboard", getFont(), 55),
       mChatButton("Chat", getFont(), 55), messageInvitation("Enter a message:", getFont(), 30),
-    errorMessage("", getFont(), 40){
+    errorMessage("", getFont(), 40), winnerName("", getFont(), 70){
 
     mBackground1.setTexture(*getTextures().get_texture(game_view::textures::ID::BACKGROUND));
     mBackground1.setPosition(0, 0);
@@ -122,10 +122,39 @@ void GameRender::set_scoreText(const std::vector<std::pair<int,std::string>>& pl
     sf::String text = "";
     std::vector<std::pair<int,std::string>> copy = players_score;
     std::sort(copy.begin(), copy.end(), std::greater<std::pair<int, std::string>>());
-    for(const auto &p : copy) {
-        text += p.second + "      " + std::to_string(p.first) + '\n';
+    winnerName.setString(copy[0].second);
+    for(int i = 0; i < copy.size(); i ++) {
+        auto p = copy[i];
+        text += std::to_string(i+1) + "   " + p.second + "      " + std::to_string(p.first) + '\n';
     }
     mScoreText.setString(text);
+}
+
+void GameRender::render_end_of_game() {
+    std::cout << "render end\n";
+    sf::Sprite endSprite;
+    endSprite.setTexture(*getTextures().get_texture(game_view::textures::ID::END));
+    endSprite.setPosition(300,100);
+    winnerName.setPosition(400,245);
+    winnerName.setFillColor(sf::Color::Red);
+    mScoreText.setPosition(370,350);
+    mScoreText.setCharacterSize(45);
+    while(mWindow.isOpen()) {
+        sf::Event event{};
+        while(mWindow.pollEvent(event)){
+            if(event.type == sf::Event::Closed){
+                mWindow.close();
+            }
+        }
+        mWindow.clear();
+        mWindow.draw(mBackground1);
+        mWindow.draw(mTitle);
+        mWindow.draw(endSprite);
+        mWindow.draw(winnerName);
+        mWindow.draw(mScoreText);
+        mWindow.display();
+    }
+
 }
 
 }  // namespace game_view
