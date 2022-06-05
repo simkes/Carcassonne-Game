@@ -100,8 +100,10 @@ int Menu::ask_port() {
                     }
                 } else if (event.type == sf::Event::KeyPressed) {
                     if (event.key.code == sf::Keyboard::BackSpace) {
-                        stringEntered.erase(stringEntered.getSize() - 1);
-                        textEntered.setString(stringEntered);
+                        if (!stringEntered.isEmpty()) {
+                            stringEntered.erase(stringEntered.getSize() - 1);
+                            textEntered.setString(stringEntered);
+                        }
                     } else if (event.key.code == sf::Keyboard::Enter) {
                         if (stringEntered == "") {
                             wrongP = true;
@@ -160,8 +162,10 @@ sf::String Menu::ask_IP() {
                 }
             } else if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::BackSpace) {
-                    stringEntered.erase(stringEntered.getSize() - 1);
-                    textEntered.setString(stringEntered);
+                    if (!stringEntered.isEmpty()) {
+                        stringEntered.erase(stringEntered.getSize() - 1);
+                        textEntered.setString(stringEntered);
+                    }
                 } else if (event.key.code == sf::Keyboard::Enter) {
                     if (stringEntered == "") {
                         wrongIP = true;
