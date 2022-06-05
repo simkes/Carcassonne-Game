@@ -49,6 +49,7 @@ void ServerGame::run() {
                 if(view_coords.x == -1) {
                     change_state();
                 } else if (mBoard.getTiles().count(coords) && mBoard.getTiles()[coords].card == currentCardPtr) {
+
                     Unit *unit = mPlayers[currentPlayerIndex].get_unit();
                     mBoard.getTiles()[coords].unit = unit;
                     unit->tile = &mBoard.getTiles()[coords];

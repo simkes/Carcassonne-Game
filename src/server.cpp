@@ -264,6 +264,8 @@ void Server::waitChatConnection(int cur_index) {
 std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
     while (mListener.accept(host) != sf::Socket::Done) {}
 
+
+
     mSelector.add(host);
     sf::Packet from_host;
     std::map<int, std::pair<std::string, int>> indConnected;
@@ -271,8 +273,10 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
         int cur_index = *availableSocket.begin();
         if (cur_index < 5) {
             if (mListener.accept(*mSockets[cur_index]) == sf::Socket::Done) {
+
                 indAddress[cur_index] = mSockets[cur_index]->getRemoteAddress().toString();
                 waitChatConnection(cur_index);
+
                 mSockets[cur_index]->setBlocking(true);
                 sf::Packet packet;
                 packet << INITIAL << availableCol;
@@ -293,12 +297,16 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
                         colors[color] = 1;
                         availableCol--;
                         lobby.insert({name, color});
+
                         playerSocket[{name, color}] = mSockets[cur_index].get();
                         playerAddress[{name, color}] = mSockets[cur_index]->getRemoteAddress().toString();
+
                         indSocket[cur_index] = mSockets[cur_index].get();
                         indPlayer[cur_index] = {name, color};
                     }
                 }
+
+
 
                 availableSocket.erase(cur_index);
                 mSockets[cur_index]->setBlocking(false);
@@ -310,8 +318,10 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
     players.reserve(lobby.size());
     for (const auto& obj : lobby) {
         players.emplace_back(iter, obj.first, static_cast<Color>(obj.second));
+
         indPlayer[iter] = obj;
         indSocket[iter++] = playerSocket[obj];
+
     }
     mChat = std::make_unique<sf::Thread>([this]{
         while (true) {
