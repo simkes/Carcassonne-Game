@@ -12,26 +12,80 @@ sf::Socket::Status Client::connect(const sf::IpAddress &IP,
                                    unsigned short port, sf::Time timeout) {
     sf::Socket::Status status =  mSocket.connect(IP, port, timeout);
     mSocket.setBlocking(false);
+    mChatSendSocket.connect(IP, port, timeout);
+    sf::Packet packet;
+    PacketType sendType = CHAT_RECEIVER;
+    // sf::IpAddress ip = mChatSendSocket.getLocalAddress();
+     // std::string ipString = ip.toString();
+    packet << sendType;  //<< ipString;
+    mChatSendSocket.send(packet);
+    packet.clear();
+    mChatSendSocket.receive(packet);
+
+    PacketType receiveType;
+    packet >> receiveType;
+    if (sendType != receiveType) {
+        std::cout << "failed to connect receive socket\n";
+    }
+
+
+    mChatReceiveSocket.connect(IP, port, timeout);
+    packet.clear();
+    sendType = CHAT_SENDER;
+    //ip = mChatReceiveSocket.getRemoteAddress();
+    //ipString = ip.toString();
+    packet << sendType; // << ipString;
+    mChatReceiveSocket.send(packet);
+    packet.clear();
+    mChatReceiveSocket.receive(packet);
+
+    packet >> receiveType;
+    if (sendType != receiveType) {
+        std::cout << "failed to connect send socket\n";
+    }
+
     return status;
 }
 
 void Client::process_game() {
     interaction::result ans;
     sf::Event event{};
+    std::string message;
     if (mRender.window().pollEvent(event)) {
-        ans = mInteraction[currentState]->handleEvent(event,
-                                                      interactionEnd);
+        if (chat){
+            message = mChatInteraction.handleEvent(event,
+                                                   interactionChatEnd, chat);
+        }
+
+        else{
+            ans = mInteraction[currentState]->handleEvent(event,
+                                                          interactionEnd, chat);
+        }
+
     }
-    mRender.render(currentState);
-    if (interactionEnd && currentState != State::DEFAULT) {
-        sf::Packet packet;
-        packet << curType << ans.tile_coordinates.x << ans.tile_coordinates.y
-               << ans.card_rotation;
-        mSocket.setBlocking(true);
-        while(mSocket.send(packet) != sf::Socket::Done){}
-        mSocket.setBlocking(false);
+    mRender.render(currentState, chat);
+
+    if (chat) {
+        if (interactionChatEnd && !message.empty()){
+            sf::Packet packet;
+            packet << MESSAGE << message;
+            while(mChatSendSocket.send(packet) != sf::Socket::Done){}
+            interactionChatEnd = false;
+        }
+
+    } else {
+        if (interactionEnd && currentState != State::DEFAULT) {
+            sf::Packet packet;
+            packet << curType << ans.tile_coordinates.x << ans.tile_coordinates.y
+                   << ans.card_rotation;
+            mSocket.setBlocking(true);
+            while(mSocket.send(packet) != sf::Socket::Done){}
+            mSocket.setBlocking(false);
+        }
+
+        interactionEnd = false;
     }
-    interactionEnd = false;
+
 }
 
 void Client::render_lobby() {
@@ -44,18 +98,46 @@ void Client::render_lobby() {
          (hostSocket.send(send_packet) == sf::Socket::Done);
             //std::cout << "sent\n";
         hostSocket.setBlocking(false);
+        sf::Event event{};
+        while(mRender.window().pollEvent(event)) {}
     }
 }
 
+[[noreturn]] void Client::receiveMessage() {
+
+    while (true){
+        sf::Packet packet;
+        PacketType type;
+        std::string name;
+        std::string message;
+
+        mChatReceiveSocket.receive(packet);
+        mutex.lock();
+        packet >> type >> name >> message;
+        if(type == MESSAGE) {
+            mRender.add_message(name, message);
+        }
+        mutex.unlock();
+    }
+
+}
+
 void Client::run() {
-    while(mRender.window().isOpen()){
+    sf::Thread thread([&]() {
+        receiveMessage();
+    });
+    thread.launch();
+
+    while(mRender.window().isOpen() && !gameOver){
         receive();
         if(curType == WAIT_START){
             render_lobby();
-        } else if (curType == GAME_START || (curType > WAIT_START && curType < GAME_OVER)) {
+        } else if (curType > WAIT_START && curType < GAME_OVER) {
             process_game();
         }
     }
+    thread.terminate();
+    mRender.render_end_of_game();
 }
 
 sf::Socket::Status Client::receive() {
@@ -110,7 +192,7 @@ sf::Socket::Status Client::receive() {
             break;
         }
         case GAME_OVER: {
-            //TODO: print smt and end
+            finish_game(packet);
             break;
         }
         case PAUSE: {
@@ -178,14 +260,15 @@ void Client::new_unit(sf::Packet &packet) {
     currentState = State::DEFAULT;
 }
 
+
 void Client::update(sf::Packet &packet) {
     int n; // number of players
     packet >> n;
-    std::vector<std::pair<std::string,int>> players_score(n);
+    std::vector<std::pair<int, std::string>> players_score(n);
     for(int i = 0; i < n; i ++) {
         std::string name; int score;
         packet >> name >> score;
-        players_score[i] = {name,score};
+        players_score[i] = {score, name};
     }
     mRender.set_scoreText(players_score);
     int m; // number of deleted units
@@ -198,5 +281,18 @@ void Client::update(sf::Packet &packet) {
     currentState = State::DEFAULT;
 }
 
+void Client::finish_game(sf::Packet &packet) {
+    int n; // number of players
+    packet >> n;
+    std::vector<std::pair<int, std::string>> players_score(n);
+    for(int i = 0; i < n; i ++) {
+        std::string name; int score;
+        packet >> name >> score;
+        players_score[i] = {score, name};
+    }
+    mRender.set_scoreText(players_score);
+    gameOver = true;
+    std::cout << "get finish\n";
+}
 
 }

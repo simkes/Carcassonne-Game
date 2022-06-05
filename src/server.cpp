@@ -1,5 +1,6 @@
 #include "server.h"
 #include <iostream>
+#include <memory>
 
 namespace carcassonne_game::game_server {
 
@@ -142,19 +143,37 @@ void Server::newTurn(size_t index, Card card) {
     }
 }
 
-void Server::finishGame() {
+void Server::finishGame(const std::vector<std::pair<std::string,int>> &players_score) {
+    int n = (int)players_score.size();
     for (auto &obj : indSocket) {
         sf::Packet packet;
-        // results
-        obj.second->send(packet);
+        packet << GAME_OVER << n;
+        for(const auto &p : players_score) {
+            packet << p.first << p.second;
+        }
+        obj.second->setBlocking(true);
+        if (obj.second->send(packet) == sf::Socket::Disconnected) {
+            throw std::runtime_error("disconnected");
+        }
         obj.second->disconnect();
     }
+
 }
 
 void Server::sendPause() {
     for (auto &obj : indSocket) {
         sf::Packet packet;
         obj.second->send(packet);
+    }
+}
+
+void Server::sendChatMessage(const std::string &name, const std::string &message) {
+    sf::Packet packet;
+    packet << MESSAGE << name << message;
+    for (const auto &obj : mChatSender) {
+        if (obj->getRemotePort()) {
+            obj->send(packet);
+        }
     }
 }
 
@@ -192,8 +211,61 @@ bool Server::check_start() {
     }
 }
 
+void Server::waitChatConnection(int cur_index) {
+    while (1) {
+        mListener.accept(*mChatReceiver[cur_index]);
+        sf::Packet packet;
+        mChatReceiver[cur_index]->receive(packet);
+        PacketType type;
+        packet >> type;
+        if (type == CHAT_RECEIVER) {
+            std::string ip;
+            ip = mChatReceiver[cur_index]->getRemoteAddress().toString();
+            if (ip == indAddress[cur_index]) {
+                sf::Packet to_be_sent;
+                to_be_sent << CHAT_RECEIVER;
+                mChatReceiver[cur_index]->send(to_be_sent);
+                std::unique_lock lock(chatMutex);
+                mChatSelector.add(*mChatReceiver[cur_index]);
+                break;
+            } else {
+                sf::Packet to_be_sent;
+                to_be_sent << WRONG_PLAYER;
+                mChatReceiver[cur_index]->send(to_be_sent);
+            }
+        }
+        mChatReceiver[cur_index]->disconnect();
+    }
+
+    while (1) {
+        mListener.accept(*mChatSender[cur_index]);
+        sf::Packet packet;
+        mChatSender[cur_index]->receive(packet);
+        PacketType type;
+        packet >> type;
+        if (type == CHAT_SENDER) {
+            std::string ip;
+            ip = mChatReceiver[cur_index]->getRemoteAddress().toString();
+            if (ip == indAddress[cur_index]) {
+                sf::Packet to_be_sent;
+                to_be_sent << CHAT_SENDER;
+                mChatSender[cur_index]->send(packet);
+                break;
+            } else {
+                sf::Packet to_be_sent;
+                to_be_sent << WRONG_PLAYER;
+                mChatSender[cur_index]->send(packet);
+            }
+        }
+        mChatSender[cur_index]->disconnect();
+    }
+}
+
 std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
     while (mListener.accept(host) != sf::Socket::Done) {}
+
+
+
     mSelector.add(host);
     sf::Packet from_host;
     std::map<int, std::pair<std::string, int>> indConnected;
@@ -201,7 +273,10 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
         int cur_index = *availableSocket.begin();
         if (cur_index < 5) {
             if (mListener.accept(*mSockets[cur_index]) == sf::Socket::Done) {
-                std::cout << mSockets[cur_index]->getRemoteAddress() << '\n';
+
+                indAddress[cur_index] = mSockets[cur_index]->getRemoteAddress().toString();
+                waitChatConnection(cur_index);
+
                 mSockets[cur_index]->setBlocking(true);
                 sf::Packet packet;
                 packet << INITIAL << availableCol;
@@ -222,10 +297,17 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
                         colors[color] = 1;
                         availableCol--;
                         lobby.insert({name, color});
+
+                        playerSocket[{name, color}] = mSockets[cur_index].get();
+                        playerAddress[{name, color}] = mSockets[cur_index]->getRemoteAddress().toString();
+
                         indSocket[cur_index] = mSockets[cur_index].get();
                         indPlayer[cur_index] = {name, color};
                     }
                 }
+
+
+
                 availableSocket.erase(cur_index);
                 mSockets[cur_index]->setBlocking(false);
                 cur_index = *availableSocket.begin();
@@ -236,8 +318,33 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
     players.reserve(lobby.size());
     for (const auto& obj : lobby) {
         players.emplace_back(iter, obj.first, static_cast<Color>(obj.second));
-        //indPlayer.insert({iter++, players.back()});
+
+        indPlayer[iter] = obj;
+        indSocket[iter++] = playerSocket[obj];
+
     }
+    mChat = std::make_unique<sf::Thread>([this]{
+        while (true) {
+            //std::unique_lock lock(chatMutex);
+            if (mChatSelector.wait(sf::seconds(0.5))) {
+                for (int i = 0; i < mChatReceiver.size(); i++) {
+                    sf::TcpSocket *socket = mChatReceiver[i].get();
+                    if (mChatSelector.isReady(*socket)) {
+                        sf::Packet packet;
+                        PacketType type;
+                        std::string message;
+                        std::string name = indPlayer[i].first;
+                        socket->receive(packet);
+                        packet >> type >> message;
+                        if (type == MESSAGE){
+                            sendChatMessage(name, message);
+                        }
+                    }
+                }
+            }
+        }
+    });
+    mChat->launch();
     return players;
 }
 

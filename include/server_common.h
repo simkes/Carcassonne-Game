@@ -16,9 +16,13 @@ const PacketType NEW_TURN = 5;
 const PacketType UPDATE_CARD = 6;
 const PacketType UPDATE_UNIT = 7;
 const PacketType UPDATE = 8;
-const PacketType GAME_OVER = 9;
-const PacketType GAME_START = 10;
-const PacketType PAUSE = 11;
+const PacketType MESSAGE = 9;
+const PacketType GAME_OVER = 10;
+const PacketType GAME_START = 11;
+const PacketType PAUSE = 12;
+const PacketType CHAT_RECEIVER = 13;
+const PacketType CHAT_SENDER = 14;
+const PacketType WRONG_PLAYER = 15;
 
 } // namespace carcassonne_game
 

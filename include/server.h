@@ -8,6 +8,7 @@
 #include <SFML/Network/TcpListener.hpp>
 #include <SFML/Network/Packet.hpp>
 #include <iostream>
+#include <mutex>
 
 namespace carcassonne_game::game_server {
 
@@ -20,6 +21,8 @@ struct Server {
         host.setBlocking(true);
         for (int i = 0 ; i < 5; i++) {
             mSockets.emplace_back(new sf::TcpSocket());
+            mChatSender.emplace_back(new sf::TcpSocket());
+            mChatReceiver.emplace_back(new sf::TcpSocket());
             availableSocket.insert(i);
         }
 
@@ -39,7 +42,7 @@ struct Server {
 
     void sendPause();
 
-    void finishGame();
+    void finishGame(const std::vector<std::pair<std::string,int>> &players_score);
 
     void sendError(const std::string &error_msg, size_t index);
 
@@ -49,6 +52,10 @@ struct Server {
 
     std::vector<Player> waitConnections(std::vector<Player> &players);
 
+    void waitChatConnection(int cur_index);
+
+    void sendChatMessage(const std::string &name, const std::string &message);
+
     bool check_start();
 
 
@@ -57,6 +64,19 @@ private:
     sf::TcpSocket host;
     sf::SocketSelector mSelector;
     std::vector<std::unique_ptr<sf::TcpSocket>> mSockets;
+    std::vector<std::unique_ptr<sf::TcpSocket>> mChatSender;
+    std::vector<std::unique_ptr<sf::TcpSocket>> mChatReceiver;
+    // std::vector<std::unique_ptr<sf::Thread>> mChatThread;
+    std::map<int, std::string> indAddress;
+
+    sf::SocketSelector mChatSelector;
+    std::unique_ptr<sf::Thread> mChat;
+
+    std::map<int, int> playerToSocketInd;
+
+
+    std::map<std::pair<std::string, int>, sf::TcpSocket*> playerSocket;
+    std::map<std::pair<std::string, int>, std::string> playerAddress;
     sf::TcpListener mListener;
     std::map<int, std::pair<std::string, int>> indPlayer;
     std::set<int>availableSocket;
@@ -64,6 +84,7 @@ private:
     std::vector<int> colors = std::vector<int>(5, 0);
     std::set<std::pair<std::string, int>>lobby;
     int availableCol = 5;
+    std::mutex chatMutex;
 };
 
 struct ServerGame {
@@ -95,6 +116,7 @@ private:
     void init_visitors();
 
     void place_first_card();
+
 
     void update();
     void change_state();

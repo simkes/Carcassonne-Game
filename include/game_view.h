@@ -68,7 +68,7 @@ private:
 
 struct CurrentCardView {
     CurrentCardView() {
-        mSprite.setPosition({115, 205});
+        mSprite.setPosition({115, 225});
         mSprite.setOrigin(textures::CARD_TEXTURE_SIZE/2, textures::CARD_TEXTURE_SIZE/2);
     }
     void set_texture(int texture_id);

@@ -22,7 +22,8 @@ enum class ID {
     UNIT_YELLOW,
     TITLE,
     SCORE,
-    BACKGROUND_TILE
+    BACKGROUND_TILE,
+    END
 };
 
 inline std::map<game_model::Color, ID> unit_color{

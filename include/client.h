@@ -13,16 +13,23 @@ namespace carcassonne_game::game_client {
 class Client{
 private:
     sf::TcpSocket mSocket;
+    sf::TcpSocket mChatSendSocket;
+    sf::TcpSocket mChatReceiveSocket;
+    sf::Mutex mutex;
     int host = -1;
 
-    bool started = 0;
+    bool started = false;
     game_view::GameRender mRender;
     std::map<State, std::unique_ptr<defaultInteraction>> mInteraction;
+    chatInteraction mChatInteraction;
 
     State currentState = State::DEFAULT;
     bool interactionEnd = false;
+    bool chat = false;
+    bool interactionChatEnd = false;
     PacketType curType = PAUSE;
 
+    bool gameOver = false;
     void init_interaction();
     void process_game();
     void render_lobby();
@@ -32,10 +39,12 @@ private:
     void new_card(sf::Packet &packet);
     void new_unit(sf::Packet &packet);
     void update(sf::Packet &packet);
+    void finish_game(sf::Packet &packet);
+    [[noreturn]] void receiveMessage();
     sf::Socket::Status receive();
 public:
     sf::TcpSocket hostSocket;
-    Client() {
+    Client() : mChatInteraction(&mRender) {
         //       mSocket.setBlocking(false); // non blocking socket
         init_interaction();
     }
