@@ -285,6 +285,7 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
                         colors[color] = 1;
                         availableCol--;
                         lobby.insert({name, color});
+                        playerSocket[{name, color}] = mSockets[cur_index].get();
                         playerAddress[{name, color}] = mSockets[cur_index]->getRemoteAddress().toString();
                         indSocket[cur_index] = mSockets[cur_index].get();
                         indPlayer[cur_index] = {name, color};
@@ -301,7 +302,8 @@ std::vector<Player> Server::waitConnections(std::vector<Player> &players) {
     players.reserve(lobby.size());
     for (const auto& obj : lobby) {
         players.emplace_back(iter, obj.first, static_cast<Color>(obj.second));
-        //indPlayer.insert({iter++, players.back()});
+        indPlayer[iter] = obj;
+        indSocket[iter++] = playerSocket[obj];
     }
     mChat = std::make_unique<sf::Thread>([this]{
         while (true) {

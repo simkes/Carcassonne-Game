@@ -72,6 +72,10 @@ private:
     sf::SocketSelector mChatSelector;
     std::unique_ptr<sf::Thread> mChat;
 
+    std::map<int, int> playerToSocketInd;
+
+
+    std::map<std::pair<std::string, int>, sf::TcpSocket*> playerSocket;
     std::map<std::pair<std::string, int>, std::string> playerAddress;
     sf::TcpListener mListener;
     std::map<int, std::pair<std::string, int>> indPlayer;
